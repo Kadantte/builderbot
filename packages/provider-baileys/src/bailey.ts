@@ -52,7 +52,7 @@ class BaileysProvider extends ProviderClass<WASocket> {
         port: 3000,
         timeRelease: 0, //21600000
         writeMyself: 'none',
-        groupsIgnore: false,
+        groupsIgnore: true,
         readStatus: false,
         experimentalStore: false,
         autoRefresh: 0,
@@ -189,9 +189,10 @@ class BaileysProvider extends ProviderClass<WASocket> {
                 connectTimeoutMs: 20_000,
                 keepAliveIntervalMs: 30_000,
                 shouldIgnoreJid: (jid: string) => {
-                    const isGroupJid = this.globalVendorArgs.groupsIgnore && isJidGroup(jid)
-                    const isBroadcast = !this.globalVendorArgs.readStatus && isJidBroadcast(jid)
-                    return isGroupJid || isBroadcast
+                    if (this.globalVendorArgs.groupsIgnore) {
+                        return isJidGroup(jid) || isJidBroadcast(jid)
+                    }
+                    return false
                 },
                 patchMessageBeforeSending: (message: {
                     deviceSentMessage: { message: { listMessage: { listType: proto.Message.ListMessage.ListType } } }
