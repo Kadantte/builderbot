@@ -531,8 +531,12 @@ describe('#MetaProvider', () => {
             const fakeHeaderText = 'Welcome to our flow!'
             const fakeBodyText = 'Please follow the steps in the flow.'
             const fakeFooterText = 'Thank you for using our service!'
+            const fakeFlowMessageVer = '3'
+            const fakeFlowAction = 'navigate'
             const fakeFlowId = 'flow123'
+            const fakeFlowToken = '1234567890'
             const fakeFlowCta = 'Start Flow'
+            const fakeIsDraftFlow = true
             const fakeScreenName = 'HomeScreen'
             const fakeData = { userId: 'user123' }
             jest.spyOn(metaProvider, 'sendMessageMeta')
@@ -543,8 +547,12 @@ describe('#MetaProvider', () => {
                 fakeHeaderText,
                 fakeBodyText,
                 fakeFooterText,
+                fakeFlowMessageVer,
+                fakeFlowAction,
                 fakeFlowId,
+                fakeFlowToken,
                 fakeFlowCta,
+                fakeIsDraftFlow,
                 fakeScreenName,
                 fakeData
             )

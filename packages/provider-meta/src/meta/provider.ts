@@ -449,8 +449,12 @@ class MetaProvider extends ProviderClass<MetaInterface> implements MetaInterface
         headerText: string,
         bodyText: string,
         footerText: string,
+        flowMessageVer: string,
+        flowAction: string,
         flowID: string,
+        flowToken: string,
         flowCta: string,
+        isDraftFlow: boolean,
         screenName: string,
         data: Record<string, any>
     ) => {
@@ -475,15 +479,16 @@ class MetaProvider extends ProviderClass<MetaInterface> implements MetaInterface
                 action: {
                     name: 'flow',
                     parameters: {
-                        flow_message_version: '3',
-                        flow_action: 'navigate',
-                        flow_token: '<FLOW_TOKEN>', // opcional para cifrado con endpoint
+                        flow_message_version: flowMessageVer ?? '3',
+                        flow_action: flowAction ?? 'navigate',
+                        flow_token: flowToken ?? '<FLOW_TOKEN>',
                         flow_id: flowID,
-                        flow_cta: flowCta, // open flow! -> mensaje del boton
+                        flow_cta: flowCta,
                         flow_action_payload: {
                             screen: screenName,
                             data: data ? data : { '<CUSTOM_KEY>': '<CUSTOM_VALUE>' },
                         },
+                        ...(isDraftFlow && { mode: 'draft' })
                     },
                 },
             },
