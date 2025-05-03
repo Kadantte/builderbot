@@ -122,7 +122,7 @@ export interface ParamsIncomingMessage {
     numberId: string
     version: string
     message: any
-    fileData: File | null
+    fileData?: File | null
 }
 
 export type TextGenericParams = {
