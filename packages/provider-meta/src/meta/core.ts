@@ -132,7 +132,13 @@ export class MetaCoreVendor extends EventEmitter {
                     }
                     const to = body.entry[0].changes[0].value?.metadata?.display_phone_number
                     const pushName: string | undefined = contact?.profile?.name ?? 'Unknown'
-                    const fileData = message?.audio ??  message?.image ??  message?.video ??  message?.document ??  message?.sticker ?? null as File | undefined;
+                    const fileData =
+                        message?.audio ??
+                        message?.image ??
+                        message?.video ??
+                        message?.document ??
+                        message?.sticker ??
+                        (null as File | undefined)
 
                     const response: Message = await processIncomingMessage({
                         messageId,
