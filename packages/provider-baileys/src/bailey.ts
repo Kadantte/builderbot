@@ -174,6 +174,7 @@ class BaileysProvider extends ProviderClass<WASocket> {
         try {
             const sock = makeWASocketOther({
                 logger: loggerBaileys,
+                version: [2, 3000, 1015901307],
                 printQRInTerminal: false,
                 auth: {
                     creds: state.creds,
@@ -222,18 +223,23 @@ class BaileysProvider extends ProviderClass<WASocket> {
                 if (this.globalVendorArgs.phoneNumber) {
                     await sock.waitForConnectionUpdate((update: { qr: any }) => !!update.qr)
                     const phoneNumberClean = utils.removePlus(this.globalVendorArgs.phoneNumber)
-                    await delay(800)
-                    const code = await sock.requestPairingCode(phoneNumberClean)
 
-                    this.emit('require_action', {
-                        title: '⚡⚡ ACTION REQUIRED ⚡⚡',
-                        instructions: [
-                            `Accept the WhatsApp notification from ${this.globalVendorArgs.phoneNumber} on your phone 👌`,
-                            `The token for linking is: ${code}`,
-                            `Need help: https://link.codigoencasa.com/DISCORD`,
-                        ],
-                        payload: { qr: null, code },
-                    })
+                    setTimeout(async () => {
+                        try {
+                            const code = await sock.requestPairingCode(phoneNumberClean)
+                            this.emit('require_action', {
+                                title: '⚡⚡ ACTION REQUIRED ⚡⚡',
+                                instructions: [
+                                    `Accept the WhatsApp notification from ${this.globalVendorArgs.phoneNumber} on your phone 👌`,
+                                    `The token for linking is: ${code}`,
+                                    `Need help: https://link.codigoencasa.com/DISCORD`,
+                                ],
+                                payload: { qr: null, code },
+                            })
+                        } catch (e) {
+                            logger.log(e)
+                        }
+                    }, 5000)
                 } else {
                     this.emit('auth_failure', [
                         `The phone number has not been defined, please add it`,
