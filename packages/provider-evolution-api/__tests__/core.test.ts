@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals'
 import Queue from 'queue-promise'
 import { EvolutionCoreVendor } from '../src/evolution/core'
-import { Message } from '../src/types'
 
 jest.mock('../src/utils/processIncomingMsg', () => ({
     processIncomingMessage: jest.fn(),
