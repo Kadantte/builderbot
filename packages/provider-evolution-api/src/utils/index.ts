@@ -1,5 +1,3 @@
-export { getMediaUrl } from './mediaUrl'
-export { downloadFile, fileTypeFromFile } from './downloadFile'
-export { processIncomingMessage } from './processIncomingMsg'
-export { getProfile } from './profile'
-export { parseMetaNumber } from './number'
+export { generalDownload } from './download'
+
+export { convertAudio } from './convertAudio'
