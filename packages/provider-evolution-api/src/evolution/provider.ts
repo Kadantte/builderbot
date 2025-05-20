@@ -1,33 +1,25 @@
 import { ProviderClass, utils } from '@builderbot/bot'
 import type { Vendor } from '@builderbot/bot/dist/provider/interface/provider'
 import type { BotContext, Button, SendOptions } from '@builderbot/bot/dist/types'
-import axios from 'axios'
-import FormData from 'form-data'
-import { createReadStream } from 'fs'
+import axios, { AxiosError, AxiosResponse } from 'axios'
 import { writeFile } from 'fs/promises'
 import mime from 'mime-types'
 import { tmpdir } from 'os'
-import { join, basename, resolve } from 'path'
+import { join, resolve } from 'path'
 import Queue from 'queue-promise'
 
 import { EvolutionCoreVendor } from './core'
 import type { EvolutionInterface } from '../interface/evolution'
-import { downloadFile, getProfile } from '../utils'
-import { parseMetaNumber } from '../utils/number'
+import { downloadFile } from '../utils'
 
-import type {
-    EvolutionGlobalVendorArgs,
-    Localization,
-    Message,
-    MetaList,
-    ParsedContact,
-    Reaction,
-    SaveFileOptions,
-    TextMessageBody,
-} from '~/types'
+import type { EvolutionGlobalVendorArgs, Message, SaveFileOptions } from '~/types'
 
+/**
+ * Evolution API Provider implementation
+ * Handles all communication with Evolution API for sending messages, media, etc.
+ */
 class EvolutionProvider extends ProviderClass<EvolutionInterface> implements EvolutionInterface {
-    public vendor: Vendor<any>
+    public vendor: Vendor<EvolutionInterface>
     public queue: Queue = new Queue()
 
     public globalVendorArgs: EvolutionGlobalVendorArgs = {
@@ -35,8 +27,13 @@ class EvolutionProvider extends ProviderClass<EvolutionInterface> implements Evo
         apiKey: '',
         baseURL: 'http://localhost:8080',
         instanceName: '',
+        port: 3000,
     }
 
+    /**
+     * Creates an instance of Evolution Provider
+     * @param args Provider configuration
+     */
     constructor(args: EvolutionGlobalVendorArgs) {
         super()
         this.globalVendorArgs = { ...this.globalVendorArgs, ...args }
@@ -47,128 +44,201 @@ class EvolutionProvider extends ProviderClass<EvolutionInterface> implements Evo
         })
     }
 
+    /**
+     * Initialize HTTP server middleware
+     */
     protected beforeHttpServerInit(): void {
         this.server = this.server
             .use((req, _, next) => {
                 req['globalVendorArgs'] = this.globalVendorArgs
                 return next()
             })
-            .post('/', this.vendor.indexHome)
+            .post(
+                '/',
+                this.vendor?.indexHome ||
+                    ((_, res) => {
+                        res.end('OK')
+                        return
+                    })
+            )
     }
 
-    protected async initVendor(): Promise<any> {
+    /**
+     * Initialize vendor core
+     */
+    protected async initVendor(): Promise<Vendor<any>> {
         const vendor = new EvolutionCoreVendor(this.queue)
-        this.vendor = vendor
+        this.vendor = vendor as unknown as Vendor<EvolutionInterface>
         return Promise.resolve(this.vendor)
     }
 
+    /**
+     * Build standard headers for API requests
+     * @param additionalHeaders Optional additional headers to include
+     * @returns Headers object with apiKey
+     */
+    private builderHeader(additionalHeaders: Record<string, string> = {}): Record<string, string> {
+        const { apiKey } = this.globalVendorArgs
+        return {
+            apikey: apiKey,
+            ...additionalHeaders,
+        }
+    }
+
+    /**
+     * Verify connection with Evolution API after HTTP server initialization
+     */
     protected async afterHttpServerInit(): Promise<void> {
         try {
-            const { baseURL, instanceName, apiKey } = this.globalVendorArgs
+            const { baseURL, instanceName } = this.globalVendorArgs
 
-            // Verificar conexión con Evolution API
+            // Verify connection with Evolution API
             const response = await axios.get(`${baseURL}/instance/connectionState/${instanceName}`, {
-                headers: {
-                    apikey: apiKey,
-                },
+                headers: this.builderHeader(),
             })
 
             if (response.data.state === 'open') {
                 this.emit('ready')
             } else {
-                throw new Error('Instance not connected')
+                throw new Error(`Instance state: ${response.data.state}`)
             }
         } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Unknown error'
             this.emit('notice', {
                 title: '🟠 ERROR AUTH 🟠',
                 instructions: [
                     'Error connecting to Evolution API, please check your credentials',
                     'Make sure your instance is connected',
+                    `Details: ${errorMessage}`,
                 ],
             })
         }
     }
 
-    busEvents = () => [
-        {
-            event: 'auth_failure',
-            func: (payload: any) => this.emit('auth_failure', payload),
-        },
-        {
-            event: 'notice',
-            func: ({ instructions, title }) => this.emit('notice', { instructions, title }),
-        },
-        {
-            event: 'ready',
-            func: () => this.emit('ready', true),
-        },
-        {
-            event: 'message',
-            func: (payload: BotContext) => {
-                this.emit('message', payload)
+    /**
+     * Event bus configuration
+     */
+    protected busEvents() {
+        return [
+            {
+                event: 'auth_failure',
+                func: (payload: any) => this.emit('auth_failure', payload),
             },
-        },
-    ]
+            {
+                event: 'notice',
+                func: ({ instructions, title }: { instructions: string[]; title: string }) =>
+                    this.emit('notice', { instructions, title }),
+            },
+            {
+                event: 'ready',
+                func: () => this.emit('ready', true),
+            },
+            {
+                event: 'message',
+                func: (payload: BotContext) => {
+                    this.emit('message', payload)
+                },
+            },
+        ]
+    }
 
+    /**
+     * Send text message
+     * @param to Recipient phone number
+     * @param message Text message to send
+     */
     async sendText(to: string, message: string): Promise<any> {
         return this.sendMessage(to, message)
     }
 
-    async sendMessage(to: string, message: string): Promise<any> {
-        try {
-            const { baseURL, instanceName, apiKey } = this.globalVendorArgs
+    /**
+     * Send text message (main implementation)
+     * @param to Recipient phone number
+     * @param message Text message to send
+     */
+    public async sendMessage<K = any>(to: string, message: string, _args?: any): Promise<K> {
+        const { baseURL, instanceName } = this.globalVendorArgs
 
-            return await axios.post(
+        try {
+            return (await axios.post(
                 `${baseURL}/message/sendText/${instanceName}`,
                 {
                     number: to,
                     text: message,
                 },
                 {
-                    headers: {
-                        apikey: apiKey,
-                    },
+                    headers: this.builderHeader(),
                 }
-            )
+            )) as K
         } catch (error) {
-            console.error('Error sending message:', error)
+            const errorMessage =
+                error instanceof AxiosError ? error.response?.data?.message || error.message : 'Unknown error'
+            console.error(`Error sending message: ${errorMessage}`)
             throw error
         }
     }
 
+    /**
+     * Send image media
+     * @param to Recipient phone number
+     * @param mediaUrl Image URL or base64
+     * @param mediaName Optional filename
+     * @param caption Optional image caption
+     */
     async sendImage(to: string, mediaUrl: string, mediaName?: string, caption?: string): Promise<any> {
+        const { baseURL, instanceName } = this.globalVendorArgs
+
         try {
-            const { baseURL, instanceName, apiKey } = this.globalVendorArgs
+            const mimeType = mime.lookup(mediaUrl) || 'image/png'
+            const timestamp = Date.now ? Date.now() : new Date().getTime()
+            const fileName = mediaName || `image-${timestamp}.${mime.extension(mimeType) || 'png'}`
 
             return await axios.post(
                 `${baseURL}/message/sendMedia/${instanceName}`,
                 {
                     number: to,
                     mediaType: 'image',
-                    mimeType: mime.lookup(mediaUrl) || 'image/png',
-                    caption: caption,
+                    mimeType,
+                    caption,
                     media: mediaUrl,
-                    fileName: mediaName || 'image.png',
+                    fileName,
                 },
                 {
-                    headers: {
-                        apikey: apiKey,
-                    },
+                    headers: this.builderHeader(),
                 }
             )
         } catch (error) {
-            console.error('Error sending image:', error)
+            const errorMessage =
+                error instanceof AxiosError ? error.response?.data?.message || error.message : 'Unknown error'
+            console.error(`Error sending image: ${errorMessage}`)
             throw error
         }
     }
 
+    /**
+     * Send image from URL
+     * @param to Recipient phone number
+     * @param url Image URL
+     * @param mediaName Optional filename
+     * @param caption Optional image caption
+     */
     async sendImageUrl(to: string, url: string, mediaName?: string, caption?: string): Promise<any> {
         return this.sendImage(to, url, mediaName, caption)
     }
 
+    /**
+     * Send video media
+     * @param to Recipient phone number
+     * @param mediaUrl Video URL or base64
+     * @param mediaName Optional filename
+     * @param caption Optional video caption
+     */
     async sendVideo(to: string, mediaUrl: string, mediaName?: string, caption?: string): Promise<any> {
+        const { baseURL, instanceName } = this.globalVendorArgs
+
         try {
-            const { baseURL, instanceName, apiKey } = this.globalVendorArgs
+            const timestamp = Date.now ? Date.now() : new Date().getTime()
+            const fileName = mediaName || `video-${timestamp}.mp4`
 
             return await axios.post(
                 `${baseURL}/message/video/${instanceName}`,
@@ -176,29 +246,46 @@ class EvolutionProvider extends ProviderClass<EvolutionInterface> implements Evo
                     number: to,
                     mediaType: 'video',
                     mimeType: 'video/mp4',
-                    caption: caption,
+                    caption,
                     media: mediaUrl,
-                    fileName: mediaName || 'video.mp4',
+                    fileName,
                 },
                 {
-                    headers: {
-                        apikey: apiKey,
-                    },
+                    headers: this.builderHeader(),
                 }
             )
         } catch (error) {
-            console.error('Error sending video:', error)
+            const errorMessage =
+                error instanceof AxiosError ? error.response?.data?.message || error.message : 'Unknown error'
+            console.error(`Error sending video: ${errorMessage}`)
             throw error
         }
     }
 
+    /**
+     * Send video from URL
+     * @param to Recipient phone number
+     * @param url Video URL
+     * @param mediaName Optional filename
+     * @param caption Optional video caption
+     */
     async sendVideoUrl(to: string, url: string, mediaName?: string, caption?: string): Promise<any> {
         return this.sendVideo(to, url, mediaName, caption)
     }
 
+    /**
+     * Send audio media
+     * @param to Recipient phone number
+     * @param mediaUrl Audio URL or base64
+     * @param mediaName Optional filename
+     * @param caption Optional audio caption
+     */
     async sendAudio(to: string, mediaUrl: string, mediaName?: string, caption?: string): Promise<any> {
+        const { baseURL, instanceName } = this.globalVendorArgs
+
         try {
-            const { baseURL, instanceName, apiKey } = this.globalVendorArgs
+            const timestamp = Date.now ? Date.now() : new Date().getTime()
+            const fileName = mediaName || `audio-${timestamp}.mp3`
 
             return await axios.post(
                 `${baseURL}/message/audio/${instanceName}`,
@@ -206,28 +293,41 @@ class EvolutionProvider extends ProviderClass<EvolutionInterface> implements Evo
                     number: to,
                     mediaType: 'audio',
                     mimeType: 'audio/mp3',
-                    caption: caption,
+                    caption,
                     media: mediaUrl,
-                    fileName: mediaName || 'audio.mp3',
+                    fileName,
                 },
                 {
-                    headers: {
-                        apikey: apiKey,
-                    },
+                    headers: this.builderHeader(),
                 }
             )
         } catch (error) {
-            console.error('Error sending audio:', error)
+            const errorMessage =
+                error instanceof AxiosError ? error.response?.data?.message || error.message : 'Unknown error'
+            console.error(`Error sending audio: ${errorMessage}`)
             throw error
         }
     }
 
+    /**
+     * Send audio from URL
+     * @param to Recipient phone number
+     * @param url Audio URL
+     * @param mediaName Optional filename
+     * @param caption Optional audio caption
+     */
     async sendAudioUrl(to: string, url: string, mediaName?: string, caption?: string): Promise<any> {
         return this.sendAudio(to, url, mediaName, caption)
     }
 
+    /**
+     * Generic media sending method
+     * @param to Recipient phone number
+     * @param file File content
+     * @param type Media type
+     */
     async sendMedia(to: string, file: string, type: string): Promise<any> {
-        const { baseURL, instanceName, apiKey } = this.globalVendorArgs
+        const { baseURL, instanceName } = this.globalVendorArgs
 
         try {
             return await axios.post(
@@ -237,47 +337,26 @@ class EvolutionProvider extends ProviderClass<EvolutionInterface> implements Evo
                     [type]: file,
                 },
                 {
-                    headers: {
-                        apikey: apiKey,
-                    },
+                    headers: this.builderHeader(),
                 }
             )
         } catch (error) {
-            console.error(`Error sending ${type}:`, error)
+            const errorMessage =
+                error instanceof AxiosError ? error.response?.data?.message || error.message : 'Unknown error'
+            console.error(`Error sending ${type}: ${errorMessage}`)
             throw error
         }
     }
 
-    // async sendButtons(to: string, buttons: Button[] = [], text: string): Promise<any> {
-    //     try {
-    //         const { baseURL, instanceName, apiKey } = this.globalVendorArgs
-
-    //         return await axios.post(
-    //             `${baseURL}/message/buttons/${instanceName}`,
-    //             {
-    //                 number: to,
-    //                 buttons: buttons.map(btn => ({
-    //                     buttonText: btn.body,
-    //                     buttonId: btn.id
-    //                 })),
-    //                 text
-    //             },
-    //             {
-    //                 headers: {
-    //                     'apikey': apiKey
-    //                 }
-    //             }
-    //         )
-    //     } catch (error) {
-    //         console.error('Error sending buttons:', error)
-    //         throw error
-    //     }
-    // }
-
+    /**
+     * Send list message
+     * @param to Recipient phone number
+     * @param list List content
+     */
     async sendList(to: string, list: any): Promise<any> {
-        try {
-            const { baseURL, instanceName, apiKey } = this.globalVendorArgs
+        const { baseURL, instanceName } = this.globalVendorArgs
 
+        try {
             return await axios.post(
                 `${baseURL}/message/list/${instanceName}`,
                 {
@@ -285,134 +364,99 @@ class EvolutionProvider extends ProviderClass<EvolutionInterface> implements Evo
                     list,
                 },
                 {
-                    headers: {
-                        apikey: apiKey,
-                    },
+                    headers: this.builderHeader(),
                 }
             )
         } catch (error) {
-            console.error('Error sending list:', error)
+            const errorMessage =
+                error instanceof AxiosError ? error.response?.data?.message || error.message : 'Unknown error'
+            console.error(`Error sending list: ${errorMessage}`)
             throw error
         }
     }
 
+    /**
+     * Send complete list
+     * @param to Recipient phone number
+     * @param list List content
+     */
     async sendListComplete(to: string, list: any): Promise<any> {
         return this.sendList(to, list)
     }
 
-    async saveFile(ctx: Partial<Message & BotContext>, options: SaveFileOptions = {}): Promise<string> {
-        // try {
-        //     // Download the file from the URL
-        //     const buffer = await utils.downloadFile(ctx.url)
+    /**
+     * Save file from context
+     * @param ctx Message context containing file information
+     * @param options Save options
+     * @returns Path to saved file or error message
+     */
+    public async saveFile(ctx: Partial<Message & BotContext>, options: SaveFileOptions = {}): Promise<string> {
+        try {
+            if (!ctx.url) {
+                return 'ERROR: No URL provided'
+            }
 
-        //     // Generate filename using timestamp and mime type from file data
-        //     const fileName = `file-${Date.now()}.${ctx.fileData?.mime_type?.split('/')[1] || 'tmp'}`
+            // Get token from context or use a default empty string
+            const token = ctx.token || ''
 
-        //     // Create full path by joining target directory with filename
-        //     const pathFile = join(options?.path ?? tmpdir(), fileName)
+            // Download the file from the URL
+            const fileData = await downloadFile(ctx.url, token)
+            if (!fileData) {
+                return 'ERROR: Failed to download file'
+            }
 
-        //     // Write buffer to file
-        //     await writeFile(pathFile, buffer)
+            // Generate filename using timestamp and extension from downloaded file
+            const timestamp = Date.now ? Date.now() : new Date().getTime()
+            const fileName = `file-${timestamp}.${fileData.extension}`
 
-        //     // Return resolved absolute path
-        //     return resolve(pathFile)
-        // } catch (err) {
-        //     console.error(`[Error saving file]:`, err.message)
-        //     return 'ERROR'
-        // }
+            // Create full path by joining target directory with filename
+            const pathFile = join(options?.path ?? tmpdir(), fileName)
 
-        return ''
+            // Write buffer to file
+            await writeFile(pathFile, fileData.buffer)
+
+            // Return resolved absolute path
+            return resolve(pathFile)
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Unknown error'
+            console.error(`[Error saving file]: ${errorMessage}`)
+            return 'ERROR: ' + errorMessage
+        }
     }
 
-    // async sendLocation(to: string, lat: string, long: string): Promise<any> {
-    //     const { baseURL, instanceName, apiKey } = this.globalVendorArgs
-
-    //     try {
-    //         return await axios.post(
-    //             `${baseURL}/message/sendLocation/${instanceName}`,
-    //             {
-    //                 number: to,
-    //                 lat,
-    //                 long
-    //             },
-    //             {
-    //                 headers: {
-    //                     'apikey': apiKey
-    //                 }
-    //             }
-    //         )
-    //     } catch (error) {
-    //         console.error('Error sending location:', error)
-    //         throw error
-    //     }
-    // }
-
-    // async sendContact(to: string, contact: Contact): Promise<any> {
-    //     const { baseURL, instanceName, apiKey } = this.globalVendorArgs
-
-    //     try {
-    //         return await axios.post(
-    //             `${baseURL}/message/contact/${instanceName}`,
-    //             {
-    //                 number: to,
-    //                 contact
-    //             },
-    //             {
-    //                 headers: {
-    //                     'apikey': apiKey
-    //                 }
-    //             }
-    //         )
-    //     } catch (error) {
-    //         console.error('Error sending contact:', error)
-    //         throw error
-    //     }
-    // }
-
-    // async sendReaction(to: string, message: string): Promise<any> {
-    //     const { baseURL, instanceName, apiKey } = this.globalVendorArgs
-
-    //     try {
-    //         return await axios.post(
-    //             `${baseURL}/message/reaction/${instanceName}`,
-    //             {
-    //                 number: to,
-    //                 reaction: message
-    //             },
-    //             {
-    //                 headers: {
-    //                     'apikey': apiKey
-    //                 }
-    //             }
-    //         )
-    //     } catch (error) {
-    //         console.error('Error sending reaction:', error)
-    //         throw error
-    //     }
-    // }
-
-    // Métodos auxiliares requeridos por la interfaz
+    /**
+     * Queue message for sending via Evolution API
+     * @param body Message body
+     */
     sendMessageMeta = (body: any): Promise<any> => {
-        return new Promise((resolve) =>
+        return new Promise((resolve, reject) =>
             this.queue.add(async () => {
-                const resp = await this.sendMessageToApi(body)
-                resolve(resp)
+                try {
+                    const resp = await this.sendMessageToApi(body)
+                    resolve(resp)
+                } catch (error) {
+                    reject(error)
+                }
             })
         )
     }
 
+    /**
+     * Send message directly to Evolution API
+     * @param body Message body
+     */
     sendMessageToApi = async (body: any): Promise<any> => {
-        const { baseURL, instanceName, apiKey } = this.globalVendorArgs
+        const { baseURL, instanceName } = this.globalVendorArgs
 
         try {
             const response = await axios.post(`${baseURL}/message/sendText/${instanceName}`, body, {
-                headers: {
-                    apikey: apiKey,
-                },
+                headers: this.builderHeader(),
             })
             return response.data
         } catch (error) {
-            console.error('Error sending message:', error)
+            const errorMessage =
+                error instanceof AxiosError ? error.response?.data?.message || error.message : 'Unknown error'
+            console.error(`Error sending message to API: ${errorMessage}`)
             throw error
         }
     }

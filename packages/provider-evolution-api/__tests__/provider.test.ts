@@ -28,6 +28,9 @@ describe('#EvolutionProvider', () => {
             baseURL: 'http://localhost:8080',
             instanceName: 'test-instance',
         })
+
+        // Reset mocks between tests
+        jest.clearAllMocks()
     })
 
     describe('#afterHttpServerInit', () => {
@@ -51,7 +54,8 @@ describe('#EvolutionProvider', () => {
 
         test('should emit "notice" event when connection fails', async () => {
             // Arrange
-            ;(axios.get as jest.MockedFunction<typeof axios.get>).mockRejectedValue(new Error('Connection error'))
+            const error = new Error('Connection error')
+            ;(axios.get as jest.MockedFunction<typeof axios.get>).mockRejectedValue(error)
 
             const mockEmit = jest.fn()
             evolutionProvider.emit = mockEmit as any
@@ -65,6 +69,7 @@ describe('#EvolutionProvider', () => {
                 instructions: [
                     'Error connecting to Evolution API, please check your credentials',
                     'Make sure your instance is connected',
+                    'Details: Connection error',
                 ],
             })
         })
@@ -129,7 +134,16 @@ describe('#EvolutionProvider', () => {
             const fakeCaption = 'This is a test image'
             const fakeResponse = { data: { success: true } }
 
+            // Mock the current time to make the test deterministic
+            const originalDateNow = Date.now
+            Date.now = jest.fn(() => 1672531200000) // 2023-01-01
+
+            // Mock mime lookup and extension
             jest.spyOn(mime, 'lookup').mockReturnValue('image/jpeg')
+            jest.spyOn(mime, 'extension').mockReturnValue('jpeg')
+
+            // Clear any previous calls to axios.post
+            ;(axios.post as jest.MockedFunction<typeof axios.post>).mockClear()
             ;(axios.post as jest.MockedFunction<typeof axios.post>).mockResolvedValue(fakeResponse)
 
             // Act
@@ -144,7 +158,7 @@ describe('#EvolutionProvider', () => {
                     mimeType: 'image/jpeg',
                     caption: fakeCaption,
                     media: fakeImageUrl,
-                    fileName: 'image.png',
+                    fileName: 'image-1672531200000.jpeg',
                 },
                 {
                     headers: {
@@ -153,13 +167,16 @@ describe('#EvolutionProvider', () => {
                 }
             )
             expect(result).toEqual(fakeResponse)
+
+            // Restore original Date.now
+            Date.now = originalDateNow
         })
     })
 
     describe('#busEvents', () => {
         test('should return an array of event handlers', () => {
-            // Arrange
-            const events = evolutionProvider.busEvents()
+            // Cast to any to access protected property for testing
+            const events = (evolutionProvider as any)['busEvents']()
 
             // Assert
             expect(events.length).toBe(4)
@@ -170,24 +187,29 @@ describe('#EvolutionProvider', () => {
         })
 
         test('should emit events with correct payloads', () => {
-            // Arrange
-            const events = evolutionProvider.busEvents()
+            // Cast to any to access protected property for testing
+            const events = (evolutionProvider as any)['busEvents']()
             const mockEmit = jest.fn()
             evolutionProvider.emit = mockEmit as any
 
-            const authPayload = { error: 'Auth failed' }
-            const noticePayload = { instructions: ['Test instruction'], title: 'Test Title' }
-            const messagePayload = { from: '1234567890', body: 'Test message' }
+            // Create payloads that match the implementation
+            const authPayload = { error: 'Auth failed' } as any
+            const noticePayload = { instructions: ['Test instruction'], title: 'Test Title' } as any
+            const messagePayload = { from: '1234567890', body: 'Test message' } as any
 
             // Act
             events[0].func(authPayload)
             events[1].func(noticePayload)
-            events[2].func({ message: 'Ready' })
+            // @ts-ignore - Ready event doesn't need payload
+            events[2].func()
             events[3].func(messagePayload)
 
             // Assert
             expect(mockEmit).toHaveBeenCalledWith('auth_failure', authPayload)
-            expect(mockEmit).toHaveBeenCalledWith('notice', noticePayload)
+            expect(mockEmit).toHaveBeenCalledWith('notice', {
+                instructions: noticePayload.instructions,
+                title: noticePayload.title,
+            })
             expect(mockEmit).toHaveBeenCalledWith('ready', true)
             expect(mockEmit).toHaveBeenCalledWith('message', messagePayload)
         })
