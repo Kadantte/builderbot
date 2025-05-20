@@ -66,6 +66,11 @@ export class EvolutionCoreVendor extends EventEmitter {
         }
     }
 
+    /**
+     * Middleware function for handling incoming webhook messages.
+     * Processes incoming messages from WhatsApp and adds them to the processing queue.
+     * @type {polka.Middleware}
+     */
     public incomingMsg: polka.Middleware = async (req: any, res: any) => {
         try {
             const globalVendorArgs: EvolutionGlobalVendorArgs = req['globalVendorArgs'] ?? null
@@ -75,7 +80,15 @@ export class EvolutionCoreVendor extends EventEmitter {
                 return
             }
 
+            console.log(' body', JSON.stringify(req.body, null, 2))
+            
             const { event, data }: { event: IncomingEvent; data: RawMessage } = req.body
+            
+            if (!req.body) {
+                res.statusCode = 400
+                res.end('Invalid request body')
+                return
+            }
 
             switch (event) {
                 case 'messages.upsert':
@@ -156,6 +169,8 @@ export class EvolutionCoreVendor extends EventEmitter {
             }
             res.statusCode = 200
             res.end('Message processed successfully')
+
+            // Check for errors reported by Meta
         } catch (error) {
             console.error('Error processing incoming message:', error)
             this.emit('notice', {

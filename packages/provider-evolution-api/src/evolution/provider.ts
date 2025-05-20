@@ -7,23 +7,24 @@ import { ParamsDictionary } from 'express-serve-static-core'
 import fs from 'fs'
 import { writeFile } from 'fs/promises'
 import mime from 'mime-types'
+import path from 'path'
 import { tmpdir } from 'os'
-import path, { join, basename, resolve } from 'path'
+import { join, resolve } from 'path'
 import { Middleware } from 'polka'
 import { ParsedQs } from 'qs'
+import type polka from 'polka'
 import Queue from 'queue-promise'
 
 import type { EvolutionInterface } from '../interface/evolution'
-import type { EvolutionGlobalVendorArgs, SaveFileOptions } from '../types'
-import { generalDownload } from '../utils'
+import type { EvolutionGlobalVendorArgs, Message, SaveFileOptions } from '../types'
+import { generalDownload, downloadFile } from '../utils'
 import { EvolutionCoreVendor } from './core'
-
 /**
  * Evolution API Provider implementation
  * Handles all communication with Evolution API for sending messages, media, etc.
  */
 class EvolutionProvider extends ProviderClass<EvolutionInterface> implements EvolutionInterface {
-    public vendor: Vendor<EvolutionInterface>
+    public vendor: Vendor<EvolutionInterface & { indexHome: polka.Middleware; incomingMsg: polka.Middleware }>
     public queue: Queue = new Queue()
     public incomingMsg: any
 
@@ -75,16 +76,9 @@ class EvolutionProvider extends ProviderClass<EvolutionInterface> implements Evo
      */
     protected initVendor(): Promise<any> {
         const vendor = new EvolutionCoreVendor(this.queue)
-
-        this.server = this.server
-            .use(json())
-            .use((req, _, next) => {
-                req['globalVendorArgs'] = this.globalVendorArgs
-                return next()
-            })
-            .post('/webhook', vendor.incomingMsg)
-
-        this.vendor = vendor as unknown as Vendor<EvolutionInterface>
+        this.vendor = vendor as unknown as Vendor<
+            EvolutionInterface & { indexHome: polka.Middleware; incomingMsg: polka.Middleware }
+        >
         return Promise.resolve(this.vendor)
     }
 
