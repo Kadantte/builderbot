@@ -1,8 +1,10 @@
 import { ProviderClass } from '@builderbot/bot'
 import type { Vendor } from '@builderbot/bot/dist/provider/interface/provider'
 import type { BotContext, SendOptions } from '@builderbot/bot/dist/types'
+import { json } from '@polka/parse'
 import axios from 'axios'
 import { ParamsDictionary } from 'express-serve-static-core'
+import fs from 'fs'
 import { writeFile } from 'fs/promises'
 import mime from 'mime-types'
 import { tmpdir } from 'os'
@@ -15,8 +17,6 @@ import type { EvolutionInterface } from '../interface/evolution'
 import type { EvolutionGlobalVendorArgs, SaveFileOptions } from '../types'
 import { generalDownload } from '../utils'
 import { EvolutionCoreVendor } from './core'
-import { json } from '@polka/parse'
-import fs from 'fs'
 
 /**
  * Evolution API Provider implementation
