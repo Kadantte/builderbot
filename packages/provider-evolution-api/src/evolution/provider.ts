@@ -11,10 +11,10 @@ import { join, basename, resolve } from 'path'
 import Queue from 'queue-promise'
 
 import { EvolutionCoreVendor } from './core'
+import type { EvolutionInterface } from '../interface/evolution'
 import { downloadFile, getProfile } from '../utils'
 import { parseMetaNumber } from '../utils/number'
 
-import type { EvolutionInterface } from '../interface/evolution'
 import type {
     EvolutionGlobalVendorArgs,
     Localization,
