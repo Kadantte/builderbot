@@ -12,7 +12,7 @@ import Queue from 'queue-promise'
 
 import type { EvolutionInterface } from '../interface/evolution'
 import type { EvolutionGlobalVendorArgs } from '../types'
-import { convertAudio, generalDownload } from '../utils'
+import { generalDownload } from '../utils'
 import { EvolutionCoreVendor } from './core'
 
 /**
@@ -231,8 +231,7 @@ class EvolutionProvider extends ProviderClass<EvolutionInterface> implements Evo
      * @param filePath Ruta local del archivo de audio
      */
     sendAudio = async (number: string, filePath: string) => {
-        const fileOpus = await convertAudio(filePath)
-        const mediaBase64 = fs.readFileSync(fileOpus, { encoding: 'base64' })
+        const mediaBase64 = fs.readFileSync(filePath, { encoding: 'base64' })
 
         const body = {
             number,

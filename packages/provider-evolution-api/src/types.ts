@@ -9,5 +9,5 @@ export interface EvolutionGlobalVendorArgs extends GlobalVendorArgs {
     apiKey: string
     baseURL: string
     instanceName: string
-    port: number
+    port?: number
 }
