@@ -1,17 +1,17 @@
 import type { BotContext } from '@builderbot/bot/dist/types'
 import type polka from 'polka'
 
-import type { Message, SaveFileOptions } from '../types'
+import type { SaveFileOptions } from '../types'
 
 export interface EvolutionInterface {
     // Interface elements
     indexHome?: polka.Middleware
-    
+
     // Queue related methods that are used in the implementation
     sendMessageEvoApi: (body: any, ruta: string) => Promise<any>
     sendMessageMeta: (body: any) => Promise<any>
-    sendMessageToApi: (body: any) => Promise<any>
-    
+    sendMessageToApi: (body: any, ruta?: string) => Promise<any>
+
     // Message sending methods
     sendMessage: <K = any>(to: string, message: string, args?: any) => Promise<K>
     sendText: (to: string, message: string, context?: string | null) => Promise<any>

@@ -81,7 +81,7 @@ export type MessageStatus = 'PENDING' | 'SERVER_ACK' | 'DELIVERY_ACK' | 'READ' |
  * Main data payload of the webhook event
  */
 export interface WebhookEventData {
-    key: WebhookEventKey
+    key: WebhookEvent
     pushName: string
     status: MessageStatus
     message: WebhookMessage
@@ -117,5 +117,4 @@ export interface WebhookEvent {
     sender: string
     server_url: string
     apikey: string
->>>>>>> 3fa8323e (fix: evolution)
 }

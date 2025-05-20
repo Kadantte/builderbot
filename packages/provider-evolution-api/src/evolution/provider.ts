@@ -3,7 +3,6 @@ import type { Vendor } from '@builderbot/bot/dist/provider/interface/provider'
 import type { BotContext, SendOptions } from '@builderbot/bot/dist/types'
 import { json } from '@polka/parse'
 import axios from 'axios'
-import { ParamsDictionary } from 'express-serve-static-core'
 import fs from 'fs'
 import { writeFile } from 'fs/promises'
 import mime from 'mime-types'
@@ -11,13 +10,12 @@ import path from 'path'
 import { tmpdir } from 'os'
 import { join, resolve } from 'path'
 import { Middleware } from 'polka'
-import { ParsedQs } from 'qs'
 import type polka from 'polka'
 import Queue from 'queue-promise'
 
 import type { EvolutionInterface } from '../interface/evolution'
-import type { EvolutionGlobalVendorArgs, Message, SaveFileOptions } from '../types'
-import { generalDownload, downloadFile } from '../utils'
+import type { EvolutionGlobalVendorArgs, SaveFileOptions } from '../types'
+import { generalDownload } from '../utils'
 import { EvolutionCoreVendor } from './core'
 /**
  * Evolution API Provider implementation
@@ -55,7 +53,7 @@ class EvolutionProvider extends ProviderClass<EvolutionInterface> implements Evo
     sendAudioUrl: (to: string, url: string, mediaName?: string, caption?: string) => Promise<any>
     sendList: (to: string, list: any) => Promise<any>
     sendListComplete: (to: string, list: any) => Promise<any>
-    indexHome?: Middleware<ParamsDictionary, any, any, ParsedQs>
+    indexHome?: Middleware<any, any, any, any>
 
     /**
      * Initialize HTTP server middleware
@@ -288,9 +286,9 @@ class EvolutionProvider extends ProviderClass<EvolutionInterface> implements Evo
     /**
      * Función general para hacer peticiones POST a la API externa.
      * @param body Cuerpo de la petición
-     * @param ruta Ruta relativa del endpoint
+     * @param ruta Ruta relativa del endpoint (optional)
      */
-    sendMessageToApi = async (body: any, ruta: string): Promise<any> => {
+    sendMessageToApi = async (body: any, ruta: string = '/message/'): Promise<any> => {
         const { baseURL, instanceName, apiKey } = this.globalVendorArgs
 
         const response = await fetch(`${baseURL}${ruta}${instanceName}`, {
