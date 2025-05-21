@@ -18,6 +18,7 @@ export interface ValueLabel {
 
 export const PROVIDER_LIST: Provider[] = [
     { value: 'baileys', label: 'Baileys', hint: 'opensource' },
+    { value: 'evolution-api', label: 'Evolution API', hint: 'opensource' },
     { value: 'venom', label: 'Venom', hint: 'opensource' },
     { value: 'wppconnect', label: 'WPPConnect', hint: 'opensource' },
     // { value: 'wweb', label: 'Whatsapp-web.js', hint: 'opensource' },

@@ -1,0 +1,9 @@
+{
+    "IMPORT": "import { EvolutionProvider as Provider } from '@builderbot/provider-evolution-api'\n",
+    "IMPLEMENTATION": "const adapterProvider = createProvider(Provider, {\n        apiKey: '1234567890', // TODO: change to your evolution api key\n        baseURL: 'http://localhost:8080', // TODO: change to your evolution api url\n        instanceName: 'bot', // TODO: change to your instance name\n    })",
+    "DEPENDENCIES": {
+        "@builderbot/bot": "latest",
+        "@builderbot/provider-evolution-api": "latest"
+    },
+    "DEV_DEPENDENCIES": {}
+}
