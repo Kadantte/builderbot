@@ -2,7 +2,6 @@ import {
     useMultiFileAuthState,
     DisconnectReason,
     proto,
-    makeInMemoryStore,
     makeCacheableSignalKeyStore,
     getAggregateVotesInPollMessage,
     WASocket,
@@ -15,16 +14,15 @@ import {
     MessageUpsertType,
     isJidGroup,
     isJidBroadcast,
-} from '@builderbot/core-baileys'
+} from 'baileys'
 
-const makeWASocketOther = require('@builderbot/core-baileys').default
+const makeWASocketOther = require('baileys').default
 
 export {
     makeWASocketOther,
     useMultiFileAuthState,
     DisconnectReason,
     proto,
-    makeInMemoryStore,
     makeCacheableSignalKeyStore,
     getAggregateVotesInPollMessage,
     WASocket,

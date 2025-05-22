@@ -4,7 +4,7 @@ import type Queue from 'queue-promise'
 
 import { processIncomingMessage } from '../utils/processIncomingMsg'
 
-import type { Message, MetaGlobalVendorArgs, IncomingMessage } from '~/types'
+import type { Message, MetaGlobalVendorArgs, IncomingMessage, ContactMeta } from '~/types'
 
 /**
  * Class representing MetaCoreVendor, a vendor class for meta core functionality.
@@ -123,27 +123,47 @@ export class MetaCoreVendor extends EventEmitter {
             return
         }
 
-        messages.forEach(async (message: any) => {
-            const [contact] = contacts
-            const to = body.entry[0].changes[0].value?.metadata?.display_phone_number
-            const pushName = contact?.profile?.name
-            const response: Message = await processIncomingMessage({
-                messageId,
-                messageTimestamp,
-                to,
-                pushName,
-                message,
-                jwtToken,
-                numberId,
-                version,
-            })
-            if (response) {
-                this.queue.enqueue(() => this.processMessage(response))
-            }
-        })
+        try {
+            await Promise.all(
+                messages.map( async (message: any) => {
+                    let contact: ContactMeta
+                    if (Array.isArray(contacts)) [contact] = contacts
+                    const to = body.entry[0].changes[0].value?.metadata?.display_phone_number
+                    const pushName: string | undefined = contact?.profile?.name ?? 'Unknown'
+                    const fileData =
+                        message?.audio ??
+                        message?.image ??
+                        message?.video ??
+                        message?.document ??
+                        message?.sticker ??
+                        (null as File | undefined)
 
-        res.statusCode = 200
-        res.end('Messages enqueued')
+                    const response: Message = await processIncomingMessage({
+                        messageId,
+                        messageTimestamp,
+                        to,
+                        pushName,
+                        message,
+                        jwtToken,
+                        numberId,
+                        version,
+                        fileData,
+                    })
+                    if (response) {
+                        await this.queue.enqueue(() => this.processMessage(response))
+                    }
+                })
+            )
+            res.statusCode = 200
+            res.end('Messages enqueued')
+        } catch (error) {
+            this.emit('notice', {
+                title: '🔔  META ALERT  🔔',
+                instructions: [error.message || 'An error occurred while processing messages.'],
+            })
+            res.writeHead(400, { 'Content-Type': 'application/json' })
+            res.end(JSON.stringify({ error: error.message || 'An error occurred while processing messages.' }))
+        }
     }
 
     /**

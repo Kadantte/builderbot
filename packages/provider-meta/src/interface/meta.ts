@@ -35,8 +35,12 @@ export interface MetaInterface {
         headerText: string,
         bodyText: string,
         footerText: string,
+        flowMessageVer: string,
+        flowAction: string,
         flowID: string,
+        flowToken: string,
         flowCta: string,
+        isDraftFlow: boolean,
         screenName: string,
         data: Record<string, any>
     ) => Promise<void>

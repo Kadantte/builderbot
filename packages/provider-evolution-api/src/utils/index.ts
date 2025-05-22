@@ -1,0 +1,1 @@
+export { generalDownload } from './download'

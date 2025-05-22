@@ -100,6 +100,7 @@ export interface Message {
     pushName: string
     name: string
     url?: string
+    fileData?: File | null
     payload?: string
     title_button_reply?: string
     title_list_reply?: string
@@ -121,6 +122,7 @@ export interface ParamsIncomingMessage {
     numberId: string
     version: string
     message: any
+    fileData?: File | null
 }
 
 export type TextGenericParams = {

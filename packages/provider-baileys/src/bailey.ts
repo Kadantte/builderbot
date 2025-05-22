@@ -3,9 +3,10 @@ import type { BotContext, Button, SendOptions } from '@builderbot/bot/dist/types
 import type { Boom } from '@hapi/boom'
 import { Console } from 'console'
 import type { PathOrFileDescriptor } from 'fs'
-import { createReadStream, createWriteStream, readFileSync, existsSync } from 'fs'
+import { createReadStream, createWriteStream, readFileSync } from 'fs'
 import { writeFile } from 'fs/promises'
 import mime from 'mime-types'
+import NodeCache from 'node-cache'
 import { tmpdir } from 'os'
 import { join, basename, resolve } from 'path'
 import pino from 'pino'
@@ -23,7 +24,6 @@ import {
     MessageUpsertType,
     isJidGroup,
     isJidBroadcast,
-    makeInMemoryStore,
     DisconnectReason,
     downloadMediaMessage,
     getAggregateVotesInPollMessage,
@@ -32,7 +32,6 @@ import {
     proto,
     useMultiFileAuthState,
 } from './baileyWrapper'
-import bindStore from './bindStore'
 import { releaseTmp } from './releaseTmp'
 import type { BaileyGlobalVendorArgs } from './type'
 import { baileyGenerateImage, baileyCleanNumber, baileyIsValidNumber, emptyDirSessions } from './utils'
@@ -46,26 +45,27 @@ class BaileysProvider extends ProviderClass<WASocket> {
         name: `bot`,
         gifPlayback: false,
         usePairingCode: false,
-        browser: ['Ubuntu', 'Chrome', '20.0.04'],
+        browser: ['Windows', 'Google Chrome', '10.0.0.1'],
         phoneNumber: null,
         useBaileysStore: true,
         port: 3000,
         timeRelease: 0, //21600000
         writeMyself: 'none',
-        groupsIgnore: false,
+        groupsIgnore: true,
         readStatus: false,
         experimentalStore: false,
+        autoRefresh: 0,
         experimentalSyncMessage: undefined,
     }
 
-    store?: ReturnType<typeof makeInMemoryStore>
+    msgRetryCounterCache?: NodeCache
 
     private idsDuplicates = []
     private mapSet = new Set()
 
     constructor(args: Partial<BaileyGlobalVendorArgs>) {
         super()
-        this.store = null
+        this.msgRetryCounterCache = new NodeCache()
         this.globalVendorArgs = { ...this.globalVendorArgs, ...args }
     }
 
@@ -111,10 +111,6 @@ class BaileysProvider extends ProviderClass<WASocket> {
     }
 
     protected getMessage = async (key: { remoteJid: string; id: string }) => {
-        if (this.store) {
-            const msg = await this.store.loadMessage(key.remoteJid, key.id)
-            return msg?.message || undefined
-        }
         // only if store is present
         return proto.Message.fromObject({})
     }
@@ -133,19 +129,6 @@ class BaileysProvider extends ProviderClass<WASocket> {
 
         try {
             if (this.globalVendorArgs.useBaileysStore) {
-                this.store = !this.globalVendorArgs.experimentalStore
-                    ? makeInMemoryStore({ logger: loggerBaileys })
-                    : bindStore({ logger: loggerBaileys })
-
-                if (this.store?.readFromFile) this.store?.readFromFile(`${NAME_DIR_SESSION}/baileys_store.json`)
-
-                setInterval(() => {
-                    const path = `${NAME_DIR_SESSION}/baileys_store.json`
-                    if (existsSync(NAME_DIR_SESSION)) {
-                        this.store?.writeToFile(path)
-                    }
-                }, 10_000)
-
                 if (this.globalVendorArgs.timeRelease > 0) {
                     await releaseTmp(NAME_DIR_SESSION, this.globalVendorArgs.timeRelease)
                 }
@@ -158,6 +141,7 @@ class BaileysProvider extends ProviderClass<WASocket> {
         try {
             const sock = makeWASocketOther({
                 logger: loggerBaileys,
+                version: [2, 3000, 1015901307],
                 printQRInTerminal: false,
                 auth: {
                     creds: state.creds,
@@ -167,16 +151,17 @@ class BaileysProvider extends ProviderClass<WASocket> {
                 syncFullHistory: false,
                 markOnlineOnConnect: false,
                 generateHighQualityLinkPreview: true,
-                getMessage: async (key: { remoteJid: string; id: string }) =>
-                    (await this.getMessage(key)) as Promise<proto.IMessage>,
+                getMessage: this.getMessage,
+                msgRetryCounterCache: this.msgRetryCounterCache,
                 retryRequestDelayMs: 350,
                 maxMsgRetryCount: 4,
                 connectTimeoutMs: 20_000,
                 keepAliveIntervalMs: 30_000,
                 shouldIgnoreJid: (jid: string) => {
-                    const isGroupJid = this.globalVendorArgs.groupsIgnore && isJidGroup(jid)
-                    const isBroadcast = !this.globalVendorArgs.readStatus && isJidBroadcast(jid)
-                    return isGroupJid || isBroadcast
+                    if (this.globalVendorArgs.groupsIgnore) {
+                        return isJidGroup(jid) || isJidBroadcast(jid)
+                    }
+                    return false
                 },
                 patchMessageBeforeSending: (message: {
                     deviceSentMessage: { message: { listMessage: { listType: proto.Message.ListMessage.ListType } } }
@@ -199,12 +184,11 @@ class BaileysProvider extends ProviderClass<WASocket> {
                 ...this.globalVendorArgs,
             })
 
-            if (this?.store) this.store.bind(sock.ev)
             this.vendor = sock
             if (this.globalVendorArgs.usePairingCode && !sock.authState.creds.registered) {
                 if (this.globalVendorArgs.phoneNumber) {
-                    await sock.waitForConnectionUpdate((update: { qr: any }) => !!update.qr)
                     const phoneNumberClean = utils.removePlus(this.globalVendorArgs.phoneNumber)
+                    await utils.delay(2000)
                     const code = await sock.requestPairingCode(phoneNumberClean)
 
                     this.emit('require_action', {
@@ -466,18 +450,11 @@ class BaileysProvider extends ProviderClass<WASocket> {
                             }
 
                             const messageOriginalKey = messageCtx?.update?.pollUpdates[0]?.pollUpdateMessageKey
-                            const messageOriginal = await this.store?.loadMessage(
-                                messageOriginalKey.remoteJid,
-                                messageOriginalKey.id
-                            )
 
                             const payload = {
                                 ...messageCtx,
                                 body: pollMessage.find((poll) => poll.voters.length > 0)?.name || '',
                                 from: baileyCleanNumber(key.remoteJid, true),
-                                pushName: messageOriginal?.pushName,
-                                broadcast: messageOriginal?.broadcast,
-                                messageTimestamp: messageOriginal?.messageTimestamp,
                                 voters: pollCreation,
                                 type: 'poll',
                             }
@@ -496,11 +473,10 @@ class BaileysProvider extends ProviderClass<WASocket> {
                         body: utils.generateRefProvider('_event_call_'),
                         call,
                     }
-                    console.log(`entro llamada`)
-                    this.emit('message', payload)
 
+                    this.emit('message', payload)
                     // Opcional: Rechazar automáticamente la llamada
-                    await this.vendor.rejectCall(call.id, call.from)
+                    // await this.vendor.rejectCall(call.id, call.from)
                 }
             },
         },
