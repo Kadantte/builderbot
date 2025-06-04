@@ -106,7 +106,15 @@ export class EvolutionCoreVendor extends EventEmitter {
                                 caption: message.documentMessage.caption,
                                 base64: message.base64,
                             }
-                        } else if (message.videoMessage) {
+                        }
+                        else if (message.orderMessage) {
+                            responseObj = {
+                                from,
+                                name,
+                                body: generateRefProvider('_event_order_'),
+                            }
+                        }
+                        else if (message.videoMessage) {
                             responseObj = {
                                 type: data.messageType,
                                 from,
