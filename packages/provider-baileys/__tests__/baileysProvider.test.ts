@@ -1069,6 +1069,138 @@ describe('#BaileysProvider', () => {
             // Assert
             expect(provider.emit).toHaveBeenCalled()
         })
+
+        test('should call fallBackAction when defined and messageStubParameters contains Invalid', async () => {
+            // Arrange
+            const mockFallBackAction = jest.fn() as any
+            provider.globalVendorArgs.fallBackAction = mockFallBackAction
+
+            const mockMessage = {
+                messageStubParameters: ['Invalid session token'],
+                key: {
+                    remoteJid: '1234567890',
+                    id: 'message123',
+                },
+                pushName: 'Test User',
+            }
+
+            // Act
+            const result = await provider['busEvents']()[0].func({ messages: [mockMessage], type: 'notify' })
+
+            // Assert
+            expect(mockFallBackAction).toHaveBeenCalledWith(mockMessage)
+            expect(result).toBeUndefined() // Should return early
+        })
+
+        test('should not call fallBackAction when not defined and messageStubParameters contains Invalid', async () => {
+            // Arrange
+            provider.globalVendorArgs.fallBackAction = undefined
+            provider.globalVendorArgs.experimentalSyncMessage = undefined
+
+            const mockMessage = {
+                messageStubParameters: ['Invalid MAC signature'],
+                key: {
+                    remoteJid: '1234567890@s.whatsapp.net',
+                    id: 'message123',
+                },
+                pushName: 'Test User',
+            }
+
+            // Act
+            const result = await provider['busEvents']()[0].func({ messages: [mockMessage], type: 'notify' })
+
+            // Assert
+            expect(result).toBeUndefined() // Should return early without calling any action
+        })
+
+        test('should call experimentalSyncMessage when fallBackAction is not defined but experimentalSyncMessage is defined for Invalid messages', async () => {
+            // Arrange
+            provider.globalVendorArgs.fallBackAction = undefined
+            provider.globalVendorArgs.experimentalSyncMessage = 'Sync message test'
+
+            const remoteJid = '1234567890@s.whatsapp.net'
+            const mockMessage = {
+                messageStubParameters: ['Invalid protocol'],
+                key: {
+                    remoteJid: remoteJid,
+                    id: 'message123',
+                },
+                pushName: 'Test User',
+            }
+
+            // Ensure mapSet doesn't have the remoteJid already (for fresh test)
+            if (provider['mapSet'].has(remoteJid)) {
+                provider['mapSet'].delete(remoteJid)
+            }
+
+            const mockSendMessage = jest.fn()
+            const mockReadMessages = jest.fn()
+            provider.vendor = {
+                sendMessage: mockSendMessage,
+                readMessages: mockReadMessages,
+            } as any
+
+            // Mock baileyIsValidNumber to return true for our test number
+            const originalBaileyIsValidNumber = require('../src/utils').baileyIsValidNumber
+            require('../src/utils').baileyIsValidNumber = jest.fn().mockReturnValue(true)
+
+            try {
+                // Act
+                const result = await provider['busEvents']()[0].func({ messages: [mockMessage], type: 'notify' })
+
+                // Assert
+                expect(mockReadMessages).toHaveBeenCalledWith([mockMessage.key])
+                expect(mockSendMessage).toHaveBeenCalledWith(remoteJid, { text: 'Sync message test' })
+                expect(result).toBeUndefined()
+            } finally {
+                // Restore original function
+                require('../src/utils').baileyIsValidNumber = originalBaileyIsValidNumber
+            }
+        })
+
+        test('should not process Invalid messages when fallBackAction is defined but message is from group', async () => {
+            // Arrange
+            const mockFallBackAction = jest.fn() as any
+            provider.globalVendorArgs.fallBackAction = mockFallBackAction
+
+            const mockMessage = {
+                messageStubParameters: ['Invalid session'],
+                key: {
+                    remoteJid: '1234567890@g.us', // Group message
+                    id: 'message123',
+                },
+                pushName: 'Test User',
+            }
+
+            // Act
+            const result = await provider['busEvents']()[0].func({ messages: [mockMessage], type: 'notify' })
+
+            // Assert
+            expect(mockFallBackAction).toHaveBeenCalledWith(mockMessage)
+            expect(result).toBeUndefined()
+        })
+
+        test('should handle fallBackAction errors gracefully', async () => {
+            // Arrange
+            const mockFallBackAction = jest.fn().mockImplementation(() => {
+                throw new Error('FallBack action failed')
+            }) as any
+            provider.globalVendorArgs.fallBackAction = mockFallBackAction
+
+            const mockMessage = {
+                messageStubParameters: ['Invalid encryption'],
+                key: {
+                    remoteJid: '1234567890@s.whatsapp.net',
+                    id: 'message123',
+                },
+                pushName: 'Test User',
+            }
+
+            // Act & Assert
+            await expect(provider['busEvents']()[0].func({ messages: [mockMessage], type: 'notify' })).rejects.toThrow(
+                'FallBack action failed'
+            )
+        })
     })
 
     describe('busEvents - messages.update', () => {

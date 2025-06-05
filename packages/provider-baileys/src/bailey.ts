@@ -52,7 +52,12 @@ class BaileysProvider extends ProviderClass<WASocket> {
         experimentalStore: false,
         autoRefresh: 0,
         experimentalSyncMessage: undefined,
+        fallBackAction: undefined,
     }
+
+    private reconnectAttempts = 0
+    private maxReconnectAttempts = 10
+    private reconnectDelay = 1000 // 1 segundo inicial
 
     msgRetryCounterCache?: NodeCache
     userDevicesCache?: NodeCache
@@ -100,6 +105,7 @@ class BaileysProvider extends ProviderClass<WASocket> {
         this.globalVendorArgs = { ...this.globalVendorArgs, ...args }
 
         this.setupCleanupHandlers()
+        this.setupPeriodicCleanup()
     }
 
     private setupCleanupHandlers() {
@@ -122,6 +128,27 @@ class BaileysProvider extends ProviderClass<WASocket> {
         process.on('unhandledRejection', (reason, promise) => {
             this.logger.log(`[${new Date().toISOString()}] Unhandled Rejection at:`, promise, 'reason:', reason)
         })
+    }
+
+    private setupPeriodicCleanup() {
+        // Limpiar duplicados cada 10 minutos para evitar memory leaks
+        setInterval(() => {
+            const maxSize = 1000
+            if (this.idsDuplicates.length > maxSize) {
+                this.logger.log(
+                    `[${new Date().toISOString()}] Cleaning duplicates array: ${
+                        this.idsDuplicates.length
+                    } -> ${maxSize}`
+                )
+                this.idsDuplicates = this.idsDuplicates.slice(-maxSize) // Mantener solo los últimos 1000
+            }
+
+            // Limpiar mapSet si tiene demasiadas entradas
+            if (this.mapSet.size > maxSize) {
+                this.logger.log(`[${new Date().toISOString()}] Cleaning mapSet: ${this.mapSet.size} -> 0`)
+                this.mapSet.clear()
+            }
+        }, 600000) // 10 minutos
     }
 
     private cleanup() {
@@ -233,10 +260,14 @@ class BaileysProvider extends ProviderClass<WASocket> {
                 generateHighQualityLinkPreview: true,
                 getMessage: this.getMessage,
                 msgRetryCounterCache: this.msgRetryCounterCache,
-                retryRequestDelayMs: 350,
-                maxMsgRetryCount: 4,
-                connectTimeoutMs: 20_000,
-                keepAliveIntervalMs: 30_000,
+                userDevicesCache: this.userDevicesCache,
+                retryRequestDelayMs: 1000, // Mayor delay entre reintentos
+                maxMsgRetryCount: 8, // Más intentos de reenvío
+                connectTimeoutMs: 60_000, // 1 minuto timeout conexión
+                keepAliveIntervalMs: 10_000, // Keep alive cada 10 segundos
+                qrTimeout: 40_000, // 40 segundos para QR
+                defaultQueryTimeoutMs: 60_000, // 1 minuto para queries
+                emitOwnEvents: false, // No emitir eventos propios
                 shouldIgnoreJid: (jid: string) => {
                     if (this.globalVendorArgs.groupsIgnore) {
                         return isJidGroup(jid) || isJidBroadcast(jid)
@@ -293,24 +324,49 @@ class BaileysProvider extends ProviderClass<WASocket> {
             sock.ev.on('connection.update', async (update: { connection: any; lastDisconnect: any; qr: any }) => {
                 const { connection, lastDisconnect, qr } = update
 
+                this.logger.log(`[${new Date().toISOString()}] Connection update: ${connection}`)
+
                 const statusCode = (lastDisconnect?.error as Boom)?.output?.statusCode
+                const reason = lastDisconnect?.error?.message
+
                 /** Connection closed for various reasons */
                 if (connection === 'close') {
-                    if (statusCode !== DisconnectReason.loggedOut) {
-                        this.initVendor().then((v) => this.listenOnEvents(v))
+                    this.logger.log(
+                        `[${new Date().toISOString()}] Connection closed. Status: ${statusCode}, Reason: ${reason}`
+                    )
+
+                    // Casos donde NO debemos reconectar
+                    if (statusCode === DisconnectReason.loggedOut) {
+                        this.logger.log(`[${new Date().toISOString()}] Logged out, clearing session and restarting...`)
+                        const PATH_BASE = join(process.cwd(), `${this.globalVendorArgs.name}_sessions`)
+                        await emptyDirSessions(PATH_BASE)
+                        this.reconnectAttempts = 0
+                        await this.delayedReconnect()
                         return
                     }
 
-                    if (statusCode === DisconnectReason.loggedOut) {
-                        const PATH_BASE = join(process.cwd(), NAME_DIR_SESSION)
-                        await emptyDirSessions(PATH_BASE)
-                        this.initVendor().then((v) => this.listenOnEvents(v))
+                    // Casos donde debemos reconectar con backoff
+                    if (this.shouldReconnect(statusCode)) {
+                        await this.delayedReconnect()
                         return
                     }
+
+                    // Casos críticos - emitir error
+                    this.logger.log(`[${new Date().toISOString()}] Critical error, stopping reconnection attempts`)
+                    this.emit('auth_failure', [
+                        `Critical connection error: ${reason}`,
+                        `Status code: ${statusCode}`,
+                        `Check baileys.log for details`,
+                        `Need help: https://link.codigoencasa.com/DISCORD`,
+                    ])
                 }
 
                 /** Connection opened successfully */
                 if (connection === 'open') {
+                    this.logger.log(`[${new Date().toISOString()}] Connection opened successfully`)
+                    this.reconnectAttempts = 0 // Reset counter on successful connection
+                    this.reconnectDelay = 1000 // Reset delay
+
                     const parseNumber = `${sock?.user?.id}`.split(':').shift()
                     const host = { ...sock?.user, phone: parseNumber }
                     this.globalVendorArgs.host = host
@@ -320,6 +376,7 @@ class BaileysProvider extends ProviderClass<WASocket> {
 
                 /** QR Code */
                 if (qr && !this.globalVendorArgs.usePairingCode) {
+                    this.logger.log(`[${new Date().toISOString()}] QR Code received`)
                     this.emit('require_action', {
                         title: '⚡⚡ ACTION REQUIRED ⚡⚡',
                         instructions: [
@@ -393,6 +450,13 @@ class BaileysProvider extends ProviderClass<WASocket> {
                     messageCtx?.messageStubParameters?.length &&
                     messageCtx.messageStubParameters[0].includes('Invalid')
                 ) {
+                    if (this.globalVendorArgs.fallBackAction) {
+                        if (baileyIsValidNumber(messageCtx?.key?.remoteJid)) {
+                            await this.globalVendorArgs.fallBackAction(messageCtx)
+                        }
+                        return
+                    }
+
                     if (
                         this.globalVendorArgs.experimentalSyncMessage &&
                         this.globalVendorArgs.experimentalSyncMessage.length
@@ -873,6 +937,57 @@ class BaileysProvider extends ProviderClass<WASocket> {
         const pathFile = join(options?.path ?? tmpdir(), fileName)
         await writeFile(pathFile, buffer)
         return resolve(pathFile)
+    }
+
+    private shouldReconnect(statusCode: number): boolean {
+        // Lista de códigos donde SÍ debemos reconectar
+        const reconnectableCodes = [
+            DisconnectReason.connectionClosed,
+            DisconnectReason.connectionLost,
+            DisconnectReason.connectionReplaced,
+            DisconnectReason.timedOut,
+            DisconnectReason.badSession,
+            DisconnectReason.restartRequired,
+            429, // Rate limited
+            500, // Server error
+            502, // Bad gateway
+            503, // Service unavailable
+            504, // Gateway timeout
+        ]
+
+        return reconnectableCodes.includes(statusCode) && this.reconnectAttempts < this.maxReconnectAttempts
+    }
+
+    private async delayedReconnect(): Promise<void> {
+        if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+            this.logger.log(
+                `[${new Date().toISOString()}] Max reconnection attempts reached (${this.maxReconnectAttempts})`
+            )
+            this.emit('auth_failure', [
+                `Maximum reconnection attempts reached`,
+                `Please check your internet connection`,
+                `Check baileys.log for details`,
+                `Need help: https://link.codigoencasa.com/DISCORD`,
+            ])
+            return
+        }
+
+        this.reconnectAttempts++
+        const delay = Math.min(this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1), 30000) // Max 30 segundos
+
+        this.logger.log(
+            `[${new Date().toISOString()}] Reconnection attempt ${this.reconnectAttempts}/${
+                this.maxReconnectAttempts
+            } in ${delay}ms`
+        )
+
+        setTimeout(async () => {
+            try {
+                this.initVendor().then((v) => this.listenOnEvents(v))
+            } catch (error) {
+                this.logger.log(`[${new Date().toISOString()}] Reconnection failed:`, error)
+            }
+        }, delay)
     }
 }
 

@@ -1,4 +1,5 @@
 import type { GlobalVendorArgs } from '@builderbot/bot/dist/types'
+import { proto } from 'baileys'
 
 export interface BaileyGlobalVendorArgs extends GlobalVendorArgs {
     gifPlayback: boolean
@@ -6,6 +7,7 @@ export interface BaileyGlobalVendorArgs extends GlobalVendorArgs {
     phoneNumber: string | null
     browser: string[]
     experimentalSyncMessage?: string
+    fallBackAction?: (ctx: proto.IWebMessageInfo) => Promise<void>
     useBaileysStore: boolean
     timeRelease?: number
     experimentalStore?: boolean
