@@ -114,6 +114,14 @@ class BaileysProvider extends ProviderClass<WASocket> {
             this.cleanup()
         }
 
+        // Remove existing listeners to prevent duplicates
+        process.removeAllListeners('SIGINT')
+        process.removeAllListeners('SIGTERM')
+        process.removeAllListeners('SIGUSR1')
+        process.removeAllListeners('SIGUSR2')
+        process.removeAllListeners('uncaughtException')
+        process.removeAllListeners('unhandledRejection')
+
         process.on('SIGINT', cleanup)
         process.on('SIGTERM', cleanup)
         process.on('SIGUSR1', cleanup)
@@ -451,8 +459,10 @@ class BaileysProvider extends ProviderClass<WASocket> {
                     messageCtx.messageStubParameters[0].includes('Invalid')
                 ) {
                     if (this.globalVendorArgs.fallBackAction) {
-                        if (baileyIsValidNumber(messageCtx?.key?.remoteJid)) {
+                        try {
                             await this.globalVendorArgs.fallBackAction(messageCtx)
+                        } catch (error) {
+                            return
                         }
                         return
                     }
@@ -464,6 +474,7 @@ class BaileysProvider extends ProviderClass<WASocket> {
                         if (baileyIsValidNumber(messageCtx?.key?.remoteJid)) {
                             await pingMessageSync(messageCtx)
                         }
+                        return
                     }
                     return
                 }
