@@ -692,7 +692,12 @@ class CoreClass<P extends ProviderClass = any, D extends MemoryDB = any> extends
             ) {
                 if (answer !== '__capture_only_intended__') {
                     const respMessage = await this.provider.sendMessage(numberOrId, answer, ctxMessage)
-                    this.emit('send_message', { ...ctxMessage, from: numberOrId, answer, respMessage })
+                    this.emit('send_message', {
+                        ...ctxMessage,
+                        from: numberOrId,
+                        answer: answer,
+                        respMessage: respMessage,
+                    } as TContext & { from: string; answer: string | string[]; respMessage: any })
                 }
             }
             await this.database.save({ ...ctxMessage, from: numberOrId })
@@ -737,6 +742,21 @@ class CoreClass<P extends ProviderClass = any, D extends MemoryDB = any> extends
                 update: this.stateHandler.updateState({ from: number }),
                 clear: this.stateHandler.clear(number),
             }),
+            emit: (eventName: 'send_message' | 'notice', args: Record<string, any> & { from: string }) => {
+                if (eventName === 'send_message') {
+                    this.emit('send_message', {
+                        ...args,
+                        from: args.from,
+                        answer: args.answer || '',
+                        respMessage: args.respMessage || null,
+                    } as TContext & { from: string; answer: string | string[]; respMessage: any })
+                } else if (eventName === 'notice') {
+                    this.emit('notice', {
+                        title: args.title || '',
+                        instructions: args.instructions || [],
+                    })
+                }
+            },
             globalState: (): BotStateGlobal => ({
                 get: this.globalStateHandler.get(),
                 getAllState: this.globalStateHandler.getAllState,
