@@ -271,6 +271,7 @@ abstract class ProviderClass<V = any> extends EventEmitterClass<ProviderEventTyp
             provider: this,
             blacklist: opts.blacklist,
             state: opts.state,
+            emit: opts.emit,
             globalState: opts.globalState,
             dispatch: (customEvent, payload) => {
                 this.emit('message', {
