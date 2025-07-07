@@ -1,10 +1,10 @@
+import { randomBytes } from 'crypto'
 import { http, https } from 'follow-redirects'
 import { rename, createWriteStream, existsSync, mkdirSync } from 'fs'
 import type { IncomingMessage } from 'http'
 import mimeTypes from 'mime-types'
 import { tmpdir } from 'os'
 import { extname, basename, parse, join } from 'path'
-import { randomBytes } from 'crypto'
 
 /**
  * Extraer el mimetype from buffer
