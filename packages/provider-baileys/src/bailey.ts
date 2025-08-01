@@ -1,6 +1,7 @@
 import { ProviderClass, utils } from '@builderbot/bot'
 import type { BotContext, Button, SendOptions } from '@builderbot/bot/dist/types'
 import type { Boom } from '@hapi/boom'
+import { WABrowserDescription, WAVersion } from '@leifermendez/baileys'
 import { Console } from 'console'
 import type { PathOrFileDescriptor } from 'fs'
 import { createReadStream, createWriteStream, readFileSync } from 'fs'
@@ -41,7 +42,7 @@ class BaileysProvider extends ProviderClass<WASocket> {
         name: `bot`,
         gifPlayback: false,
         usePairingCode: false,
-        browser: ['Windows', 'Chrome', 'Chrome 114.0.5735.198'],
+        browser: ['Windows', 'Chrome', 'Chrome 114.0.5735.198'] as WABrowserDescription,
         phoneNumber: null,
         useBaileysStore: true,
         port: 3000,
@@ -263,16 +264,31 @@ class BaileysProvider extends ProviderClass<WASocket> {
             this.initVendor().then((v) => this.listenOnEvents(v))
         }
 
+        const convertVersion = (version: number[]): WAVersion => {
+            return version as WAVersion
+        }
+
+        const convertBrowser = (browser: string[]): WABrowserDescription => {
+            return browser as WABrowserDescription
+        }
+        const mapAndConvert = (args: Partial<BaileyGlobalVendorArgs>) => {
+            return {
+                ...args,
+                version: convertVersion(args.version as number[]),
+                browser: convertBrowser(args.browser as string[]),
+            }
+        }
+
         try {
             const sock = makeWASocketOther({
                 logger: loggerBaileys,
-                version: [2, 3000, 1023223821],
+                version: [2, 3000, 1023223821] as WAVersion,
                 printQRInTerminal: false,
                 auth: {
                     creds: state.creds,
                     keys: makeCacheableSignalKeyStore(state.keys, loggerBaileys),
                 },
-                browser: this.globalVendorArgs.browser,
+                browser: this.globalVendorArgs.browser as WABrowserDescription,
                 syncFullHistory: false,
                 markOnlineOnConnect: false,
                 generateHighQualityLinkPreview: true,
@@ -310,7 +326,7 @@ class BaileysProvider extends ProviderClass<WASocket> {
                     }
                     return message
                 },
-                ...this.globalVendorArgs,
+                ...mapAndConvert(this.globalVendorArgs),
             })
 
             this.vendor = sock

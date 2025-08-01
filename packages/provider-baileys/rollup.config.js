@@ -10,14 +10,12 @@ export default {
             entryFileNames: '[name].cjs',
             format: 'cjs',
             exports: 'named',
-            preserveModules: false,
         },
         {
             dir: 'dist',
-            entryFileNames: '[name].js',
+            entryFileNames: '[name].mjs',
             format: 'es',
             exports: 'named',
-            preserveModules: false,
         },
     ],
     plugins: [
@@ -25,7 +23,9 @@ export default {
         commonjs(),
         nodeResolve({
             resolveOnly: (module) =>
-                !/ffmpeg|baileys|@adiwajshing|link-preview-js|@builderbot\/bot|sharp/i.test(module),
+                !/ffmpeg|@adiwajshing|link-preview-js|@leifermendez\/baileys|baileys|@builderbot\/bot|sharp/i.test(
+                    module
+                ),
         }),
         typescript(),
         // terser()
