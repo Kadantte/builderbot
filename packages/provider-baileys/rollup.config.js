@@ -18,9 +18,6 @@ export default {
         nodeResolve({
             resolveOnly: (module) =>
                 !/ffmpeg|baileys|@adiwajshing|link-preview-js|@builderbot\/bot|sharp/i.test(module),
-            alias: {
-                baileys: '@leifermendez/baileys',
-            },
         }),
         typescript(),
         // terser()

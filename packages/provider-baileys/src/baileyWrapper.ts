@@ -14,9 +14,9 @@ import {
     MessageUpsertType,
     isJidGroup,
     isJidBroadcast,
-} from 'baileys'
+} from '@leifermendez/baileys'
 
-const makeWASocketOther = require('baileys').default
+const makeWASocketOther = require('@leifermendez/baileys').default
 
 export {
     makeWASocketOther,

@@ -1,6 +1,6 @@
 {
   "name": "@builderbot/provider-baileys",
-  "version": "1.2.10-y.2",
+  "version": "1.2.10-y.3",
   "description": "Now I'm the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin' letters to relatives / Embellishin' my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM",
   "keywords": [],
   "author": "Leifer Mendez <leifer33@gmail.com>",
@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/codigoencasa/bot-whatsapp#readme",
   "devDependencies": {
-    "@builderbot/bot": "^1.2.10-y.2",
+    "@builderbot/bot": "^1.2.10-y.3",
     "@hapi/boom": "^10.0.1",
     "@jest/globals": "^29.7.0",
     "@rollup/plugin-commonjs": "^25.0.7",
@@ -60,8 +60,8 @@
   "dependencies": {
     "@adiwajshing/keyed-db": "^0.2.4",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
-    "@types/polka": "^0.5.7",
     "@leifermendez/baileys": "^6.7.18",
+    "@types/polka": "^0.5.7",
     "baileys": "^6.7.18",
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^11.2.0",
