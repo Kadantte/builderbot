@@ -1,23 +1,23 @@
 {
   "name": "@builderbot/provider-baileys",
-  "version": "1.2.10-2.0",
+  "version": "1.2.10-2.1",
   "description": "Now I'm the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin' letters to relatives / Embellishin' my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM",
   "keywords": [],
   "author": "Leifer Mendez <leifer33@gmail.com>",
   "license": "ISC",
   "main": "dist/index.cjs",
-  "module": "dist/index.js",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
+      "import": "./dist/index.mjs",
       "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
-    },
-    "./package.json": "./package.json"
+    }
   },
   "scripts": {
-    "build": "rimraf dist && rollup --config --bundleConfigAsCjs",
+    "build": "rimraf dist && rollup --config",
     "test": "jest --forceExit",
     "test:coverage": "jest --coverage",
     "test:watch": "jest --watchAll --coverage"
@@ -38,7 +38,7 @@
   },
   "homepage": "https://github.com/codigoencasa/bot-whatsapp#readme",
   "devDependencies": {
-    "@builderbot/bot": "^1.2.10-2.0",
+    "@builderbot/bot": "workspace:^",
     "@hapi/boom": "^10.0.1",
     "@jest/globals": "^29.7.0",
     "@rollup/plugin-commonjs": "^25.0.7",
@@ -73,6 +73,5 @@
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^11.2.0",
     "node-cache": "^5.1.2"
-  },
-  "gitHead": "5994ea7d4f64bc28aee8136f85c067ee21415168"
+  }
 }
