@@ -61,10 +61,14 @@
     "@adiwajshing/keyed-db": "^0.2.4",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@types/polka": "^0.5.7",
+    "@leifermendez/baileys": "^6.7.18",
     "baileys": "^6.7.18",
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^11.2.0",
     "node-cache": "^5.1.2"
+  },
+  "exports": {
+    "baileys": "./baileys"
   },
   "gitHead": "5994ea7d4f64bc28aee8136f85c067ee21415168"
 }
