@@ -23,6 +23,7 @@ class Queue<T> {
     private logger: Logger
     private timeout: number
     private concurrencyLimit: number
+    private safeTimers: boolean
 
     constructor(logger: Logger, concurrencyLimit = 15, timeout = 50000) {
         this.queue = new Map()
@@ -32,6 +33,8 @@ class Queue<T> {
         this.logger = logger
         this.timeout = timeout
         this.concurrencyLimit = concurrencyLimit < 1 ? 15 : concurrencyLimit
+        // Modo seguro opcional activado por variable de entorno (no rompe tests existentes)
+        this.safeTimers = process.env.BUILDERBOT_QUEUE_SAFE === '1'
     }
 
     /**
@@ -88,6 +91,31 @@ class Queue<T> {
                 reject: (value: T | PromiseLike<T>) => void
             }
 
+            // Camino seguro: no limpia la cola al crear el timeout y gestiona timers por item
+            if (this.safeTimers) {
+                const timer = ({ resolve }: ITimerPromise) =>
+                    setTimeout(() => {
+                        resolve('timeout' as unknown as T)
+                    }, this.timeout)
+
+                const timerPromise = new Promise<T>((resolve, reject) => {
+                    if (item.cancelled) return reject('cancelled' as unknown as any)
+                    const existing = this.timers.get(fingerIdRef)
+                    if (existing && typeof existing !== 'boolean') clearTimeout(existing as NodeJS.Timeout)
+                    const refIdTimeOut = timer({ reject, resolve })
+                    this.timers.set(fingerIdRef, refIdTimeOut)
+                })
+
+                const cancel = () => {
+                    const t = this.timers.get(fingerIdRef)
+                    if (t && typeof t !== 'boolean') clearTimeout(t as NodeJS.Timeout)
+                    this.timers.delete(fingerIdRef)
+                    this.clearAndDone(from, item)
+                }
+                return { promiseInFunc, timer, timerPromise, cancel }
+            }
+
+            // Camino legacy (conserva comportamiento actual para no romper tests)
             const timer = ({ resolve }: ITimerPromise) =>
                 setTimeout(() => {
                     console.log('no debe aparecer si la otra funcion del race se ejecuta primero 🙉🙉🙉🙉', fingerIdRef)
@@ -143,7 +171,8 @@ class Queue<T> {
     async processQueue(from: string): Promise<void> {
         const queueByFrom = this.queue.get(from)!
         while (queueByFrom.length > 0) {
-            const tasksToProcess = queueByFrom.splice(0, this.concurrencyLimit - 1)
+            // Procesar hasta el límite de concurrencia configurado
+            const tasksToProcess = queueByFrom.splice(0, this.concurrencyLimit)
             const promises = tasksToProcess.map((item) =>
                 this.processItem(from, item).finally(() => this.clearAndDone(from, item))
             )
