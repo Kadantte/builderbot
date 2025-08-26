@@ -1,7 +1,7 @@
 import { ProviderClass, utils } from '@builderbot/bot'
 import type { BotContext, Button, SendOptions } from '@builderbot/bot/dist/types'
 import type { Boom } from '@hapi/boom'
-import { WABrowserDescription, WAVersion } from '@leifermendez/baileys'
+import { WAVersion, WABrowserDescription } from '@leifermendez/baileys'
 import { Console } from 'console'
 import type { PathOrFileDescriptor } from 'fs'
 import { createReadStream, createWriteStream, readFileSync } from 'fs'
@@ -264,21 +264,6 @@ class BaileysProvider extends ProviderClass<WASocket> {
             this.initVendor().then((v) => this.listenOnEvents(v))
         }
 
-        const convertVersion = (version: number[]): WAVersion => {
-            return version as WAVersion
-        }
-
-        const convertBrowser = (browser: string[]): WABrowserDescription => {
-            return browser as WABrowserDescription
-        }
-        const mapAndConvert = (args: Partial<BaileyGlobalVendorArgs>) => {
-            return {
-                ...args,
-                version: convertVersion(args.version as number[]),
-                browser: convertBrowser(args.browser as string[]),
-            }
-        }
-
         try {
             const sock = makeWASocketOther({
                 logger: loggerBaileys,
@@ -326,7 +311,7 @@ class BaileysProvider extends ProviderClass<WASocket> {
                     }
                     return message
                 },
-                ...mapAndConvert(this.globalVendorArgs),
+                ...this.globalVendorArgs,
             })
 
             this.vendor = sock
