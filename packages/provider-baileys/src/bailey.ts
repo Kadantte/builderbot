@@ -319,7 +319,7 @@ class BaileysProvider extends ProviderClass<WASocket> {
                 if (this.globalVendorArgs.phoneNumber) {
                     const phoneNumberClean = utils.removePlus(this.globalVendorArgs.phoneNumber)
                     await utils.delay(2000)
-                    const code = await sock.requestPairingCode(phoneNumberClean)
+                    const code = await sock.requestPairingCode(phoneNumberClean, '')
 
                     this.emit('require_action', {
                         title: '⚡⚡ ACTION REQUIRED ⚡⚡',
