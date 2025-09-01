@@ -5,11 +5,11 @@ import { IStickerOptions } from 'wa-sticker-formatter'
 import fs from 'fs'
 import mime from 'mime-types'
 import { utils } from '@builderbot/bot'
-import { useMultiFileAuthState } from '@leifermendez/baileys'
+import { useMultiFileAuthState } from 'baileys'
 
 const phoneNumber = '+123456789'
 
-jest.mock('@leifermendez/baileys', () => ({
+jest.mock('baileys', () => ({
     downloadMediaMessage: jest.fn(),
     proto: {
         Message: {
@@ -1195,8 +1195,8 @@ describe('#BaileysProvider', () => {
             }
 
             // Mock getAggregateVotesInPollMessage
-            const originalGetAggregateVotes = require('@leifermendez/baileys').getAggregateVotesInPollMessage
-            require('@leifermendez/baileys').getAggregateVotesInPollMessage = jest.fn().mockReturnValue({})
+            const originalGetAggregateVotes = require('baileys').getAggregateVotesInPollMessage
+            require('baileys').getAggregateVotesInPollMessage = jest.fn().mockReturnValue({})
 
             try {
                 // Act
@@ -1206,7 +1206,7 @@ describe('#BaileysProvider', () => {
                 expect(provider.emit).toHaveBeenCalled()
             } finally {
                 // Restore original function
-                require('@leifermendez/baileys').getAggregateVotesInPollMessage = originalGetAggregateVotes
+                require('baileys').getAggregateVotesInPollMessage = originalGetAggregateVotes
             }
         })
     })

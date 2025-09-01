@@ -15,7 +15,7 @@ import {
     isJidGroup,
     isJidBroadcast,
     makeWASocket as makeWASocketOther,
-} from '@leifermendez/baileys'
+} from 'baileys'
 
 export {
     makeWASocketOther,
