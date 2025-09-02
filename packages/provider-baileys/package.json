@@ -70,6 +70,7 @@
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@types/polka": "^0.5.7",
     "baileys": "^6.7.19",
+    "baileys-mod": "^6.8.5",
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^11.2.0",
     "jimp": "^1.6.0",
