@@ -17,7 +17,7 @@ const emptyDirSessions = async (pathBase: string) =>
  * @param rawNumber The WhatsApp number to be cleaned.
  * @returns The cleaned number.
  */
-const baileyCleanNumberWithLid = (key: { senderPn?: string; remoteJid?: string }): string => {
+function baileyCleanNumberWithLid(key: { senderPn?: string; remoteJid?: string }): string {
     const parseLidSender = key.remoteJid?.includes('@lid') ? key.senderPn : key.remoteJid
     return parseLidSender || ''
 }
