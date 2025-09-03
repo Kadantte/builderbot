@@ -49,6 +49,11 @@ jest.mock('wa-sticker-formatter', () => {
 jest.mock('../src/utils', () => ({
     baileyCleanNumber: jest.fn().mockImplementation(() => phoneNumber),
     baileyIsValidNumber: jest.fn((number: string) => number === '1234567890'),
+    baileyCleanNumberWithLid: jest
+        .fn()
+        .mockImplementation((key: any) => key?.remoteJid || key?.senderPn || 'mocked-number'),
+    baileyGenerateImage: jest.fn(),
+    emptyDirSessions: jest.fn(),
 }))
 
 const mimeType = 'text/plain'
