@@ -111,8 +111,72 @@ class BaileysProvider extends ProviderClass<WASocket> {
 
         this.globalVendorArgs = { ...this.globalVendorArgs, ...args }
 
+        this.setupConsoleFilter()
         this.setupCleanupHandlers()
         this.setupPeriodicCleanup()
+    }
+
+    /**
+     * Setup console filter to simplify specific error messages
+     * @description
+     * - Override console.log, console.error, console.warn to show simplified versions of decrypt-related errors
+     * - Shows only error titles without stack traces for "Failed to decrypt message", "Bad MAC", and "Session error" messages
+     * - Other messages are displayed normally
+     */
+    private setupConsoleFilter() {
+        const originalConsoleLog = console.log
+        const originalConsoleError = console.error
+        const originalConsoleWarn = console.warn
+
+        const shouldFilterMessage = (message: string): string | false => {
+            const messageStr = String(message)
+
+            // Detectar errores de descifrado y mostrar solo el título
+            if (messageStr.includes('Failed to decrypt message')) {
+                return '❌ Failed to decrypt message (stack trace hidden)'
+            }
+            if (messageStr.includes('Bad MAC') || messageStr.includes('Error: Bad MAC')) {
+                return '❌ Bad MAC Error (stack trace hidden)'
+            }
+            if (messageStr.includes('Session error')) {
+                return '❌ Session error (stack trace hidden)'
+            }
+            if (messageStr.includes('decrypt message with any known session')) {
+                return '❌ Decrypt session error (stack trace hidden)'
+            }
+
+            return false // No filtrar
+        }
+
+        console.log = (...args: any[]) => {
+            const message = args.join(' ')
+            const filteredMessage = shouldFilterMessage(message)
+            if (filteredMessage) {
+                originalConsoleLog(filteredMessage)
+            } else {
+                originalConsoleLog.apply(console, args)
+            }
+        }
+
+        console.error = (...args: any[]) => {
+            const message = args.join(' ')
+            const filteredMessage = shouldFilterMessage(message)
+            if (filteredMessage) {
+                originalConsoleError(filteredMessage)
+            } else {
+                originalConsoleError.apply(console, args)
+            }
+        }
+
+        console.warn = (...args: any[]) => {
+            const message = args.join(' ')
+            const filteredMessage = shouldFilterMessage(message)
+            if (filteredMessage) {
+                originalConsoleWarn(filteredMessage)
+            } else {
+                originalConsoleWarn.apply(console, args)
+            }
+        }
     }
 
     /**
