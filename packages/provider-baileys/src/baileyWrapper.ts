@@ -15,7 +15,7 @@ import {
     isJidGroup,
     isJidBroadcast,
     makeWASocket as makeWASocketOther,
-} from 'baileys-mod'
+} from 'baileys'
 
 export {
     makeWASocketOther,

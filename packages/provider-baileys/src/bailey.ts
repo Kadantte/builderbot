@@ -1,7 +1,7 @@
 import { ProviderClass, utils } from '@builderbot/bot'
 import type { BotContext, Button, SendOptions } from '@builderbot/bot/dist/types'
 import type { Boom } from '@hapi/boom'
-import { WAVersion, WABrowserDescription } from 'baileys-mod'
+import { WAVersion, WABrowserDescription } from 'baileys'
 import { Console } from 'console'
 import type { PathOrFileDescriptor } from 'fs'
 import { createReadStream, createWriteStream, readFileSync } from 'fs'
@@ -35,7 +35,13 @@ import {
 } from './baileyWrapper'
 import { releaseTmp } from './releaseTmp'
 import type { BaileyGlobalVendorArgs } from './type'
-import { baileyGenerateImage, baileyCleanNumber, baileyIsValidNumber, emptyDirSessions } from './utils'
+import {
+    baileyGenerateImage,
+    baileyCleanNumber,
+    baileyIsValidNumber,
+    emptyDirSessions,
+    baileyCleanNumberWithLid,
+} from './utils'
 
 class BaileysProvider extends ProviderClass<WASocket> {
     public globalVendorArgs: BaileyGlobalVendorArgs = {
@@ -545,7 +551,7 @@ class BaileysProvider extends ProviderClass<WASocket> {
                         ...messageCtx,
                         body: textToBody,
                         name: messageCtx?.pushName,
-                        from: messageCtx?.key?.remoteJid,
+                        from: baileyCleanNumberWithLid(messageCtx?.key),
                     }
 
                     if (messageCtx.message?.locationMessage) {

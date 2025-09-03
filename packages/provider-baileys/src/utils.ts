@@ -11,6 +11,17 @@ const emptyDirSessions = async (pathBase: string) =>
             resolve(true)
         })
     })
+
+/**
+ * Cleans the WhatsApp number format and adds @lid if it's not present.
+ * @param rawNumber The WhatsApp number to be cleaned.
+ * @returns The cleaned number.
+ */
+const baileyCleanNumberWithLid = (key: { senderPn?: string; remoteJid?: string }): string => {
+    const parseLidSender = key.remoteJid?.includes('@lid') ? key.senderPn : key.remoteJid
+    return parseLidSender
+}
+
 /**
  * Cleans the WhatsApp number format.
  * @param number The WhatsApp number to be cleaned.
@@ -57,4 +68,4 @@ const baileyIsValidNumber = (rawNumber: string): boolean => {
     return !exist
 }
 
-export { baileyCleanNumber, baileyGenerateImage, baileyIsValidNumber, emptyDirSessions }
+export { baileyCleanNumber, baileyGenerateImage, baileyIsValidNumber, emptyDirSessions, baileyCleanNumberWithLid }
