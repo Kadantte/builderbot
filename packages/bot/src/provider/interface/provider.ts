@@ -182,7 +182,7 @@ abstract class ProviderClass<V = any> extends EventEmitterClass<ProviderEventTyp
             const responseError = (res: PolkaRes) => {
                 const jsonRaw = {
                     error: `You must first log in by scanning the qr code to be able to use this functionality.`,
-                    docs: `https://builderbot.vercel.app/errors`,
+                    docs: `https://builderbot.app/errors`,
                     code: `100`,
                 }
                 console.log(jsonRaw)

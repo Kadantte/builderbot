@@ -114,7 +114,7 @@ class MetaProvider extends ProviderClass<MetaInterface> implements MetaInterface
 
             this.emit('notice', {
                 title: error.title,
-                instructions: [error.msg, 'https://builderbot.vercel.app/en/providers/meta'],
+                instructions: [error.msg, 'https://builderbot.app/en/providers/meta'],
             })
             this.emit('error', err)
         }

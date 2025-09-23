@@ -52,7 +52,7 @@ const bannerDone = (templateName: string = '', language: string): void => {
     const doneNote = [
         ``,
         `📄 Documentation:`,
-        `   https://builderbot.vercel.app`,
+        `   https://builderbot.app`,
         ``,
         `🤖 Issues? Join:`,
         `   https://link.codigoencasa.com/DISCORD`,

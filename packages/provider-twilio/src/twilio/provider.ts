@@ -95,7 +95,7 @@ class TwilioProvider extends ProviderClass<TwilioCoreVendor> implements TwilioIn
         const instructions = [
             `You are trying to send a file that is local.`,
             `For this to work with Twilio, the file needs to be in a public URL.`,
-            `More information here https://builderbot.vercel.app/en/twilio/uses-cases`,
+            `More information here https://builderbot.app/en/twilio/uses-cases`,
             `This is the URL that will be sent to Twilio (must be public)`,
             ``,
             `${urlEncode}`,
@@ -139,7 +139,7 @@ class TwilioProvider extends ProviderClass<TwilioCoreVendor> implements TwilioIn
             instructions: [
                 `Twilio presents a different way to implement buttons and lists`,
                 `To understand more about how it works, I recommend you check the following URLs`,
-                `https://builderbot.vercel.app/en/providers/twilio/uses-cases`,
+                `https://builderbot.app/en/providers/twilio/uses-cases`,
             ],
         })
     }

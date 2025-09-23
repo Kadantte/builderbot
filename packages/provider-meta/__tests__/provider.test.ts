@@ -90,7 +90,7 @@ describe('#MetaProvider', () => {
                 title: '🟠 ERROR AUTH  🟠',
                 instructions: [
                     `Error connecting to META, make sure you have the correct credentials, .env`,
-                    `https://builderbot.vercel.app/en/providers/meta`,
+                    `https://builderbot.app/en/providers/meta`,
                 ],
             })
         })
