@@ -11,6 +11,7 @@ jest.mock('axios')
 jest.mock('../src/utils', () => ({
     downloadFile: jest.fn(),
     getProfile: jest.fn(),
+    verifyToken: jest.fn(),
 }))
 
 jest.mock('fs/promises', () => ({
@@ -55,6 +56,7 @@ describe('#MetaProvider', () => {
             }
             metaProvider.globalVendorArgs = fakeArgs
             ;(require('../src/utils').getProfile as jest.Mock).mockImplementation(() => fakeProfile)
+            ;(require('../src/utils').verifyToken as jest.Mock).mockImplementation(() => ({ data: { is_valid: true } }))
             const mockEmit = jest.fn()
             const mockEventEmitter = {
                 emit: mockEmit,
@@ -79,6 +81,7 @@ describe('#MetaProvider', () => {
             }
             metaProvider.emit = (mockEventEmitter as any).emit.bind(mockEventEmitter)
             ;(require('../src/utils').getProfile as jest.Mock).mockImplementation(() => mockGetProfile)
+            ;(require('../src/utils').verifyToken as jest.Mock).mockImplementation(() => ({ data: { is_valid: true } }))
 
             const noticeSpy = jest.spyOn(metaProvider, 'emit')
 
@@ -87,11 +90,8 @@ describe('#MetaProvider', () => {
 
             // Assert
             expect(noticeSpy).toHaveBeenCalledWith('notice', {
-                title: '🟠 ERROR AUTH  🟠',
-                instructions: [
-                    `Error connecting to META, make sure you have the correct credentials, .env`,
-                    `https://builderbot.app/en/providers/meta`,
-                ],
+                title: '🟠 ERROR AUTH',
+                instructions: ['Check credentials', 'https://builderbot.app/en/providers/meta'],
             })
         })
     })
