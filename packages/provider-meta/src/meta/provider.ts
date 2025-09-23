@@ -81,6 +81,16 @@ class MetaProvider extends ProviderClass<MetaInterface> implements MetaInterface
                 throw new Error('Invalid token')
             }
 
+            // Debug permissions info
+            const currentScopes = tokenVerification.data.scopes || []
+            console.log('📋 Available permissions:', currentScopes)
+            console.log('🔍 Token verification data:', {
+                isValid: tokenVerification.data.is_valid,
+                scopes: currentScopes,
+                appId: tokenVerification.data.app_id,
+                userId: tokenVerification.data.user_id,
+            })
+
             // Get profile
             const profile = await getProfile(version, numberId, jwtToken)
             const host = {
@@ -90,49 +100,31 @@ class MetaProvider extends ProviderClass<MetaInterface> implements MetaInterface
             this.vendor.emit('host', host)
             this.emit('ready')
         } catch (err) {
-            let errorTitle = '🟠 ERROR AUTH  🟠'
-            let instructions = [
-                `Error connecting to META, make sure you have the correct credentials, .env`,
-                `https://builderbot.vercel.app/en/providers/meta`,
-            ]
-
-            // Add specific error details
-            if (err.message.includes('Invalid token')) {
-                errorTitle = '🔑 TOKEN ERROR'
-                instructions = [
-                    'Invalid or expired JWT token',
-                    'Check your META_ACCESS_TOKEN in .env file',
-                    'Generate a new token at: https://developers.facebook.com/apps/',
-                ]
-            } else if (err.message.includes('timeout')) {
-                errorTitle = '🌐 TIMEOUT ERROR'
-                instructions = [
-                    'Meta API is not responding',
-                    'Check your internet connection',
-                    'Try again in a few minutes',
-                ]
-            } else if (err.response?.status === 401) {
-                errorTitle = '🔐 UNAUTHORIZED'
-                instructions = ['Invalid credentials', 'Verify META_ACCESS_TOKEN and META_PHONE_NUMBER_ID']
-            } else if (err.response?.status === 403) {
-                errorTitle = '🚫 FORBIDDEN'
-                instructions = [
-                    'Token lacks required permissions',
-                    'Check your app permissions in Meta Developer Console',
-                ]
-            } else if (err.response?.status >= 500) {
-                errorTitle = '🔧 META SERVER ERROR'
-                instructions = ['Meta API is experiencing issues', 'Try again later']
+            const errorMap = {
+                'Invalid token': { title: '🔑 TOKEN ERROR', msg: 'Check META_ACCESS_TOKEN in .env' },
+                timeout: { title: '🌐 TIMEOUT', msg: 'Meta API not responding' },
+                '401': { title: '🔐 UNAUTHORIZED', msg: 'Invalid credentials' },
+                '403': { title: '🚫 FORBIDDEN', msg: 'Token lacks permissions' },
+                '500': { title: '🔧 SERVER ERROR', msg: 'Meta API issues' },
             }
 
-            // Add the actual error message
-            if (err.message) {
-                instructions.push(`Error: ${err.message}`)
-            }
+            const errorKey = err.message.includes('Invalid token')
+                ? 'Invalid token'
+                : err.message.includes('timeout')
+                ? 'timeout'
+                : err.response?.status === 401
+                ? '401'
+                : err.response?.status === 403
+                ? '403'
+                : err.response?.status >= 500
+                ? '500'
+                : 'default'
+
+            const error = errorMap[errorKey] || { title: '🟠 ERROR AUTH', msg: 'Check credentials' }
 
             this.emit('notice', {
-                title: errorTitle,
-                instructions,
+                title: error.title,
+                instructions: [error.msg, 'https://builderbot.vercel.app/en/providers/meta'],
             })
             this.emit('error', err)
         }
