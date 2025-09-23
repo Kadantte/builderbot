@@ -81,16 +81,6 @@ class MetaProvider extends ProviderClass<MetaInterface> implements MetaInterface
                 throw new Error('Invalid token')
             }
 
-            // Debug permissions info
-            const currentScopes = tokenVerification.data.scopes || []
-            console.log('📋 Available permissions:', currentScopes)
-            console.log('🔍 Token verification data:', {
-                isValid: tokenVerification.data.is_valid,
-                scopes: currentScopes,
-                appId: tokenVerification.data.app_id,
-                userId: tokenVerification.data.user_id,
-            })
-
             // Get profile
             const profile = await getProfile(version, numberId, jwtToken)
             const host = {
