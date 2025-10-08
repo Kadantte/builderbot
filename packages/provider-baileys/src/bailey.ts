@@ -848,15 +848,17 @@ class BaileysProvider extends ProviderClass<WASocket> {
      */
 
     sendMedia = async (number: string, imageUrl: string, text: string) => {
+        // CRITICAL FIX: Resolve LID to PN for outgoing messages
+        const resolvedNumber = await this.resolveLIDToPNForSending(number)
         const fileDownloaded = await utils.generalDownload(imageUrl)
         const mimeType = mime.lookup(fileDownloaded)
-        if (`${mimeType}`.includes('image')) return this.sendImage(number, fileDownloaded, text)
-        if (`${mimeType}`.includes('video')) return this.sendVideo(number, fileDownloaded, text)
+        if (`${mimeType}`.includes('image')) return this.sendImage(resolvedNumber, fileDownloaded, text)
+        if (`${mimeType}`.includes('video')) return this.sendVideo(resolvedNumber, fileDownloaded, text)
         if (`${mimeType}`.includes('audio')) {
             const fileOpus = await utils.convertAudio(fileDownloaded)
-            return this.sendAudio(number, fileOpus)
+            return this.sendAudio(resolvedNumber, fileOpus)
         }
-        return this.sendFile(number, fileDownloaded, text)
+        return this.sendFile(resolvedNumber, fileDownloaded, text)
     }
 
     /**
@@ -900,11 +902,14 @@ class BaileysProvider extends ProviderClass<WASocket> {
      */
 
     sendAudio = async (number: string, audioUrl: string) => {
+        // CRITICAL FIX: Resolve LID to PN for outgoing messages
+        const resolvedNumber = await this.resolveLIDToPNForSending(number)
         const payload: AnyMediaMessageContent = {
             audio: { url: audioUrl },
             ptt: true,
         }
-        return this.vendor.sendMessage(number, payload)
+        this.logger.log(`[${new Date().toISOString()}] Sending audio to: ${resolvedNumber} (original: ${number})`)
+        return this.vendor.sendMessage(resolvedNumber, payload)
     }
 
     /**
@@ -914,8 +919,11 @@ class BaileysProvider extends ProviderClass<WASocket> {
      * @returns
      */
     sendText = async (number: string, message: string) => {
+        // CRITICAL FIX: Ensure we use PN for outgoing messages to prevent sync issues
+        const resolvedNumber = await this.resolveLIDToPNForSending(number)
         const payload: AnyMessageContent = { text: message }
-        return this.vendor.sendMessage(number, payload)
+        this.logger.log(`[${new Date().toISOString()}] Sending message to: ${resolvedNumber} (original: ${number})`)
+        return this.vendor.sendMessage(resolvedNumber, payload)
     }
 
     /**
@@ -926,6 +934,8 @@ class BaileysProvider extends ProviderClass<WASocket> {
      */
 
     sendFile = async (number: string, filePath: string, text: string) => {
+        // CRITICAL FIX: Resolve LID to PN for outgoing messages
+        const resolvedNumber = await this.resolveLIDToPNForSending(number)
         const mimeType = mime.lookup(filePath)
         const fileName = basename(filePath)
 
@@ -936,7 +946,8 @@ class BaileysProvider extends ProviderClass<WASocket> {
             caption: text,
         }
 
-        return this.vendor.sendMessage(number, payload)
+        this.logger.log(`[${new Date().toISOString()}] Sending file to: ${resolvedNumber} (original: ${number})`)
+        return this.vendor.sendMessage(resolvedNumber, payload)
     }
 
     /**
@@ -1008,7 +1019,8 @@ class BaileysProvider extends ProviderClass<WASocket> {
 
     sendMessage = async (numberIn: string, message: string, options?: SendOptions): Promise<any> => {
         options = { ...options, ...options['options'] }
-        const number = baileyCleanNumber(`${numberIn}`)
+        // CRITICAL FIX: Resolve LID to PN for outgoing messages to ensure WhatsApp sync
+        const number = await this.resolveLIDToPNForSending(baileyCleanNumber(`${numberIn}`))
         if (options.buttons?.length) return this.sendButtons(number, message, options.buttons)
         if (options.media) return this.sendMedia(number, options.media, message)
         return this.sendText(number, message)
@@ -1232,6 +1244,67 @@ class BaileysProvider extends ProviderClass<WASocket> {
                 type: 'unknown',
                 isLID: false,
             }
+        }
+    }
+
+    /**
+     * CRITICAL FIX for Baileys v7.0.0+ LID sync issues
+     * Resolves LID to PN for outgoing messages to ensure they appear in WhatsApp app
+     *
+     * Issue: Messages sent to LIDs from linked devices don't sync to main WhatsApp app
+     * Solution: Convert LIDs to PNs when sending messages (keep LIDs for receiving)
+     *
+     * @param identifier The identifier to resolve (LID or PN)
+     * @returns PN format for reliable message sending
+     */
+    private async resolveLIDToPNForSending(identifier: string): Promise<string> {
+        try {
+            // If it's already a PN, return as-is
+            if (identifier.includes('@s.whatsapp.net')) {
+                return identifier
+            }
+
+            // If it's a LID, try to resolve to PN using LID store
+            if (identifier.includes('@lid')) {
+                const lidStore = this.getLIDMappingStore()
+                if (lidStore) {
+                    try {
+                        const pn = await this.getPNFromLID(identifier)
+                        if (pn) {
+                            this.logger.log(
+                                `[${new Date().toISOString()}] 🔄 Resolved LID ${identifier} to PN ${pn} for sending (sync fix)`
+                            )
+                            return pn
+                        } else {
+                            this.logger.log(
+                                `[${new Date().toISOString()}] ⚠️ No PN mapping found for LID ${identifier}, using LID (may not sync)`
+                            )
+                        }
+                    } catch (error) {
+                        this.logger.log(`[${new Date().toISOString()}] ❌ Error resolving LID to PN:`, error)
+                    }
+                }
+            }
+
+            // If it's a group, return as-is
+            if (identifier.includes('@g.us')) {
+                return identifier
+            }
+
+            // For raw numbers, format as PN
+            const cleaned = identifier.replace(/[^\d]/g, '')
+            if (cleaned.length >= 10) {
+                const pn = `${cleaned}@s.whatsapp.net`
+                this.logger.log(`[${new Date().toISOString()}] 📞 Formatted raw number ${identifier} as PN ${pn}`)
+                return pn
+            }
+
+            // Fallback: return original identifier
+            this.logger.log(`[${new Date().toISOString()}] ⚠️ Using original identifier ${identifier} for sending`)
+            return identifier
+        } catch (error) {
+            this.logger.log(`[${new Date().toISOString()}] ❌ Error in resolveLIDToPNForSending:`, error)
+            return identifier
         }
     }
 
