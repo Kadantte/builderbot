@@ -15,8 +15,10 @@ const emptyDirSessions = async (pathBase: string) =>
 /**
  * Cleans and extracts the appropriate identifier from MessageKey, supporting LID system.
  * Uses remoteJidAlt/participantAlt when available according to Baileys v7.0.0+ specs.
+ * FOLLOWS OFFICIAL GUIDANCE: Prefers LIDs over PNs as per Baileys documentation.
+ * Reference: https://baileys.wiki/docs/migration/to-v7.0.0
  * @param key The MessageKey object from Baileys with LID support
- * @returns The appropriate identifier (PN or LID)
+ * @returns The identifier (preferring LID over PN per official guidance)
  */
 function baileyCleanNumberWithLid(key: {
     senderPn?: string
@@ -25,25 +27,41 @@ function baileyCleanNumberWithLid(key: {
     participantAlt?: string
     participant?: string
 }): string {
+    let rawIdentifier = ''
+    let isLID = false
+
     // For groups: use participantAlt if available, fallback to participant
     if (key.participant || key.participantAlt) {
-        const groupParticipant = key.participantAlt || key.participant
-        return groupParticipant || ''
+        rawIdentifier = key.participantAlt || key.participant || ''
+        isLID = rawIdentifier.includes('@lid')
     }
-
     // For DMs: use remoteJidAlt if available, fallback to remoteJid
-    if (key.remoteJid || key.remoteJidAlt) {
-        const directMessage = key.remoteJidAlt || key.remoteJid
-
-        // If we have a LID and senderPn is available, prefer the PN for compatibility
-        if (directMessage?.includes('@lid') && key.senderPn) {
-            return key.senderPn
-        }
-
-        return directMessage || ''
+    else if (key.remoteJid || key.remoteJidAlt) {
+        rawIdentifier = key.remoteJidAlt || key.remoteJid || ''
+        isLID = rawIdentifier.includes('@lid')
     }
 
-    return ''
+    if (!rawIdentifier) {
+        return ''
+    }
+
+    // OFFICIAL BAILEYS STRATEGY: Prefer LIDs over PNs
+    // "THE GOAL SHOULDN'T BE TO RESTORE THE PN JID ANYMORE, MIGRATE TO LIDs. PNs are WAY LESS RELIABLE."
+    if (isLID) {
+        console.log(
+            `[${new Date().toISOString()}] baileyCleanNumberWithLid: Using LID ${rawIdentifier} (Baileys v7.0.0+ best practice)`
+        )
+        return rawIdentifier
+    }
+
+    // If we only have PN, use it but log that we should migrate to LID
+    if (rawIdentifier.includes('@s.whatsapp.net')) {
+        console.log(
+            `[${new Date().toISOString()}] baileyCleanNumberWithLid: Using PN ${rawIdentifier} - should migrate to LID when available`
+        )
+    }
+
+    return rawIdentifier
 }
 
 /**

@@ -1148,9 +1148,10 @@ class BaileysProvider extends ProviderClass<WASocket> {
 
     /**
      * Extracts sender information from MessageKey using Baileys v7.0.0+ Alt fields
-     * Optimized for performance and proper LID handling
+     * FOLLOWS OFFICIAL GUIDANCE: Prefers LIDs over PNs as per Baileys documentation
+     * Reference: https://baileys.wiki/docs/migration/to-v7.0.0
      * @param key MessageKey with potential remoteJidAlt/participantAlt fields
-     * @returns Object with identifier, type, and isLID flag
+     * @returns Object with identifier (preferring LID per official guidance), type, and isLID flag
      */
     private extractSenderWithAltFields(key: any): {
         identifier: string
@@ -1158,53 +1159,70 @@ class BaileysProvider extends ProviderClass<WASocket> {
         isLID: boolean
     } {
         try {
+            let rawIdentifier = ''
+            let isOriginallyLID = false
+
             // For groups: prioritize participantAlt over participant
             if (key?.participant || key?.participantAlt) {
-                const groupSender = key.participantAlt || key.participant
-                if (groupSender) {
-                    return {
-                        identifier: baileyCleanNumber(groupSender),
-                        type: groupSender.includes('@lid')
-                            ? 'lid'
-                            : groupSender.includes('@s.whatsapp.net')
-                            ? 'pn'
-                            : 'unknown',
-                        isLID: groupSender.includes('@lid'),
-                    }
-                }
+                rawIdentifier = key.participantAlt || key.participant || ''
+                isOriginallyLID = rawIdentifier.includes('@lid')
             }
-
             // For DMs: prioritize remoteJidAlt over remoteJid
-            if (key?.remoteJid || key?.remoteJidAlt) {
-                const directSender = key.remoteJidAlt || key.remoteJid
+            else if (key?.remoteJid || key?.remoteJidAlt) {
+                rawIdentifier = key.remoteJidAlt || key.remoteJid || ''
+                isOriginallyLID = rawIdentifier.includes('@lid')
+            }
 
-                // Handle LID with fallback to PN from senderPn
-                if (directSender?.includes('@lid') && key.senderPn) {
-                    return {
-                        identifier: baileyCleanNumber(key.senderPn), // Use PN for compatibility
-                        type: 'pn', // Even though original is LID, we return PN for compatibility
-                        isLID: true, // Flag indicates original was LID
-                    }
-                }
-
-                if (directSender) {
-                    return {
-                        identifier: baileyCleanNumber(directSender),
-                        type: directSender.includes('@lid')
-                            ? 'lid'
-                            : directSender.includes('@s.whatsapp.net')
-                            ? 'pn'
-                            : 'unknown',
-                        isLID: directSender.includes('@lid'),
-                    }
+            if (!rawIdentifier) {
+                return {
+                    identifier: '',
+                    type: 'unknown',
+                    isLID: false,
                 }
             }
 
-            // Fallback to empty
+            // NORMALIZATION STRATEGY: Follow Baileys v7.0.0+ official guidance - MIGRATE TO LIDs
+            // Reference: https://baileys.wiki/docs/migration/to-v7.0.0
+            // "THE GOAL SHOULDN'T BE TO RESTORE THE PN JID ANYMORE, MIGRATE TO LIDs. PNs are WAY LESS RELIABLE."
+            let normalizedIdentifier = rawIdentifier
+            let shouldPreferLID = false
+
+            // Strategy 1: If we have both LID and PN, prefer LID (official recommendation)
+            if (isOriginallyLID) {
+                // Keep the LID - this is the preferred approach per Baileys docs
+                normalizedIdentifier = rawIdentifier
+                shouldPreferLID = true
+                this.logger.log(
+                    `[${new Date().toISOString()}] Using LID ${rawIdentifier} as primary identifier (Baileys v7.0.0+ best practice)`
+                )
+            }
+            // Strategy 2: If we only have PN but can get LID from store, try to upgrade to LID
+            else if (!isOriginallyLID && rawIdentifier.includes('@s.whatsapp.net')) {
+                // We have a PN, but should try to find corresponding LID if available
+                const lidStore = this.getLIDMappingStore()
+                if (lidStore) {
+                    // Note: We would need to implement async LID lookup here in the future
+                    // For now, keep the PN but log the situation
+                    this.logger.log(
+                        `[${new Date().toISOString()}] PN ${rawIdentifier} detected - should lookup corresponding LID for migration`
+                    )
+                }
+            }
+
+            // Clean the normalized identifier
+            const cleanIdentifier = baileyCleanNumber(normalizedIdentifier)
+
+            // Determine final type based on normalized identifier
+            const finalType = normalizedIdentifier.includes('@lid')
+                ? 'lid'
+                : normalizedIdentifier.includes('@s.whatsapp.net')
+                ? 'pn'
+                : 'unknown'
+
             return {
-                identifier: '',
-                type: 'unknown',
-                isLID: false,
+                identifier: cleanIdentifier,
+                type: finalType,
+                isLID: isOriginallyLID, // Flag indicates if original was LID, even if we normalized to PN
             }
         } catch (error) {
             this.logger.log(`[${new Date().toISOString()}] Error extracting sender with Alt fields:`, error)
@@ -1275,24 +1293,52 @@ class BaileysProvider extends ProviderClass<WASocket> {
      */
     private validateLIDSupport(state: any): void {
         try {
-            const hasLidMapping = state.keys && typeof state.keys === 'object'
-            const hasDeviceIndex = state.creds && typeof state.creds === 'object'
+            // OFFICIAL REQUIREMENT per https://baileys.wiki/docs/migration/to-v7.0.0
+            // "This system requires the auth state to support the lid-mapping and device-index keys"
 
-            if (!hasLidMapping) {
-                this.logger.log(`[${new Date().toISOString()}] WARNING: Auth state may not support lid-mapping`)
+            let hasLidMappingKey = false
+            let hasDeviceIndexKey = false
+
+            if (state.keys && typeof state.keys === 'object') {
+                const keyNames = Object.keys(state.keys)
+                hasLidMappingKey = keyNames.some(
+                    (key) => key === 'lid-mapping' || key === 'lidMapping' || key.includes('lid-map')
+                )
+                hasDeviceIndexKey = keyNames.some(
+                    (key) => key === 'device-index' || key === 'deviceIndex' || key.includes('device-index')
+                )
             }
 
-            if (!hasDeviceIndex) {
-                this.logger.log(`[${new Date().toISOString()}] WARNING: Auth state may not support device-index`)
+            // Critical validation as per official docs
+            if (!hasLidMappingKey) {
+                this.logger.log(
+                    `[${new Date().toISOString()}] ⚠️  CRITICAL: Auth state missing 'lid-mapping' key support`
+                )
+                this.logger.log(`[${new Date().toISOString()}] This is REQUIRED for Baileys v7.0.0+ LID system`)
             }
 
-            // Log auth state structure for debugging (without sensitive data)
-            this.logger.log(`[${new Date().toISOString()}] Auth state keys available:`, Object.keys(state))
+            if (!hasDeviceIndexKey) {
+                this.logger.log(
+                    `[${new Date().toISOString()}] ⚠️  CRITICAL: Auth state missing 'device-index' key support`
+                )
+                this.logger.log(`[${new Date().toISOString()}] This is REQUIRED for Baileys v7.0.0+ LID system`)
+            }
+
+            if (hasLidMappingKey && hasDeviceIndexKey) {
+                this.logger.log(
+                    `[${new Date().toISOString()}] ✅ Auth state supports LID system requirements (lid-mapping ✓, device-index ✓)`
+                )
+            } else {
+                this.logger.log(
+                    `[${new Date().toISOString()}] ❌ Auth state does NOT meet Baileys v7.0.0+ LID requirements`
+                )
+                this.logger.log(`[${new Date().toISOString()}] Please update your authentication state provider`)
+            }
+
+            // Debug logging
             if (state.keys) {
-                this.logger.log(`[${new Date().toISOString()}] Signal keys structure available: ${typeof state.keys}`)
-            }
-            if (state.creds) {
-                this.logger.log(`[${new Date().toISOString()}] Credentials structure available: ${typeof state.creds}`)
+                const availableKeys = Object.keys(state.keys).slice(0, 5) // Show first 5 keys only
+                this.logger.log(`[${new Date().toISOString()}] Available auth keys (sample):`, availableKeys)
             }
         } catch (error) {
             this.logger.log(`[${new Date().toISOString()}] Error validating LID support:`, error)

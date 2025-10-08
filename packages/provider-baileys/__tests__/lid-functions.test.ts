@@ -123,12 +123,14 @@ describe('LID Functions - Baileys v7.0.0+ Compatibility', () => {
             expect(baileyCleanNumberWithLid(messageKey)).toBe('5555555555@s.whatsapp.net')
         })
 
-        it('should prefer senderPn when remoteJid is a LID', () => {
+        it('should prefer LID over senderPn (Baileys v7.0.0+ official guidance)', () => {
             const messageKey = {
                 remoteJid: 'user123@lid',
                 senderPn: '1234567890@s.whatsapp.net',
             }
-            expect(baileyCleanNumberWithLid(messageKey)).toBe('1234567890@s.whatsapp.net')
+            // Updated for Baileys v7.0.0+ LID-first strategy per official documentation
+            // "THE GOAL SHOULDN'T BE TO RESTORE THE PN JID ANYMORE, MIGRATE TO LIDs. PNs are WAY LESS RELIABLE."
+            expect(baileyCleanNumberWithLid(messageKey)).toBe('user123@lid')
         })
 
         it('should prefer participantAlt over participant for groups', () => {
