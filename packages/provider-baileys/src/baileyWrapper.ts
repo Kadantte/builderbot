@@ -15,6 +15,7 @@ import {
     isJidGroup,
     isJidBroadcast,
     makeWASocket as makeWASocketOther,
+    isPnUser,
 } from 'baileys'
 
 export {
@@ -34,4 +35,5 @@ export {
     MessageUpsertType,
     isJidGroup,
     isJidBroadcast,
+    isPnUser,
 }

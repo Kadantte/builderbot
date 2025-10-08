@@ -41,6 +41,8 @@ import {
     baileyIsValidNumber,
     emptyDirSessions,
     baileyCleanNumberWithLid,
+    baileyStoreLIDPNMapping,
+    baileyStoreLIDPNMappings,
 } from './utils'
 
 class BaileysProvider extends ProviderClass<WASocket> {
@@ -315,7 +317,8 @@ class BaileysProvider extends ProviderClass<WASocket> {
 
     protected getMessage = async (key: { remoteJid: string; id: string }) => {
         // only if store is present
-        return proto.Message.fromObject({})
+        // In Baileys v7.0.0+ fromObject() was replaced with create()
+        return proto.Message.create({})
     }
 
     protected saveCredsGlobal: (() => Promise<void>) | null = null
@@ -329,6 +332,13 @@ class BaileysProvider extends ProviderClass<WASocket> {
         const loggerBaileys = pino({ level: 'fatal' })
 
         this.saveCredsGlobal = saveCreds
+
+        // Verificar soporte para LID system (Baileys v7.0.0+)
+        this.validateLIDSupport(state)
+
+        this.logger.log(
+            `[${new Date().toISOString()}] LID system support: ${this.hasLIDSupport(state) ? 'ENABLED' : 'DISABLED'}`
+        )
 
         try {
             if (this.globalVendorArgs.useBaileysStore) {
@@ -356,7 +366,7 @@ class BaileysProvider extends ProviderClass<WASocket> {
                 generateHighQualityLinkPreview: true,
                 getMessage: this.getMessage,
                 msgRetryCounterCache: this.msgRetryCounterCache,
-                userDevicesCache: this.userDevicesCache,
+                userDevicesCache: this.userDevicesCache as any, // NodeCache compatibility with Baileys v7.0.0+
                 retryRequestDelayMs: 1000, // Mayor delay entre reintentos
                 maxMsgRetryCount: 8, // Más intentos de reenvío
                 connectTimeoutMs: 60_000, // 1 minuto timeout conexión
@@ -618,11 +628,16 @@ class BaileysProvider extends ProviderClass<WASocket> {
                         }
                     }
 
+                    // Extract sender using Baileys v7.0.0+ LID system with Alt fields
+                    const senderInfo = this.extractSenderWithAltFields(messageCtx?.key)
+
                     let payload = {
                         ...messageCtx,
                         body: textToBody,
                         name: messageCtx?.pushName,
-                        from: baileyCleanNumberWithLid(messageCtx?.key),
+                        from: senderInfo.identifier,
+                        fromType: senderInfo.type, // 'lid', 'pn', or 'unknown'
+                        isLID: senderInfo.isLID,
                     }
 
                     if (messageCtx.message?.locationMessage) {
@@ -755,6 +770,51 @@ class BaileysProvider extends ProviderClass<WASocket> {
                     this.emit('message', payload)
                     // Opcional: Rechazar automáticamente la llamada
                     // await this.vendor.rejectCall(call.id, call.from)
+                }
+            },
+        },
+        {
+            event: 'lid-mapping.update',
+            func: async (lidMappingUpdate) => {
+                try {
+                    this.logger.log(`[${new Date().toISOString()}] LID mapping update received:`, lidMappingUpdate)
+
+                    const lidStore = this.getLIDMappingStore()
+                    if (!lidStore) {
+                        this.logger.log(`[${new Date().toISOString()}] LID store not available for mapping update`)
+                        return
+                    }
+
+                    // Process LID mapping updates according to Baileys v7.0.0+ specs
+                    if (lidMappingUpdate && typeof lidMappingUpdate === 'object') {
+                        // Use our utility functions for consistent LID handling
+                        // Store individual mappings using our wrapper functions
+                        for (const [lid, pn] of Object.entries(lidMappingUpdate)) {
+                            if (lid && pn && typeof lid === 'string' && typeof pn === 'string') {
+                                await baileyStoreLIDPNMapping(lidStore, lid, pn)
+                                this.logger.log(`[${new Date().toISOString()}] Stored LID mapping: ${lid} <-> ${pn}`)
+                            }
+                        }
+
+                        // Batch store if multiple mappings using our wrapper function
+                        if (Object.keys(lidMappingUpdate).length > 1) {
+                            await baileyStoreLIDPNMappings(lidStore, lidMappingUpdate)
+                            this.logger.log(
+                                `[${new Date().toISOString()}] Batch stored ${
+                                    Object.keys(lidMappingUpdate).length
+                                } LID mappings`
+                            )
+                        }
+
+                        // Emit custom event for external listeners
+                        this.emit('lid_mapping_updated', {
+                            mappings: lidMappingUpdate,
+                            timestamp: new Date().toISOString(),
+                            count: Object.keys(lidMappingUpdate).length,
+                        })
+                    }
+                } catch (error) {
+                    this.logger.log(`[${new Date().toISOString()}] Error processing lid-mapping.update:`, error)
                 }
             },
         },
@@ -1075,6 +1135,77 @@ class BaileysProvider extends ProviderClass<WASocket> {
         return resolve(pathFile)
     }
 
+    /**
+     * Extracts sender information from MessageKey using Baileys v7.0.0+ Alt fields
+     * Optimized for performance and proper LID handling
+     * @param key MessageKey with potential remoteJidAlt/participantAlt fields
+     * @returns Object with identifier, type, and isLID flag
+     */
+    private extractSenderWithAltFields(key: any): {
+        identifier: string
+        type: 'lid' | 'pn' | 'unknown'
+        isLID: boolean
+    } {
+        try {
+            // For groups: prioritize participantAlt over participant
+            if (key?.participant || key?.participantAlt) {
+                const groupSender = key.participantAlt || key.participant
+                if (groupSender) {
+                    return {
+                        identifier: baileyCleanNumber(groupSender),
+                        type: groupSender.includes('@lid')
+                            ? 'lid'
+                            : groupSender.includes('@s.whatsapp.net')
+                            ? 'pn'
+                            : 'unknown',
+                        isLID: groupSender.includes('@lid'),
+                    }
+                }
+            }
+
+            // For DMs: prioritize remoteJidAlt over remoteJid
+            if (key?.remoteJid || key?.remoteJidAlt) {
+                const directSender = key.remoteJidAlt || key.remoteJid
+
+                // Handle LID with fallback to PN from senderPn
+                if (directSender?.includes('@lid') && key.senderPn) {
+                    return {
+                        identifier: baileyCleanNumber(key.senderPn), // Use PN for compatibility
+                        type: 'pn', // Even though original is LID, we return PN for compatibility
+                        isLID: true, // Flag indicates original was LID
+                    }
+                }
+
+                if (directSender) {
+                    return {
+                        identifier: baileyCleanNumber(directSender),
+                        type: directSender.includes('@lid')
+                            ? 'lid'
+                            : directSender.includes('@s.whatsapp.net')
+                            ? 'pn'
+                            : 'unknown',
+                        isLID: directSender.includes('@lid'),
+                    }
+                }
+            }
+
+            // Fallback to empty
+            return {
+                identifier: '',
+                type: 'unknown',
+                isLID: false,
+            }
+        } catch (error) {
+            this.logger.log(`[${new Date().toISOString()}] Error extracting sender with Alt fields:`, error)
+            // Fallback to original method
+            return {
+                identifier: baileyCleanNumberWithLid(key),
+                type: 'unknown',
+                isLID: false,
+            }
+        }
+    }
+
     private shouldReconnect(statusCode: number): boolean {
         // Lista de códigos donde SÍ debemos reconectar
         const reconnectableCodes = [
@@ -1124,6 +1255,136 @@ class BaileysProvider extends ProviderClass<WASocket> {
                 this.logger.log(`[${new Date().toISOString()}] Reconnection failed:`, error)
             }
         }, delay)
+    }
+
+    /**
+     * Validates if the auth state supports LID system (lid-mapping and device-index keys)
+     * Required for Baileys v7.0.0+ LID system
+     * @param state The authentication state from useMultiFileAuthState
+     */
+    private validateLIDSupport(state: any): void {
+        try {
+            const hasLidMapping = state.keys && typeof state.keys === 'object'
+            const hasDeviceIndex = state.creds && typeof state.creds === 'object'
+
+            if (!hasLidMapping) {
+                this.logger.log(`[${new Date().toISOString()}] WARNING: Auth state may not support lid-mapping`)
+            }
+
+            if (!hasDeviceIndex) {
+                this.logger.log(`[${new Date().toISOString()}] WARNING: Auth state may not support device-index`)
+            }
+
+            // Log auth state structure for debugging (without sensitive data)
+            this.logger.log(`[${new Date().toISOString()}] Auth state keys available:`, Object.keys(state))
+            if (state.keys) {
+                this.logger.log(`[${new Date().toISOString()}] Signal keys structure available: ${typeof state.keys}`)
+            }
+            if (state.creds) {
+                this.logger.log(`[${new Date().toISOString()}] Credentials structure available: ${typeof state.creds}`)
+            }
+        } catch (error) {
+            this.logger.log(`[${new Date().toISOString()}] Error validating LID support:`, error)
+        }
+    }
+
+    /**
+     * Checks if the auth state has LID system support
+     * @param state The authentication state
+     * @returns boolean indicating LID support
+     */
+    private hasLIDSupport(state: any): boolean {
+        try {
+            // Check for the presence of keys and creds which should support LID mapping
+            const hasKeys = state.keys && typeof state.keys === 'object'
+            const hasCreds = state.creds && typeof state.creds === 'object'
+
+            return hasKeys && hasCreds
+        } catch (error) {
+            this.logger.log(`[${new Date().toISOString()}] Error checking LID support:`, error)
+            return false
+        }
+    }
+
+    /**
+     * Gets the LID mapping store from the socket
+     * @returns The LID mapping store or null if not available
+     */
+    public getLIDMappingStore(): any {
+        try {
+            if (this.vendor && this.vendor.signalRepository && this.vendor.signalRepository.lidMapping) {
+                return this.vendor.signalRepository.lidMapping
+            }
+            return null
+        } catch (error) {
+            this.logger.log(`[${new Date().toISOString()}] Error accessing LID mapping store:`, error)
+            return null
+        }
+    }
+
+    /**
+     * Public method to get LID from PN using the internal store
+     * @param phoneNumber Phone number to get LID for
+     * @returns Promise<string | null> LID or null if not found
+     */
+    public async getLIDFromPN(phoneNumber: string): Promise<string | null> {
+        const lidStore = this.getLIDMappingStore()
+        if (!lidStore) {
+            this.logger.log(`[${new Date().toISOString()}] LID store not available for getLIDFromPN`)
+            return null
+        }
+
+        try {
+            const lid = await lidStore.getLIDForPN(phoneNumber)
+            return lid || null
+        } catch (error) {
+            this.logger.log(`[${new Date().toISOString()}] Error getting LID from PN ${phoneNumber}:`, error)
+            return null
+        }
+    }
+
+    /**
+     * Public method to get PN from LID using the internal store
+     * @param lid LID to get phone number for
+     * @returns Promise<string | null> Phone number or null if not found
+     */
+    public async getPNFromLID(lid: string): Promise<string | null> {
+        const lidStore = this.getLIDMappingStore()
+        if (!lidStore) {
+            this.logger.log(`[${new Date().toISOString()}] LID store not available for getPNFromLID`)
+            return null
+        }
+
+        try {
+            const phoneNumber = await lidStore.getPNForLID(lid)
+            return phoneNumber || null
+        } catch (error) {
+            this.logger.log(`[${new Date().toISOString()}] Error getting PN from LID ${lid}:`, error)
+            return null
+        }
+    }
+
+    /**
+     * Public method to store a LID-PN mapping
+     * @param lid Local Identifier
+     * @param phoneNumber Phone Number
+     * @returns Promise<boolean> Success status
+     */
+    public async storeLIDPNMapping(lid: string, phoneNumber: string): Promise<boolean> {
+        const lidStore = this.getLIDMappingStore()
+        if (!lidStore) {
+            this.logger.log(`[${new Date().toISOString()}] LID store not available for storeLIDPNMapping`)
+            return false
+        }
+
+        try {
+            await baileyStoreLIDPNMapping(lidStore, lid, phoneNumber)
+            this.logger.log(`[${new Date().toISOString()}] Successfully stored LID mapping: ${lid} <-> ${phoneNumber}`)
+            return true
+        } catch (error) {
+            this.logger.log(`[${new Date().toISOString()}] Error storing LID mapping ${lid}<->${phoneNumber}:`, error)
+            return false
+        }
     }
 }
 
