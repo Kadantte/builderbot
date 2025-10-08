@@ -73,7 +73,7 @@ describe('#baileyIsValidNumber', () => {
         expect(isValid).toBeTruthy()
     })
 
-    test('should return true if the number is empty', () => {
+    test('should return false if the number is empty', () => {
         // Arrange
         const emptyNumber = ''
 
@@ -81,7 +81,8 @@ describe('#baileyIsValidNumber', () => {
         const isValid = baileyIsValidNumber(emptyNumber)
 
         // Assert
-        expect(isValid).toBeTruthy()
+        // Updated for Baileys v7.0.0+ LID system - empty strings are invalid
+        expect(isValid).toBeFalsy()
     })
 })
 

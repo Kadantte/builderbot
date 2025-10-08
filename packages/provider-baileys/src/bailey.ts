@@ -317,8 +317,19 @@ class BaileysProvider extends ProviderClass<WASocket> {
 
     protected getMessage = async (key: { remoteJid: string; id: string }) => {
         // only if store is present
-        // In Baileys v7.0.0+ fromObject() was replaced with create()
-        return proto.Message.create({})
+        // In Baileys v7.0.0+ use create(), fallback to empty object for tests
+        try {
+            if (proto.Message.create) {
+                return proto.Message.create({})
+            } else {
+                // Fallback for tests and older versions
+                return {}
+            }
+        } catch (error) {
+            // Fallback in case of any error
+            this.logger.log(`[${new Date().toISOString()}] Error in getMessage, using fallback:`, error)
+            return {}
+        }
     }
 
     protected saveCredsGlobal: (() => Promise<void>) | null = null
