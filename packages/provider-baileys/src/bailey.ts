@@ -136,22 +136,25 @@ class BaileysProvider extends ProviderClass<WASocket> {
 
             // Detectar errores de descifrado y mostrar solo el título
             if (messageStr.includes('Failed to decrypt message')) {
-                return 'Tratando de descifrar mensaje... (stack trace hidden)'
+                return '[INFO] 🔐 Procesando mensaje cifrado (reintentando descifrado)'
             }
             if (messageStr.includes('Bad MAC') || messageStr.includes('Error: Bad MAC')) {
-                return 'Re-intentando.. MAC (stack trace hidden)'
+                return '[INFO] 🔐 Error de autenticación del mensaje (MAC), reintentando...'
             }
             if (messageStr.includes('Session error')) {
-                return 'Re-intentando.. Session  (stack trace hidden)'
+                return '[INFO] ⚠️ Error de sesión detectado, reconectando...'
             }
             if (messageStr.includes('decrypt message with any known session')) {
-                return 'Re-intentando.. Decrypt (stack trace hidden)'
+                return '[INFO] 🔐 Sincronizando sesión de cifrado con el dispositivo'
             }
             if (messageStr.includes('Closing open session in favor of incoming prekey bundle')) {
-                return '🔄 Session replaced by prekey bundle (details hidden)'
+                return '[INFO] 🔄 Actualizando claves de sesión (Signal Protocol Prekey Bundle)'
+            }
+            if (messageStr.includes('Closing stale open session for new outgoing prekey bundle')) {
+                return '[INFO] 🔄 Actualizando sesión cifrada con el servidor (Signal Protocol Ratchet)'
             }
             if (messageStr.includes('Closing session: SessionEntry')) {
-                return '🔄 Session closed (details hidden)'
+                return '[INFO] 🔄 Actualizando sesión cifrada con el servidor (Signal Protocol Ratchet)'
             }
 
             return false // No filtrar
