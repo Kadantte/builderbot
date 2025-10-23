@@ -76,5 +76,6 @@
     "jimp": "^1.6.0",
     "node-cache": "^5.1.2",
     "sharp": "0.33.3"
-  }
+  },
+  "gitHead": "fb733120394e079aaa0d13e364e2954ec2dccf79"
 }
