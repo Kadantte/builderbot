@@ -124,6 +124,11 @@ jobs:
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+            - name: Configure Git
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+
             - name: Release Alpha
               run: |
                   # Obtener versión base sin sufijo alpha
@@ -134,8 +139,12 @@ jobs:
                   # Actualizar versión en todos los paquetes
                   npx lerna version $NEW_VERSION --force-publish --yes --no-git-tag-version --no-push
 
-                  # Publicar al tag alpha (--no-git-checks ignora cambios sin commitear)
-                  npx lerna publish from-package --dist-tag alpha --yes --no-git-checks
+                  # Hacer commit temporal de los cambios de versión (necesario para lerna publish)
+                  git add -A
+                  git commit -m "chore: bump version to $NEW_VERSION [skip ci]" || true
+
+                  # Publicar al tag alpha
+                  npx lerna publish from-package --dist-tag alpha --yes
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
