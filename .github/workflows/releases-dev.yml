@@ -116,6 +116,18 @@ jobs:
                   name: dist-packages
                   path: packages
 
+            - name: Verify artifacts
+              run: |
+                  echo "📂 Verificando artifacts descargados:"
+                  ls -la packages/
+                  echo "---"
+                  ls -la packages/bot/dist/ || echo "⚠️ No se encontró packages/bot/dist"
+
+            - name: Configure npm auth
+              run: |
+                  echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+                  npm whoami || echo "⚠️ No se pudo verificar autenticación npm"
+
             - name: Release Alpha
               id: release
               run: |
@@ -127,10 +139,15 @@ jobs:
                   # Actualizar versión en todos los paquetes
                   npx lerna version $NEW_VERSION --force-publish --yes --no-git-tag-version --no-push
 
-                  # Publicar al tag alpha
-                  npx lerna publish from-package --dist-tag alpha --yes 2>&1 | tee release-output.txt
+                  # Verificar versiones actualizadas
+                  echo "📋 Versiones actualizadas:"
+                  npx lerna ls --json | jq -r '.[] | "  - \(.name): \(.version)"'
+
+                  # Publicar al tag alpha (--no-verify-access evita chequeos de permisos)
+                  npx lerna publish from-package --dist-tag alpha --yes --no-verify-access 2>&1 | tee release-output.txt
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+                  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
             - name: 📋 Log Deployed Version
               run: |
