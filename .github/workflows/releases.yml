@@ -16,6 +16,9 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v3
+              with:
+                  fetch-depth: 0
+                  token: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Set output
               id: vars
@@ -82,6 +85,11 @@ jobs:
                   git tag -a "v$VERSION" -m "Release v$VERSION" || true
 
                   echo "✅ Commit y tag creados para v$VERSION"
+
+            - name: Push changes and tags
+              run: |
+                  git push origin builderbot-prod --follow-tags
+                  echo "✅ Cambios y tags subidos al repositorio"
 
             - name: Release Latest
               run: npx lerna publish from-package --dist-tag latest --yes
