@@ -13,7 +13,10 @@ import makeWASocketOther, {
     MessageUpsertType,
     isJidGroup,
     isJidBroadcast,
-} from 'whaileys'
+    PollMessageOptions,
+    WAVersion,
+    WABrowserDescription,
+} from 'baileys'
 
 export {
     makeWASocketOther,
@@ -31,4 +34,7 @@ export {
     MessageUpsertType,
     isJidGroup,
     isJidBroadcast,
+    PollMessageOptions,
+    WAVersion,
+    WABrowserDescription,
 }

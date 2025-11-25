@@ -52,6 +52,7 @@ const baileyGenerateImage = async (base64: string, name: string = 'qr.png'): Pro
  * @returns True if it's a valid number, false otherwise.
  */
 const baileyIsValidNumber = (rawNumber: string): boolean => {
+    if (!rawNumber || rawNumber.trim() === '') return false
     const regexGroup: RegExp = /\@g.us\b/gm
     const exist = rawNumber.match(regexGroup)
     return !exist

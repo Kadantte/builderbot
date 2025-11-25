@@ -13,7 +13,6 @@ import pino from 'pino'
 import type polka from 'polka'
 import type { IStickerOptions } from 'wa-sticker-formatter'
 import { Sticker } from 'wa-sticker-formatter'
-import { WAVersion, WABrowserDescription, Browsers } from 'whaileys'
 
 import {
     AnyMediaMessageContent,
@@ -31,6 +30,9 @@ import {
     makeWASocketOther,
     proto,
     useMultiFileAuthState,
+    PollMessageOptions,
+    WAVersion,
+    WABrowserDescription,
 } from './baileyWrapper'
 import { releaseTmp } from './releaseTmp'
 import type { BaileyGlobalVendorArgs } from './type'
@@ -277,7 +279,7 @@ class BaileysProvider extends ProviderClass<WASocket> {
                 markOnlineOnConnect: false,
                 generateHighQualityLinkPreview: true,
                 getMessage: this.getMessage,
-                msgRetryCounterMap: {},
+                msgRetryCounterCache: this.msgRetryCounterCache as any,
                 userDevicesCache: this.userDevicesCache as any,
                 retryRequestDelayMs: 1000, // Mayor delay entre reintentos
                 connectTimeoutMs: 60_000, // 1 minuto timeout conexión
@@ -489,9 +491,7 @@ class BaileysProvider extends ProviderClass<WASocket> {
                         if (textToBody === 'requestPlaceholder' && !(messageCtx as any).requestId) {
                             try {
                                 if (this.vendor.requestPlaceholderResend) {
-                                    const messageId = await this.vendor.requestPlaceholderResend([
-                                        { messageKey: messageCtx.key },
-                                    ])
+                                    const messageId = await this.vendor.requestPlaceholderResend(messageCtx.key)
                                     this.logger.log(
                                         `[${new Date().toISOString()}] Requested placeholder resync, id=${messageId}`
                                     )
@@ -689,6 +689,30 @@ class BaileysProvider extends ProviderClass<WASocket> {
             },
         },
     ]
+
+    /**
+     *
+     * @param {string} number
+     * @param {string} text
+     * @param {string} footer
+     * @param {Array} poll
+     * @example await sendMessage("+XXXXXXXXXXX", { poll: { "name": "You accept terms", "values": [ "Yes", "Not"], "selectableCount": 1 })
+     */
+
+    sendPoll = async (numberIn: string, text: string, poll: { options: string[]; multiselect: any }) => {
+        const numberClean = baileyCleanNumber(numberIn)
+
+        if (poll.options.length < 2) return false
+
+        const pollMessage: PollMessageOptions = {
+            name: text,
+            values: poll.options,
+            selectableCount: poll?.multiselect === undefined ? 1 : poll?.multiselect ? 1 : 0,
+        }
+        return this.vendor.sendMessage(numberClean, {
+            poll: pollMessage,
+        })
+    }
 
     /**
      * @param {string} orderId
