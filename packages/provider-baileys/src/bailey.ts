@@ -1,7 +1,6 @@
 import { ProviderClass, utils } from '@builderbot/bot'
 import type { BotContext, Button, SendOptions } from '@builderbot/bot/dist/types'
 import type { Boom } from '@hapi/boom'
-import { WAVersion, WABrowserDescription } from 'whaileys'
 import { Console } from 'console'
 import type { PathOrFileDescriptor } from 'fs'
 import { createReadStream, createWriteStream, readFileSync } from 'fs'
@@ -14,6 +13,7 @@ import pino from 'pino'
 import type polka from 'polka'
 import type { IStickerOptions } from 'wa-sticker-formatter'
 import { Sticker } from 'wa-sticker-formatter'
+import { WAVersion, WABrowserDescription } from 'whaileys'
 
 import {
     AnyMediaMessageContent,

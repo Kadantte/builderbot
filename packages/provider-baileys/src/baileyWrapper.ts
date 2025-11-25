@@ -1,4 +1,4 @@
-import {
+import makeWASocketOther, {
     useMultiFileAuthState,
     DisconnectReason,
     proto,
@@ -14,7 +14,6 @@ import {
     isJidGroup,
     isJidBroadcast,
 } from 'whaileys'
-import makeWASocketOther from 'whaileys'
 
 export {
     makeWASocketOther,
