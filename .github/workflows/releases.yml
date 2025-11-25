@@ -3,7 +3,7 @@ name: 🚀⚡ Liberando versiones
 on:
     push:
         branches:
-            - builderbot/prod
+            - builderbot-prod
 jobs:
     ############ RELEASE ############
     release-prod:

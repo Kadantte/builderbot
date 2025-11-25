@@ -3,7 +3,7 @@ name: Build and Test
 on:
     pull_request:
         branches:
-            - builderbot/dev
+            - builderbot-dev
 
 jobs:
     ############ BUILD PACKAGE ############

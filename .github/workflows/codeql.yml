@@ -14,13 +14,13 @@ name: 'CodeQL'
 on:
     push:
         branches:
-            - builderbot/prod
-            - builderbot/dev
+            - builderbot-prod
+            - builderbot-dev
     pull_request:
         # The branches below must be a subset of the branches above
         branches:
-            - builderbot/prod
-            - builderbot/dev
+            - builderbot-prod
+            - builderbot-dev
     schedule:
         - cron: '21 16 * * 5'
 
