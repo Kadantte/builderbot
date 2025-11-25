@@ -1,6 +1,7 @@
 name: 🚀 (DEV) Liberando versiones
 
 on:
+    workflow_dispatch:
     push:
         branches:
             - builderbot-dev
@@ -118,7 +119,16 @@ jobs:
             - name: Release Alpha
               id: release
               run: |
-                  npx lerna publish --canary --preid alpha --dist-tag alpha --yes 2>&1 | tee release-output.txt
+                  # Obtener versión base sin sufijo alpha
+                  BASE_VERSION=$(node -p "require('./lerna.json').version.replace(/-alpha.*/, '')")
+                  NEW_VERSION="${BASE_VERSION}-alpha.${{ github.run_number }}"
+                  echo "📦 Publicando versión: $NEW_VERSION"
+
+                  # Actualizar versión en todos los paquetes
+                  npx lerna version $NEW_VERSION --force-publish --yes --no-git-tag-version --no-push
+
+                  # Publicar al tag alpha
+                  npx lerna publish from-package --dist-tag alpha --yes 2>&1 | tee release-output.txt
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
