@@ -74,9 +74,9 @@ abstract class ProviderClass<V = any> extends EventEmitterClass<ProviderEventTyp
      * Abstract method to define bus events.
      * @protected
      * @abstract
-     * @returns {Array<{ event: string; func: Function }>} Array of event definitions.
+     * @returns {Array<{ event: string | number | symbol; func: Function }>} Array of event definitions.
      */
-    protected abstract busEvents(): Array<{ event: string; func: Function }>
+    protected abstract busEvents(): Array<{ event: string | number | symbol; func: Function }>
 
     /**
      * Abstract method to initialize vendor.

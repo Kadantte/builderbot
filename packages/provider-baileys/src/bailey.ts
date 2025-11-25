@@ -13,7 +13,7 @@ import pino from 'pino'
 import type polka from 'polka'
 import type { IStickerOptions } from 'wa-sticker-formatter'
 import { Sticker } from 'wa-sticker-formatter'
-import { WAVersion, WABrowserDescription } from 'whaileys'
+import { WAVersion, WABrowserDescription, Browsers } from 'whaileys'
 
 import {
     AnyMediaMessageContent,
@@ -298,14 +298,16 @@ class BaileysProvider extends ProviderClass<WASocket> {
             if (this.globalVendorArgs.usePairingCode && !sock.authState.creds.registered) {
                 if (this.globalVendorArgs.phoneNumber) {
                     const phoneNumberClean = utils.removePlus(this.globalVendorArgs.phoneNumber)
+                    const code = await sock.requestPairingCode(this.globalVendorArgs.phoneNumber)
                     await utils.delay(2000)
                     this.emit('require_action', {
                         title: '⚡⚡ ACTION REQUIRED ⚡⚡',
                         instructions: [
                             `Accept the WhatsApp notification from ${this.globalVendorArgs.phoneNumber} on your phone 👌`,
+                            `The pairing code is: ${code}`,
                             `Need help: https://link.codigoencasa.com/DISCORD`,
                         ],
-                        payload: { qr: null },
+                        payload: { code },
                     })
                 } else {
                     this.emit('auth_failure', [
