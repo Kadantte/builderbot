@@ -10,6 +10,9 @@ jobs:
         if: ${{ !github.event.act }}
         name: Release
         runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            packages: write
         steps:
             - name: Checkout
               uses: actions/checkout@v3
@@ -85,4 +88,4 @@ jobs:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
             - name: Release Github
-              run: node ./scripts/github.js --version="${{ steps.package-version.outputs.current-version}}" --token="${{ secrets.OCTO_TOKEN }}"
+              run: node ./scripts/github.js --version="${{ steps.package-version.outputs.current-version}}" --token="${{ secrets.GITHUB_TOKEN }}"
