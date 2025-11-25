@@ -39,7 +39,7 @@ jobs:
             - name: Build Package
               run: pnpm build:full
 
-            - name: Release DEV
-              run: pnpm run publish:dev
+            - name: Release Alpha
+              run: npx lerna publish --canary --preid alpha --dist-tag alpha --yes
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

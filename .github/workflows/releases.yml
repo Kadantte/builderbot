@@ -47,8 +47,8 @@ jobs:
             - name: Build Package
               run: pnpm build:full
 
-            - name: Release PROD
-              run: npx lerna publish from-package --yes
+            - name: Release Latest
+              run: npx lerna publish from-package --dist-tag latest --yes
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
