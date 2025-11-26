@@ -1,6 +1,7 @@
-import { beforeEach, describe, expect, jest, it } from '@jest/globals'
-import { MessengerEvents, MessengerMessage } from '../src/facebook.events'
 import { utils } from '@builderbot/bot'
+import { beforeEach, describe, expect, jest, it } from '@jest/globals'
+
+import { MessengerEvents, MessengerMessage } from '../src/facebook.events'
 
 jest.mock('@builderbot/bot', () => ({
     EventEmitterClass: class {

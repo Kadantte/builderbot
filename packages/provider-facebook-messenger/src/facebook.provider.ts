@@ -1,11 +1,11 @@
-import type { Middleware } from 'polka'
-import { writeFile } from 'fs/promises'
-import { join, resolve } from 'path'
-import { tmpdir } from 'os'
 import { ProviderClass } from '@builderbot/bot'
 import type { BotContext, GlobalVendorArgs, SendOptions } from '@builderbot/bot/dist/types'
 import axios, { AxiosResponse } from 'axios'
+import { writeFile } from 'fs/promises'
 import mime from 'mime-types'
+import { tmpdir } from 'os'
+import { join, resolve } from 'path'
+import type { Middleware } from 'polka'
 
 import { MessengerEvents } from './facebook.events'
 
