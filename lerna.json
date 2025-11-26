@@ -1,5 +1,5 @@
 {
-  "version": "1.3.7-alpha.0",
+  "version": "1.3.11",
   "packages": [
     "packages/bot",
     "packages/cli",
@@ -12,6 +12,7 @@
     "packages/provider-meta",
     "packages/provider-evolution-api",
     "packages/provider-baileys",
+    "packages/provider-facebook-messenger",
     "packages/provider-twilio",
     "packages/provider-web-whatsapp",
     "packages/provider-wppconnect",
@@ -20,6 +21,15 @@
     "packages/contexts-dialogflow",
     "packages/contexts-dialogflow-cx"
   ],
+  "command": {
+    "version": {
+      "allowBranch": "*",
+      "ignoreChanges": [
+        "**/*"
+      ],
+      "noVerifyAccess": true
+    }
+  },
   "npmClient": "pnpm",
   "$schema": "node_modules/lerna/schemas/lerna-schema.json"
 }

@@ -61,6 +61,9 @@ importers:
             only-allow:
                 specifier: ^1.2.1
                 version: 1.2.1
+            openai:
+                specifier: ^4.104.0
+                version: 4.104.0(encoding@0.1.13)(ws@8.18.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))(zod@3.25.76)
             prettier:
                 specifier: ^2.8.8
                 version: 2.8.8
@@ -244,8 +247,8 @@ importers:
     packages/contexts-dialogflow:
         dependencies:
             '@builderbot/bot':
-                specifier: '*'
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             '@google-cloud/dialogflow':
                 specifier: ^6.5.0
                 version: 6.14.0(encoding@0.1.13)
@@ -284,8 +287,8 @@ importers:
     packages/contexts-dialogflow-cx:
         dependencies:
             '@builderbot/bot':
-                specifier: '*'
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             '@google-cloud/dialogflow-cx':
                 specifier: ^4.4.0
                 version: 4.10.0(encoding@0.1.13)
@@ -324,8 +327,8 @@ importers:
     packages/create-builderbot:
         dependencies:
             '@builderbot/cli':
-                specifier: '*'
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../cli
         devDependencies:
             '@rollup/plugin-commonjs':
                 specifier: ^25.0.7
@@ -349,8 +352,8 @@ importers:
     packages/database-json:
         dependencies:
             '@builderbot/bot':
-                specifier: '*'
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
         devDependencies:
             '@rollup/plugin-commonjs':
                 specifier: ^25.0.7
@@ -383,8 +386,8 @@ importers:
     packages/database-mongo:
         dependencies:
             '@builderbot/bot':
-                specifier: '*'
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             mongodb:
                 specifier: ^4.17.2
                 version: 4.17.2
@@ -429,8 +432,8 @@ importers:
     packages/database-mysql:
         dependencies:
             '@builderbot/bot':
-                specifier: '*'
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             mysql2:
                 specifier: ^2.3.3
                 version: 2.3.3
@@ -472,8 +475,8 @@ importers:
     packages/database-postgres:
         dependencies:
             '@builderbot/bot':
-                specifier: '*'
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             pg:
                 specifier: ^8.11.5
                 version: 8.16.3
@@ -588,8 +591,8 @@ importers:
                 version: 0.33.3
         devDependencies:
             '@builderbot/bot':
-                specifier: '*'
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             '@hapi/boom':
                 specifier: ^10.0.1
                 version: 10.0.1
@@ -697,8 +700,8 @@ importers:
                 version: 2.2.1
         devDependencies:
             '@builderbot/bot':
-                specifier: '*'
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             '@jest/globals':
                 specifier: ^29.7.0
                 version: 29.7.0
@@ -769,6 +772,61 @@ importers:
                 specifier: ^2.3.0
                 version: 2.3.0
 
+    packages/provider-facebook-messenger:
+        dependencies:
+            axios:
+                specifier: ^1.7.7
+                version: 1.11.0
+            mime-types:
+                specifier: ^2.1.35
+                version: 2.1.35
+            polka:
+                specifier: ^0.5.2
+                version: 0.5.2
+        devDependencies:
+            '@builderbot/bot':
+                specifier: workspace:*
+                version: link:../bot
+            '@jest/globals':
+                specifier: ^29.7.0
+                version: 29.7.0
+            '@rollup/plugin-commonjs':
+                specifier: ^25.0.8
+                version: 25.0.8(rollup@4.50.0)
+            '@rollup/plugin-json':
+                specifier: ^6.1.0
+                version: 6.1.0(rollup@4.50.0)
+            '@rollup/plugin-node-resolve':
+                specifier: ^15.2.3
+                version: 15.3.1(rollup@4.50.0)
+            '@types/jest':
+                specifier: ^29.5.12
+                version: 29.5.14
+            '@types/mime-types':
+                specifier: ^2.1.4
+                version: 2.1.4
+            '@types/node':
+                specifier: ^20.12.3
+                version: 20.19.11
+            '@types/polka':
+                specifier: ^0.5.7
+                version: 0.5.7
+            jest:
+                specifier: ^29.7.0
+                version: 29.7.0(@types/node@20.19.11)(ts-node@10.9.2(@types/node@20.19.11)(typescript@5.9.2))
+            rimraf:
+                specifier: ^5.0.5
+                version: 5.0.10
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.50.0)(typescript@5.9.2)
+            ts-jest:
+                specifier: ^29.1.2
+                version: 29.4.1(@babel/core@7.28.3)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.3))(jest-util@29.7.0)(jest@29.7.0(@types/node@20.19.11)(ts-node@10.9.2(@types/node@20.19.11)(typescript@5.9.2)))(typescript@5.9.2)
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.2
+
     packages/provider-meta:
         dependencies:
             axios:
@@ -794,8 +852,8 @@ importers:
                 version: 2.2.1
         devDependencies:
             '@builderbot/bot':
-                specifier: '*'
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             '@jest/globals':
                 specifier: ^29.7.0
                 version: 29.7.0
@@ -867,8 +925,8 @@ importers:
                 version: 2.26.22
         devDependencies:
             '@builderbot/bot':
-                specifier: '*'
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             '@hapi/boom':
                 specifier: ^10.0.1
                 version: 10.0.1
@@ -925,8 +983,8 @@ importers:
                 version: 4.20.1
         devDependencies:
             '@builderbot/bot':
-                specifier: '*'
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             '@jest/globals':
                 specifier: ^29.7.0
                 version: 29.7.0
@@ -998,8 +1056,8 @@ importers:
                 version: 5.1.0(bufferutil@4.0.9)(encoding@0.1.13)(typescript@5.9.2)(utf-8-validate@5.0.10)
         devDependencies:
             '@builderbot/bot':
-                specifier: '*'
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             '@jest/globals':
                 specifier: ^29.7.0
                 version: 29.7.0
@@ -1080,8 +1138,8 @@ importers:
                 version: 1.23.0(bufferutil@4.0.9)(encoding@0.1.13)(utf-8-validate@5.0.10)
         devDependencies:
             '@builderbot/bot':
-                specifier: '*'
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             '@jest/globals':
                 specifier: ^29.7.0
                 version: 29.7.0
@@ -1156,8 +1214,8 @@ importers:
                 version: 0.33.3
         devDependencies:
             '@builderbot/bot':
-                specifier: '*'
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             '@rollup/plugin-commonjs':
                 specifier: ^25.0.7
                 version: 25.0.8(rollup@4.50.0)
@@ -1725,19 +1783,6 @@ packages:
             {
                 integrity: sha512-X999CKBxGwX8wW+4gFibsbiNdwqmdQEXmUejIWaIqdrHBgS5ARIOOeyiQbHjP9G58xVEPcuvP6VwwH3A0OFTOA==,
             }
-
-    '@builderbot/bot@1.3.7':
-        resolution:
-            {
-                integrity: sha512-dE4nwNhjfFFiTwrZA+GJGKrSXi3kQ+PrYk3MVcAlxh7ztoDiGcbLQ2tMT0e/kOjN/w8KdWezoi54EiFUy9FtgA==,
-            }
-
-    '@builderbot/cli@1.3.7':
-        resolution:
-            {
-                integrity: sha512-YNtyc0+TYprgeWMhLeryi1JrzKeZwRsxXD60rEym5WwTnb87fpxvvZ7V4uOsy8mNhwV+ELp+kHa8UL+8VgOoGQ==,
-            }
-        hasBin: true
 
     '@cacheable/node-cache@1.7.0':
         resolution:
@@ -4338,6 +4383,12 @@ packages:
                 integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==,
             }
 
+    '@types/node-fetch@2.6.13':
+        resolution:
+            {
+                integrity: sha512-QGpRVpzSaUs30JBSGPjOg4Uveu384erbHBoT1zeONvyCfwQxIkUshLAOqN/k9EjGviPRmWTTe6aH2qySWKTVSw==,
+            }
+
     '@types/node@10.17.60':
         resolution:
             {
@@ -4348,6 +4399,12 @@ packages:
         resolution:
             {
                 integrity: sha512-QpLcX9ZSsq3YYUUnD3nFDY8H7wctAhQj/TFKL8Ya8v5fMm3CFXxo8zStsLAl780ltoYoo1WvKUVGBQK+1ifr7g==,
+            }
+
+    '@types/node@18.19.130':
+        resolution:
+            {
+                integrity: sha512-GRaXQx6jGfL8sKfaIDD6OupbIHBr9jv7Jnaml9tB7l4v068PAOXqfcujMMo5PhbIs6ggR1XODELqahT2R8v0fg==,
             }
 
     '@types/node@20.19.11':
@@ -7987,6 +8044,12 @@ packages:
                 integrity: sha512-j0KLYPhm6zeac4lz3oJ3o65qvgQCcPubiyotZrXqEaG4hNagNYO8qdlUrX5vwqv9ohqeT/Z3j6+yW067yWWdUw==,
             }
 
+    form-data-encoder@1.7.2:
+        resolution:
+            {
+                integrity: sha512-qfqtYan3rxrnCk1VYaA4H+Ms9xdpPqvLZa6xmMgFvhO32x7/3J/ExcTd6qpxM0vH2GdMI+poehyBZvqfMTto8A==,
+            }
+
     form-data-encoder@2.1.4:
         resolution:
             {
@@ -8014,6 +8077,13 @@ packages:
                 integrity: sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==,
             }
         engines: { node: '>= 6' }
+
+    formdata-node@4.4.1:
+        resolution:
+            {
+                integrity: sha512-0iirZp3uVDjVGt9p49aTaqjk84TrglENEDuqfdlZQ1roC9CWlPk6Avf8EEnZNcAqPonwkG35x4n3ww/1THYAeQ==,
+            }
+        engines: { node: '>= 12.20' }
 
     formidable@2.1.5:
         resolution:
@@ -8901,6 +8971,12 @@ packages:
         resolution:
             {
                 integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==,
+            }
+
+    ini@1.3.7:
+        resolution:
+            {
+                integrity: sha512-iKpRpXP+CrP2jyrxvg1kMUpXDyRUFDWurxbnVT1vQPx+Wz9uCYsMIqYuSBLV+PAaZG/d7kRLKRFc9oDMsH+mFQ==,
             }
 
     ini@1.3.8:
@@ -9930,6 +10006,7 @@ packages:
                 integrity: sha512-/PpesirAIfaklxUzp4Yb7xBper9MwP6hNRA6BGGUFCgbJ+BM5CKBtsoxinNXkLHAr+GXS1/lSlF2rP7cv5Fl+g==,
             }
         engines: { node: '>= 0.6' }
+        deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
     keyv@3.1.0:
         resolution:
@@ -11090,6 +11167,14 @@ packages:
             }
         engines: { node: '>= 8.0.0' }
 
+    node-domexception@1.0.0:
+        resolution:
+            {
+                integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==,
+            }
+        engines: { node: '>=10.5.0' }
+        deprecated: Use your platform's native DOMException instead
+
     node-fetch@2.6.7:
         resolution:
             {
@@ -11480,6 +11565,21 @@ packages:
                 integrity: sha512-7x81NCL719oNbsq/3mh+hVrAWmFuEYUqrq/Iw3kUzH8ReypT9QQ0BLoJS7/G9k6N81XjW4qHWtjWwe/9eLy1EQ==,
             }
         engines: { node: '>=12' }
+
+    openai@4.104.0:
+        resolution:
+            {
+                integrity: sha512-p99EFNsA/yX6UhVO93f5kJsDRLAg+CTA2RBqdHK4RtK8u5IJw32Hyb2dTGKbnnFmnuoBv5r7Z2CURI9sGZpSuA==,
+            }
+        hasBin: true
+        peerDependencies:
+            ws: ^8.18.0
+            zod: ^3.23.8
+        peerDependenciesMeta:
+            ws:
+                optional: true
+            zod:
+                optional: true
 
     optionator@0.9.4:
         resolution:
@@ -12554,7 +12654,7 @@ packages:
                 integrity: sha512-U1uufzBjz3+PkpCxFrWzh4OrMIdIb2ztzCu0YEPfRHjHswcSwHZswnK+WdsOQJsRV8WeTg3jLhJR4D867+fjsA==,
             }
         engines: { node: '>=10.18.1' }
-        deprecated: < 24.9.0 is no longer supported
+        deprecated: < 24.15.0 is no longer supported
 
     puppeteer@21.11.0:
         resolution:
@@ -12562,7 +12662,7 @@ packages:
                 integrity: sha512-9jTHuYe22TD3sNxy0nEIzC7ZrlRnDgeX3xPkbS7PnbdwYjl2o/z/YuCrRBwezdKpbTDTJ4VqIggzNyeRcKq3cg==,
             }
         engines: { node: '>=16.13.2' }
-        deprecated: < 24.9.0 is no longer supported
+        deprecated: < 24.15.0 is no longer supported
         hasBin: true
 
     puppeteer@22.15.0:
@@ -12571,7 +12671,7 @@ packages:
                 integrity: sha512-XjCY1SiSEi1T7iSYuxS82ft85kwDJUS7wj1Z0eGVXKdtr5g4xnVcbjwxhq5xBnpK/E7x1VZZoJDxpjAOasHT4Q==,
             }
         engines: { node: '>=18' }
-        deprecated: < 24.9.0 is no longer supported
+        deprecated: < 24.15.0 is no longer supported
         hasBin: true
 
     pure-rand@6.1.0:
@@ -14532,6 +14632,12 @@ packages:
                 integrity: sha512-mlExGW4w71ebDJviH16lQLtZS32VKqsSfk80GCfUlwT/4/hNRFsoscrF/c++9xinkMzECL1uL9DDwXqFWkruPg==,
             }
 
+    undici-types@5.26.5:
+        resolution:
+            {
+                integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==,
+            }
+
     undici-types@6.21.0:
         resolution:
             {
@@ -14806,6 +14912,13 @@ packages:
             {
                 integrity: sha512-XHPEwS0q6TaxcvG85+8EYkbiCux2XtWG2mkc47Ng2A77BQu9+DqIOJldST4HgPkuea7dvKSj5VgX3P1d4rW8Tg==,
             }
+
+    web-streams-polyfill@4.0.0-beta.3:
+        resolution:
+            {
+                integrity: sha512-QW95TCTaHmsYfHDybGMwO5IJIM93I/6vTRk+daHTWFPhwh+C8Cg7j7XyKrwrj8Ib6vYXe0ocYNrmzY4xAAN6ug==,
+            }
+        engines: { node: '>= 14' }
 
     webidl-conversions@3.0.1:
         resolution:
@@ -15898,24 +16011,6 @@ snapshots:
     '@borewit/text-codec@0.1.1': {}
 
     '@borewit/text-codec@0.2.0': {}
-
-    '@builderbot/bot@1.3.7':
-        dependencies:
-            '@ffmpeg-installer/ffmpeg': 1.1.0
-            body-parser: 1.20.3
-            cors: 2.8.5
-            fluent-ffmpeg: 2.1.3
-            follow-redirects: 1.15.11(debug@4.4.1)
-            mime-types: 2.1.35
-            picocolors: 1.1.1
-            polka: 0.5.2
-        optionalDependencies:
-            sharp: 0.33.3
-        transitivePeerDependencies:
-            - debug
-            - supports-color
-
-    '@builderbot/cli@1.3.7': {}
 
     '@cacheable/node-cache@1.7.0':
         dependencies:
@@ -17957,9 +18052,18 @@ snapshots:
 
     '@types/ms@2.1.0': {}
 
+    '@types/node-fetch@2.6.13':
+        dependencies:
+            '@types/node': 20.19.11
+            form-data: 4.0.4
+
     '@types/node@10.17.60': {}
 
     '@types/node@16.9.1': {}
+
+    '@types/node@18.19.130':
+        dependencies:
+            undici-types: 5.26.5
 
     '@types/node@20.19.11':
         dependencies:
@@ -19178,7 +19282,7 @@ snapshots:
 
     config-chain@1.1.13:
         dependencies:
-            ini: 1.3.8
+            ini: 1.3.7
             proto-list: 1.2.4
 
     configstore@6.0.0:
@@ -20425,6 +20529,8 @@ snapshots:
 
     forever-agent@0.6.1: {}
 
+    form-data-encoder@1.7.2: {}
+
     form-data-encoder@2.1.4: {}
 
     form-data@2.3.3:
@@ -20449,6 +20555,11 @@ snapshots:
             es-set-tostringtag: 2.1.0
             hasown: 2.0.2
             mime-types: 2.1.35
+
+    formdata-node@4.4.1:
+        dependencies:
+            node-domexception: 1.0.0
+            web-streams-polyfill: 4.0.0-beta.3
 
     formidable@2.1.5:
         dependencies:
@@ -20731,7 +20842,7 @@ snapshots:
 
     global-dirs@0.1.1:
         dependencies:
-            ini: 1.3.8
+            ini: 1.3.7
 
     global-dirs@3.0.1:
         dependencies:
@@ -21065,6 +21176,8 @@ snapshots:
             wrappy: 1.0.2
 
     inherits@2.0.4: {}
+
+    ini@1.3.7: {}
 
     ini@1.3.8: {}
 
@@ -22614,6 +22727,8 @@ snapshots:
         dependencies:
             clone: 2.1.2
 
+    node-domexception@1.0.0: {}
+
     node-fetch@2.6.7(encoding@0.1.13):
         dependencies:
             whatwg-url: 5.0.0
@@ -22961,6 +23076,21 @@ snapshots:
             is-docker: 2.2.1
             is-wsl: 2.2.0
 
+    openai@4.104.0(encoding@0.1.13)(ws@8.18.3(bufferutil@4.0.9)(utf-8-validate@5.0.10))(zod@3.25.76):
+        dependencies:
+            '@types/node': 18.19.130
+            '@types/node-fetch': 2.6.13
+            abort-controller: 3.0.0
+            agentkeepalive: 4.6.0
+            form-data-encoder: 1.7.2
+            formdata-node: 4.4.1
+            node-fetch: 2.7.0(encoding@0.1.13)
+        optionalDependencies:
+            ws: 8.18.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+            zod: 3.25.76
+        transitivePeerDependencies:
+            - encoding
+
     optionator@0.9.4:
         dependencies:
             deep-is: 0.1.4
@@ -23085,7 +23215,7 @@ snapshots:
         dependencies:
             '@tootallnate/quickjs-emscripten': 0.23.0
             agent-base: 7.1.4
-            debug: 4.3.4
+            debug: 4.4.1
             get-uri: 6.0.5
             http-proxy-agent: 7.0.2
             https-proxy-agent: 7.0.6
@@ -23836,7 +23966,7 @@ snapshots:
     rc@1.2.8:
         dependencies:
             deep-extend: 0.6.0
-            ini: 1.3.8
+            ini: 1.3.7
             minimist: 1.2.8
             strip-json-comments: 2.0.1
 
@@ -25129,6 +25259,8 @@ snapshots:
             buffer: 5.7.1
             through: 2.3.8
 
+    undici-types@5.26.5: {}
+
     undici-types@6.21.0: {}
 
     undici@7.15.0: {}
@@ -25333,6 +25465,8 @@ snapshots:
     wcwidth@1.0.1:
         dependencies:
             defaults: 1.0.4
+
+    web-streams-polyfill@4.0.0-beta.3: {}
 
     webidl-conversions@3.0.1: {}
 
