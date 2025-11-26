@@ -56,6 +56,7 @@
     "packages/provider-meta",
     "packages/provider-evolution-api",
     "packages/provider-baileys",
+    "packages/provider-facebook-messenger",
     "packages/provider-twilio",
     "packages/provider-web-whatsapp",
     "packages/provider-wppconnect",

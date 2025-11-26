@@ -772,6 +772,61 @@ importers:
                 specifier: ^2.3.0
                 version: 2.3.0
 
+    packages/provider-facebook-messenger:
+        dependencies:
+            axios:
+                specifier: ^1.7.7
+                version: 1.11.0
+            mime-types:
+                specifier: ^2.1.35
+                version: 2.1.35
+            polka:
+                specifier: ^0.5.2
+                version: 0.5.2
+        devDependencies:
+            '@builderbot/bot':
+                specifier: workspace:*
+                version: link:../bot
+            '@jest/globals':
+                specifier: ^29.7.0
+                version: 29.7.0
+            '@rollup/plugin-commonjs':
+                specifier: ^25.0.8
+                version: 25.0.8(rollup@4.50.0)
+            '@rollup/plugin-json':
+                specifier: ^6.1.0
+                version: 6.1.0(rollup@4.50.0)
+            '@rollup/plugin-node-resolve':
+                specifier: ^15.2.3
+                version: 15.3.1(rollup@4.50.0)
+            '@types/jest':
+                specifier: ^29.5.12
+                version: 29.5.14
+            '@types/mime-types':
+                specifier: ^2.1.4
+                version: 2.1.4
+            '@types/node':
+                specifier: ^20.12.3
+                version: 20.19.11
+            '@types/polka':
+                specifier: ^0.5.7
+                version: 0.5.7
+            jest:
+                specifier: ^29.7.0
+                version: 29.7.0(@types/node@20.19.11)(ts-node@10.9.2(@types/node@20.19.11)(typescript@5.9.2))
+            rimraf:
+                specifier: ^5.0.5
+                version: 5.0.10
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.50.0)(typescript@5.9.2)
+            ts-jest:
+                specifier: ^29.1.2
+                version: 29.4.1(@babel/core@7.28.3)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.3))(jest-util@29.7.0)(jest@29.7.0(@types/node@20.19.11)(ts-node@10.9.2(@types/node@20.19.11)(typescript@5.9.2)))(typescript@5.9.2)
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.2
+
     packages/provider-meta:
         dependencies:
             axios:
