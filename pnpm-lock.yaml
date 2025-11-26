@@ -244,8 +244,8 @@ importers:
     packages/contexts-dialogflow:
         dependencies:
             '@builderbot/bot':
-                specifier: ^1.3.7
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             '@google-cloud/dialogflow':
                 specifier: ^6.5.0
                 version: 6.14.0(encoding@0.1.13)
@@ -284,8 +284,8 @@ importers:
     packages/contexts-dialogflow-cx:
         dependencies:
             '@builderbot/bot':
-                specifier: ^1.3.7
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             '@google-cloud/dialogflow-cx':
                 specifier: ^4.4.0
                 version: 4.10.0(encoding@0.1.13)
@@ -324,8 +324,8 @@ importers:
     packages/create-builderbot:
         dependencies:
             '@builderbot/cli':
-                specifier: ^1.3.7
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../cli
         devDependencies:
             '@rollup/plugin-commonjs':
                 specifier: ^25.0.7
@@ -349,8 +349,8 @@ importers:
     packages/database-json:
         dependencies:
             '@builderbot/bot':
-                specifier: ^1.3.7
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
         devDependencies:
             '@rollup/plugin-commonjs':
                 specifier: ^25.0.7
@@ -383,8 +383,8 @@ importers:
     packages/database-mongo:
         dependencies:
             '@builderbot/bot':
-                specifier: ^1.3.7
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             mongodb:
                 specifier: ^4.17.2
                 version: 4.17.2
@@ -429,8 +429,8 @@ importers:
     packages/database-mysql:
         dependencies:
             '@builderbot/bot':
-                specifier: ^1.3.7
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             mysql2:
                 specifier: ^2.3.3
                 version: 2.3.3
@@ -472,8 +472,8 @@ importers:
     packages/database-postgres:
         dependencies:
             '@builderbot/bot':
-                specifier: ^1.3.7
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             pg:
                 specifier: ^8.11.5
                 version: 8.16.3
@@ -588,8 +588,8 @@ importers:
                 version: 0.33.3
         devDependencies:
             '@builderbot/bot':
-                specifier: ^1.3.7
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             '@hapi/boom':
                 specifier: ^10.0.1
                 version: 10.0.1
@@ -697,8 +697,8 @@ importers:
                 version: 2.2.1
         devDependencies:
             '@builderbot/bot':
-                specifier: ^1.3.7
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             '@jest/globals':
                 specifier: ^29.7.0
                 version: 29.7.0
@@ -794,8 +794,8 @@ importers:
                 version: 2.2.1
         devDependencies:
             '@builderbot/bot':
-                specifier: ^1.3.7
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             '@jest/globals':
                 specifier: ^29.7.0
                 version: 29.7.0
@@ -867,8 +867,8 @@ importers:
                 version: 2.26.22
         devDependencies:
             '@builderbot/bot':
-                specifier: ^1.3.7
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             '@hapi/boom':
                 specifier: ^10.0.1
                 version: 10.0.1
@@ -925,8 +925,8 @@ importers:
                 version: 4.20.1
         devDependencies:
             '@builderbot/bot':
-                specifier: ^1.3.7
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             '@jest/globals':
                 specifier: ^29.7.0
                 version: 29.7.0
@@ -998,8 +998,8 @@ importers:
                 version: 5.1.0(bufferutil@4.0.9)(encoding@0.1.13)(typescript@5.9.2)(utf-8-validate@5.0.10)
         devDependencies:
             '@builderbot/bot':
-                specifier: ^1.3.7
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             '@jest/globals':
                 specifier: ^29.7.0
                 version: 29.7.0
@@ -1080,8 +1080,8 @@ importers:
                 version: 1.23.0(bufferutil@4.0.9)(encoding@0.1.13)(utf-8-validate@5.0.10)
         devDependencies:
             '@builderbot/bot':
-                specifier: ^1.3.7
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             '@jest/globals':
                 specifier: ^29.7.0
                 version: 29.7.0
@@ -1156,8 +1156,8 @@ importers:
                 version: 0.33.3
         devDependencies:
             '@builderbot/bot':
-                specifier: ^1.3.7
-                version: 1.3.7
+                specifier: workspace:*
+                version: link:../bot
             '@rollup/plugin-commonjs':
                 specifier: ^25.0.7
                 version: 25.0.8(rollup@4.50.0)
@@ -1725,19 +1725,6 @@ packages:
             {
                 integrity: sha512-X999CKBxGwX8wW+4gFibsbiNdwqmdQEXmUejIWaIqdrHBgS5ARIOOeyiQbHjP9G58xVEPcuvP6VwwH3A0OFTOA==,
             }
-
-    '@builderbot/bot@1.3.7':
-        resolution:
-            {
-                integrity: sha512-dE4nwNhjfFFiTwrZA+GJGKrSXi3kQ+PrYk3MVcAlxh7ztoDiGcbLQ2tMT0e/kOjN/w8KdWezoi54EiFUy9FtgA==,
-            }
-
-    '@builderbot/cli@1.3.7':
-        resolution:
-            {
-                integrity: sha512-YNtyc0+TYprgeWMhLeryi1JrzKeZwRsxXD60rEym5WwTnb87fpxvvZ7V4uOsy8mNhwV+ELp+kHa8UL+8VgOoGQ==,
-            }
-        hasBin: true
 
     '@cacheable/node-cache@1.7.0':
         resolution:
@@ -9936,6 +9923,7 @@ packages:
                 integrity: sha512-/PpesirAIfaklxUzp4Yb7xBper9MwP6hNRA6BGGUFCgbJ+BM5CKBtsoxinNXkLHAr+GXS1/lSlF2rP7cv5Fl+g==,
             }
         engines: { node: '>= 0.6' }
+        deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
     keyv@3.1.0:
         resolution:
@@ -12560,7 +12548,7 @@ packages:
                 integrity: sha512-U1uufzBjz3+PkpCxFrWzh4OrMIdIb2ztzCu0YEPfRHjHswcSwHZswnK+WdsOQJsRV8WeTg3jLhJR4D867+fjsA==,
             }
         engines: { node: '>=10.18.1' }
-        deprecated: < 24.9.0 is no longer supported
+        deprecated: < 24.15.0 is no longer supported
 
     puppeteer@21.11.0:
         resolution:
@@ -12568,7 +12556,7 @@ packages:
                 integrity: sha512-9jTHuYe22TD3sNxy0nEIzC7ZrlRnDgeX3xPkbS7PnbdwYjl2o/z/YuCrRBwezdKpbTDTJ4VqIggzNyeRcKq3cg==,
             }
         engines: { node: '>=16.13.2' }
-        deprecated: < 24.9.0 is no longer supported
+        deprecated: < 24.15.0 is no longer supported
         hasBin: true
 
     puppeteer@22.15.0:
@@ -12577,7 +12565,7 @@ packages:
                 integrity: sha512-XjCY1SiSEi1T7iSYuxS82ft85kwDJUS7wj1Z0eGVXKdtr5g4xnVcbjwxhq5xBnpK/E7x1VZZoJDxpjAOasHT4Q==,
             }
         engines: { node: '>=18' }
-        deprecated: < 24.9.0 is no longer supported
+        deprecated: < 24.15.0 is no longer supported
         hasBin: true
 
     pure-rand@6.1.0:
@@ -15904,24 +15892,6 @@ snapshots:
     '@borewit/text-codec@0.1.1': {}
 
     '@borewit/text-codec@0.2.0': {}
-
-    '@builderbot/bot@1.3.7':
-        dependencies:
-            '@ffmpeg-installer/ffmpeg': 1.1.0
-            body-parser: 1.20.3
-            cors: 2.8.5
-            fluent-ffmpeg: 2.1.3
-            follow-redirects: 1.15.11(debug@4.4.1)
-            mime-types: 2.1.35
-            picocolors: 1.1.1
-            polka: 0.5.2
-        optionalDependencies:
-            sharp: 0.33.3
-        transitivePeerDependencies:
-            - debug
-            - supports-color
-
-    '@builderbot/cli@1.3.7': {}
 
     '@cacheable/node-cache@1.7.0':
         dependencies:
