@@ -1,7 +1,6 @@
 import { ProviderClass, utils } from '@builderbot/bot'
 import type { BotContext, Button, SendOptions } from '@builderbot/bot/dist/types'
 import type { Boom } from '@hapi/boom'
-import { WAVersion, WABrowserDescription } from 'baileys'
 import { Console } from 'console'
 import type { PathOrFileDescriptor } from 'fs'
 import { createReadStream, createWriteStream, readFileSync } from 'fs'
@@ -19,7 +18,6 @@ import {
     AnyMediaMessageContent,
     AnyMessageContent,
     BaileysEventMap,
-    PollMessageOptions,
     WAMessage,
     WASocket,
     MessageUpsertType,
@@ -32,6 +30,9 @@ import {
     makeWASocketOther,
     proto,
     useMultiFileAuthState,
+    PollMessageOptions,
+    WAVersion,
+    WABrowserDescription,
 } from './baileyWrapper'
 import { releaseTmp } from './releaseTmp'
 import type { BaileyGlobalVendorArgs } from './type'
@@ -111,82 +112,8 @@ class BaileysProvider extends ProviderClass<WASocket> {
 
         this.globalVendorArgs = { ...this.globalVendorArgs, ...args }
 
-        this.setupConsoleFilter()
         this.setupCleanupHandlers()
         this.setupPeriodicCleanup()
-    }
-
-    /**
-     * Setup console filter to simplify specific error messages
-     * @description
-     * - Override console.log, console.error, console.warn to show simplified versions of decrypt-related errors
-     * - Shows only error titles without stack traces for "Failed to decrypt message", "Bad MAC", "Session error" messages
-     * - Shows simplified messages for session management: "Closing open session", "Closing session: SessionEntry"
-     * - Other messages are displayed normally
-     */
-    private setupConsoleFilter() {
-        const originalConsoleLog = console.log
-        const originalConsoleError = console.error
-        const originalConsoleWarn = console.warn
-
-        const shouldFilterMessage = (message: string): string | false => {
-            const messageStr = String(message)
-
-            // Detectar errores de descifrado y mostrar solo el título
-            if (messageStr.includes('Failed to decrypt message')) {
-                return '[INFO] 🔐 Procesando mensaje cifrado (reintentando descifrado)'
-            }
-            if (messageStr.includes('Bad MAC') || messageStr.includes('Error: Bad MAC')) {
-                return '[INFO] 🔐 Error de autenticación del mensaje (MAC), reintentando...'
-            }
-            if (messageStr.includes('Session error')) {
-                return '[INFO] ⚠️ Error de sesión detectado, reconectando...'
-            }
-            if (messageStr.includes('decrypt message with any known session')) {
-                return '[INFO] 🔐 Sincronizando sesión de cifrado con el dispositivo'
-            }
-            if (messageStr.includes('Closing open session in favor of incoming prekey bundle')) {
-                return '[INFO] 🔄 Actualizando claves de sesión (Signal Protocol Prekey Bundle)'
-            }
-            if (messageStr.includes('Closing stale open session for new outgoing prekey bundle')) {
-                return '[INFO] 🔄 Actualizando sesión cifrada con el servidor (Signal Protocol Ratchet)'
-            }
-            if (messageStr.includes('Closing session: SessionEntry')) {
-                return '[INFO] 🔄 Actualizando sesión cifrada con el servidor (Signal Protocol Ratchet)'
-            }
-
-            return false // No filtrar
-        }
-
-        console.log = (...args: any[]) => {
-            const message = args.join(' ')
-            const filteredMessage = shouldFilterMessage(message)
-            if (filteredMessage) {
-                originalConsoleLog(filteredMessage)
-            } else {
-                originalConsoleLog.apply(console, args)
-            }
-        }
-
-        console.error = (...args: any[]) => {
-            const message = args.join(' ')
-            const filteredMessage = shouldFilterMessage(message)
-            if (filteredMessage) {
-                originalConsoleError(filteredMessage)
-            } else {
-                originalConsoleError.apply(console, args)
-            }
-        }
-
-        console.warn = (...args: any[]) => {
-            const message = args.join(' ')
-            const filteredMessage = shouldFilterMessage(message)
-            if (filteredMessage) {
-                originalConsoleWarn(filteredMessage)
-            } else {
-                originalConsoleWarn.apply(console, args)
-            }
-        }
     }
 
     /**
@@ -318,19 +245,7 @@ class BaileysProvider extends ProviderClass<WASocket> {
 
     protected getMessage = async (key: { remoteJid: string; id: string }) => {
         // only if store is present
-        // In Baileys v7.0.0+ use create(), fallback to empty object for tests
-        try {
-            if (proto.Message.create) {
-                return proto.Message.create({})
-            } else {
-                // Fallback for tests and older versions
-                return {}
-            }
-        } catch (error) {
-            // Fallback in case of any error
-            this.logger.log(`[${new Date().toISOString()}] Error in getMessage, using fallback:`, error)
-            return {}
-        }
+        return proto.Message.create({})
     }
 
     protected saveCredsGlobal: (() => Promise<void>) | null = null
@@ -370,10 +285,9 @@ class BaileysProvider extends ProviderClass<WASocket> {
                 markOnlineOnConnect: false,
                 generateHighQualityLinkPreview: true,
                 getMessage: this.getMessage,
-                msgRetryCounterCache: this.msgRetryCounterCache,
-                userDevicesCache: this.userDevicesCache as any, // NodeCache compatibility with Baileys v7.0.0+
+                msgRetryCounterCache: this.msgRetryCounterCache as any,
+                userDevicesCache: this.userDevicesCache as any,
                 retryRequestDelayMs: 1000, // Mayor delay entre reintentos
-                maxMsgRetryCount: 8, // Más intentos de reenvío
                 connectTimeoutMs: 60_000, // 1 minuto timeout conexión
                 keepAliveIntervalMs: 10_000, // Keep alive cada 10 segundos
                 qrTimeout: 40_000, // 40 segundos para QR
@@ -385,24 +299,6 @@ class BaileysProvider extends ProviderClass<WASocket> {
                     }
                     return false
                 },
-                patchMessageBeforeSending: (message: {
-                    deviceSentMessage: { message: { listMessage: { listType: proto.Message.ListMessage.ListType } } }
-                    listMessage: { listType: proto.Message.ListMessage.ListType }
-                }) => {
-                    if (
-                        message.deviceSentMessage?.message?.listMessage?.listType ===
-                        proto.Message.ListMessage.ListType.PRODUCT_LIST
-                    ) {
-                        message = JSON.parse(JSON.stringify(message))
-                        message.deviceSentMessage.message.listMessage.listType =
-                            proto.Message.ListMessage.ListType.SINGLE_SELECT
-                    }
-                    if (message.listMessage?.listType == proto.Message.ListMessage.ListType.PRODUCT_LIST) {
-                        message = JSON.parse(JSON.stringify(message))
-                        message.listMessage.listType = proto.Message.ListMessage.ListType.SINGLE_SELECT
-                    }
-                    return message
-                },
                 ...this.globalVendorArgs,
             })
 
@@ -410,17 +306,16 @@ class BaileysProvider extends ProviderClass<WASocket> {
             if (this.globalVendorArgs.usePairingCode && !sock.authState.creds.registered) {
                 if (this.globalVendorArgs.phoneNumber) {
                     const phoneNumberClean = utils.removePlus(this.globalVendorArgs.phoneNumber)
+                    const code = await sock.requestPairingCode(this.globalVendorArgs.phoneNumber)
                     await utils.delay(2000)
-                    const code = await sock.requestPairingCode(phoneNumberClean, '')
-
                     this.emit('require_action', {
                         title: '⚡⚡ ACTION REQUIRED ⚡⚡',
                         instructions: [
                             `Accept the WhatsApp notification from ${this.globalVendorArgs.phoneNumber} on your phone 👌`,
-                            `The token for linking is: ${code}`,
+                            `The pairing code is: ${code}`,
                             `Need help: https://link.codigoencasa.com/DISCORD`,
                         ],
-                        payload: { qr: null, code },
+                        payload: { code },
                     })
                 } else {
                     this.emit('auth_failure', [
@@ -494,6 +389,7 @@ class BaileysProvider extends ProviderClass<WASocket> {
                             `You must scan the QR Code`,
                             `Remember that the QR code updates every minute`,
                             `Need help: https://link.codigoencasa.com/DISCORD`,
+                            `Official documentation: https://www.builderbot.app`,
                         ],
                         payload: { qr },
                     })
@@ -522,11 +418,17 @@ class BaileysProvider extends ProviderClass<WASocket> {
      * to have a standard set of events
      * @returns
      */
-    protected busEvents = (): { event: keyof BaileysEventMap; func: (arg?: any, arg2?: any) => any }[] => [
+    protected busEvents = (): {
+        event: keyof BaileysEventMap
+        func: (arg?: any, arg2?: any) => any
+    }[] => [
         {
             event: 'messages.upsert',
             func: async (argFromProvider) => {
-                const { messages, type } = argFromProvider as { type: MessageUpsertType; messages: WAMessage[] }
+                const { messages, type } = argFromProvider as {
+                    type: MessageUpsertType
+                    messages: WAMessage[]
+                }
                 if (type !== 'notify') return
 
                 const pingMessageSync = async (_messageCtx: proto.IWebMessageInfo) => {
@@ -535,8 +437,10 @@ class BaileysProvider extends ProviderClass<WASocket> {
                             this.mapSet.add(_messageCtx?.key?.remoteJid)
                             const jid = _messageCtx?.key?.remoteJid
 
-                            await this.vendor.readMessages([_messageCtx?.key])
-                            await this.vendor.sendMessage(jid, { text: this.globalVendorArgs.experimentalSyncMessage })
+                            // Removed readMessages() call - Baileys v7 no longer sends ACKs to prevent bans
+                            await this.vendor.sendMessage(jid, {
+                                text: this.globalVendorArgs.experimentalSyncMessage,
+                            })
                         } catch (e) {
                             this.logger.log(e)
                         }
@@ -633,16 +537,11 @@ class BaileysProvider extends ProviderClass<WASocket> {
                         }
                     }
 
-                    // Extract sender using Baileys v7.0.0+ LID system with Alt fields
-                    const senderInfo = this.extractSenderWithAltFields(messageCtx?.key)
-
                     let payload = {
                         ...messageCtx,
                         body: textToBody,
                         name: messageCtx?.pushName,
-                        from: senderInfo.identifier,
-                        fromType: senderInfo.type, // 'lid', 'pn', or 'unknown'
-                        isLID: senderInfo.isLID,
+                        from: messageCtx?.key?.remoteJid,
                     }
 
                     if (messageCtx.message?.locationMessage) {
@@ -656,27 +555,45 @@ class BaileysProvider extends ProviderClass<WASocket> {
                     }
 
                     if (messageCtx.message?.videoMessage) {
-                        payload = { ...payload, body: utils.generateRefProvider('_event_media_') }
+                        payload = {
+                            ...payload,
+                            body: utils.generateRefProvider('_event_media_'),
+                        }
                     }
 
                     if (messageCtx.message?.stickerMessage) {
-                        payload = { ...payload, body: utils.generateRefProvider('_event_media_') }
+                        payload = {
+                            ...payload,
+                            body: utils.generateRefProvider('_event_media_'),
+                        }
                     }
 
                     if (messageCtx.message?.imageMessage) {
-                        payload = { ...payload, body: utils.generateRefProvider('_event_media_') }
+                        payload = {
+                            ...payload,
+                            body: utils.generateRefProvider('_event_media_'),
+                        }
                     }
 
                     if (messageCtx.message?.documentMessage || messageCtx.message?.documentWithCaptionMessage) {
-                        payload = { ...payload, body: utils.generateRefProvider('_event_document_') }
+                        payload = {
+                            ...payload,
+                            body: utils.generateRefProvider('_event_document_'),
+                        }
                     }
 
                     if (messageCtx.message?.audioMessage) {
-                        payload = { ...payload, body: utils.generateRefProvider('_event_voice_note_') }
+                        payload = {
+                            ...payload,
+                            body: utils.generateRefProvider('_event_voice_note_'),
+                        }
                     }
 
                     if (messageCtx.message?.orderMessage) {
-                        payload = { ...payload, body: utils.generateRefProvider('_event_order_') }
+                        payload = {
+                            ...payload,
+                            body: utils.generateRefProvider('_event_order_'),
+                        }
                     }
 
                     if (payload.from === 'status@broadcast') continue
@@ -781,6 +698,30 @@ class BaileysProvider extends ProviderClass<WASocket> {
     ]
 
     /**
+     *
+     * @param {string} number
+     * @param {string} text
+     * @param {string} footer
+     * @param {Array} poll
+     * @example await sendMessage("+XXXXXXXXXXX", { poll: { "name": "You accept terms", "values": [ "Yes", "Not"], "selectableCount": 1 })
+     */
+
+    sendPoll = async (numberIn: string, text: string, poll: { options: string[]; multiselect: any }) => {
+        const numberClean = baileyCleanNumber(numberIn)
+
+        if (poll.options.length < 2) return false
+
+        const pollMessage: PollMessageOptions = {
+            name: text,
+            values: poll.options,
+            selectableCount: poll?.multiselect === undefined ? 1 : poll?.multiselect ? 1 : 0,
+        }
+        return this.vendor.sendMessage(numberClean, {
+            poll: pollMessage,
+        })
+    }
+
+    /**
      * @param {string} orderId
      * @param {string} orderToken
      * @example await getOrderDetails('order-id', 'order-token')
@@ -788,6 +729,44 @@ class BaileysProvider extends ProviderClass<WASocket> {
     getOrderDetails = async (orderId: string, orderToken: string) => {
         const orderDetails = await this.vendor.getOrderDetails(orderId, orderToken)
         return orderDetails
+    }
+
+    /**
+     * Obtener LID (Local Identifier) para un número de teléfono (PN)
+     * @param {string} phoneNumber - Número de teléfono en formato JID (e.g., '1234567890@s.whatsapp.net')
+     * @returns {Promise<string|null>} - El LID correspondiente o null si no se encuentra
+     * @example await getLIDForPN('1234567890@s.whatsapp.net')
+     */
+    getLIDForPN = async (phoneNumber: string) => {
+        try {
+            const vendor = this.vendor as any
+            if (vendor?.signalRepository?.lidMapping?.getLIDForPN) {
+                return await vendor.signalRepository.lidMapping.getLIDForPN(phoneNumber)
+            }
+            return null
+        } catch (e) {
+            this.logger.log(`[${new Date().toISOString()}] Error getting LID for PN:`, e)
+            return null
+        }
+    }
+
+    /**
+     * Obtener número de teléfono (PN) para un LID (Local Identifier)
+     * @param {string} lid - Local Identifier
+     * @returns {Promise<string|null>} - El número de teléfono correspondiente o null si no se encuentra
+     * @example await getPNForLID('lid:xxxxxx')
+     */
+    getPNForLID = async (lid: string) => {
+        try {
+            const vendor = this.vendor as any
+            if (vendor?.signalRepository?.lidMapping?.getPNForLID) {
+                return await vendor.signalRepository.lidMapping.getPNForLID(lid)
+            }
+            return null
+        } catch (e) {
+            this.logger.log(`[${new Date().toISOString()}] Error getting PN for LID:`, e)
+            return null
+        }
     }
 
     /**
@@ -885,8 +864,7 @@ class BaileysProvider extends ProviderClass<WASocket> {
             caption: text,
         }
 
-        this.logger.log(`[${new Date().toISOString()}] Sending file to: ${resolvedNumber} (original: ${number})`)
-        return this.vendor.sendMessage(resolvedNumber, payload)
+        return this.vendor.sendMessage(number, payload)
     }
 
     /**
@@ -922,30 +900,6 @@ class BaileysProvider extends ProviderClass<WASocket> {
         }
 
         return this.vendor.sendMessage(numberClean, buttonMessage)
-    }
-
-    /**
-     *
-     * @param {string} number
-     * @param {string} text
-     * @param {string} footer
-     * @param {Array} poll
-     * @example await sendMessage("+XXXXXXXXXXX", { poll: { "name": "You accept terms", "values": [ "Yes", "Not"], "selectableCount": 1 })
-     */
-
-    sendPoll = async (numberIn: string, text: string, poll: { options: string[]; multiselect: any }) => {
-        const numberClean = baileyCleanNumber(numberIn)
-
-        if (poll.options.length < 2) return false
-
-        const pollMessage: PollMessageOptions = {
-            name: text,
-            values: poll.options,
-            selectableCount: poll?.multiselect === undefined ? 1 : poll?.multiselect ? 1 : 0,
-        }
-        return this.vendor.sendMessage(numberClean, {
-            poll: pollMessage,
-        })
     }
 
     /**

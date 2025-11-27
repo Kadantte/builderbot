@@ -11,48 +11,19 @@ const emptyDirSessions = async (pathBase: string) =>
             resolve(true)
         })
     })
-
 /**
- * Cleans and extracts the identifier from MessageKey.
- * Baileys handles LID automatically, we just extract the available identifier.
- * @param key The MessageKey object from Baileys
- * @returns The identifier
- */
-function baileyCleanNumberWithLid(key: { remoteJid?: string; participant?: string }): string {
-    // For groups: use participant
-    if (key.participant) {
-        return key.participant
-    }
-    // For DMs: use remoteJid
-    if (key.remoteJid) {
-        return key.remoteJid
-    }
-    return ''
-}
-
-/**
- * Cleans the WhatsApp number format. Baileys handles LID automatically.
+ * Cleans the WhatsApp number format.
  * @param number The WhatsApp number to be cleaned.
  * @param full Whether to return the full number format or not.
  * @returns The cleaned number.
  */
 const baileyCleanNumber = (number: string, full: boolean = false): string => {
-    // Handle group chats - return as is
     const regexGroup: RegExp = /\@g.us\b/gm
-    const existGroup = number.match(regexGroup)
-    if (existGroup) return number
-
-    // Handle any WhatsApp format - return as is (includes @lid, @s.whatsapp.net, etc.)
-    if (number.includes('@')) {
-        if (full) {
-            return number.split('@')[0].replace('+', '').replace(/\s/g, '')
-        }
-        return number
-    }
-
-    // Clean and format raw phone number
-    const cleanedNumber = number.replace('+', '').replace(/\s/g, '')
-    return full ? cleanedNumber : `${cleanedNumber}@s.whatsapp.net`
+    const exist = number.match(regexGroup)
+    if (exist) return number
+    number = number.replace('@s.whatsapp.net', '').replace('+', '').replace(/\s/g, '')
+    number = !full ? `${number}@s.whatsapp.net` : number
+    return number
 }
 
 /**
@@ -76,29 +47,15 @@ const baileyGenerateImage = async (base64: string, name: string = 'qr.png'): Pro
 }
 
 /**
- * Validates if the given identifier is a valid WhatsApp user identifier and not a group ID.
- * @param rawIdentifier The identifier to validate
- * @returns True if it's a valid user identifier, false otherwise
+ * Validates if the given number is a valid WhatsApp number and not a group ID.
+ * @param rawNumber The number to validate.
+ * @returns True if it's a valid number, false otherwise.
  */
-const baileyIsValidNumber = (rawIdentifier: string): boolean => {
-    if (!rawIdentifier || typeof rawIdentifier !== 'string') {
-        return false
-    }
-
-    // Exclude group chats
+const baileyIsValidNumber = (rawNumber: string): boolean => {
+    if (!rawNumber || rawNumber.trim() === '') return false
     const regexGroup: RegExp = /\@g.us\b/gm
-    const isGroup = rawIdentifier.match(regexGroup)
-    if (isGroup) return false
-
-    // Exclude broadcast lists
-    if (rawIdentifier.includes('@broadcast')) return false
-
-    // Accept any WhatsApp format (Baileys handles @lid, @s.whatsapp.net automatically)
-    if (rawIdentifier.includes('@')) return true
-
-    // For raw numbers, consider them valid if they look like phone numbers
-    const cleanNumber = rawIdentifier.replace(/\D/g, '')
-    return cleanNumber.length >= 10 && cleanNumber.length <= 15
+    const exist = rawNumber.match(regexGroup)
+    return !exist
 }
 
-export { baileyCleanNumber, baileyGenerateImage, baileyIsValidNumber, emptyDirSessions, baileyCleanNumberWithLid }
+export { baileyCleanNumber, baileyGenerateImage, baileyIsValidNumber, emptyDirSessions }
