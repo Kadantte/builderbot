@@ -36,13 +36,7 @@ import {
 } from './baileyWrapper'
 import { releaseTmp } from './releaseTmp'
 import type { BaileyGlobalVendorArgs } from './type'
-import {
-    baileyGenerateImage,
-    baileyCleanNumber,
-    baileyIsValidNumber,
-    emptyDirSessions,
-    baileyCleanNumberWithLid,
-} from './utils'
+import { baileyGenerateImage, baileyCleanNumber, baileyIsValidNumber, emptyDirSessions } from './utils'
 
 class BaileysProvider extends ProviderClass<WASocket> {
     public globalVendorArgs: BaileyGlobalVendorArgs = {
@@ -1048,46 +1042,6 @@ class BaileysProvider extends ProviderClass<WASocket> {
         const pathFile = join(options?.path ?? tmpdir(), fileName)
         await writeFile(pathFile, buffer)
         return resolve(pathFile)
-    }
-
-    /**
-     * Extracts sender information from MessageKey. Baileys handles LID automatically.
-     * @param key MessageKey from Baileys
-     * @returns Object with identifier and basic type info
-     */
-    private extractSenderWithAltFields(key: any): {
-        identifier: string
-        type: 'lid' | 'pn' | 'unknown'
-        isLID: boolean
-    } {
-        try {
-            const identifier = baileyCleanNumberWithLid(key)
-
-            if (!identifier) {
-                return {
-                    identifier: '',
-                    type: 'unknown',
-                    isLID: false,
-                }
-            }
-
-            // Determine type based on identifier format
-            const isLID = identifier.includes('@lid')
-            const type = isLID ? 'lid' : identifier.includes('@s.whatsapp.net') ? 'pn' : 'unknown'
-
-            return {
-                identifier: baileyCleanNumber(identifier),
-                type,
-                isLID,
-            }
-        } catch (error) {
-            this.logger.log(`[${new Date().toISOString()}] Error extracting sender:`, error)
-            return {
-                identifier: baileyCleanNumberWithLid(key),
-                type: 'unknown',
-                isLID: false,
-            }
-        }
     }
 
     private shouldReconnect(statusCode: number): boolean {
