@@ -58,7 +58,7 @@
         "body-parser": "^1.20.2",
         "polka": "^0.5.2",
         "sharp": "0.33.3",
-        "venom-bot": "~5.1.0"
+        "venom-bot": "~5.3.0"
     },
     "gitHead": "1aeef80914d0fa6d23f8a5787998559a5912f110"
 }
