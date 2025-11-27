@@ -246,7 +246,7 @@ describe('InstagramProvider', () => {
         })
 
         it('should process incoming webhook correctly', () => {
-            ;(provider as any).ctrlInMsg(mockReq, mockRes)
+            (provider as any).ctrlInMsg(mockReq, mockRes)
 
             expect(provider.vendor.eventInMsg).toHaveBeenCalledWith(mockReq.body)
             expect(mockRes.end).toHaveBeenCalledWith('EVENT_RECEIVED')
