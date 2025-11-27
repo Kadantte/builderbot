@@ -78,7 +78,7 @@
     "sharp": "0.33.3",
     "tslib": "^2.8.1",
     "typescript": "^5.9.3",
-    "whaileys": "6.4.3"
+    "whaileys": "6.3.8"
   },
   "gitHead": "1aeef80914d0fa6d23f8a5787998559a5912f110"
 }
