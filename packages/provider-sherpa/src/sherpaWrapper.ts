@@ -1,7 +1,6 @@
 import makeWASocketOther, {
     useMultiFileAuthState,
     DisconnectReason,
-    proto,
     makeCacheableSignalKeyStore,
     getAggregateVotesInPollMessage,
     WASocket,
@@ -14,6 +13,7 @@ import makeWASocketOther, {
     isJidGroup,
     isJidBroadcast,
 } from 'whaileys'
+import { proto } from 'whaileys/WAProto'
 
 export {
     makeWASocketOther,

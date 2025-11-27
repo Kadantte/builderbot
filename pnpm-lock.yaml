@@ -19144,7 +19144,7 @@ snapshots:
 
     '@tokenizer/inflate@0.2.7':
         dependencies:
-            debug: 4.4.1
+            debug: 4.4.3
             fflate: 0.8.2
             token-types: 6.1.1
         transitivePeerDependencies:
@@ -24131,7 +24131,7 @@ snapshots:
             '@borewit/text-codec': 0.2.0
             '@tokenizer/token': 0.3.0
             content-type: 1.0.5
-            debug: 4.4.1
+            debug: 4.4.3
             file-type: 21.0.0
             media-typer: 1.1.0
             strtok3: 10.3.4
@@ -24144,7 +24144,7 @@ snapshots:
         dependencies:
             '@tokenizer/token': 0.3.0
             content-type: 1.0.5
-            debug: 4.4.1
+            debug: 4.4.3
             file-type: 16.5.4
             media-typer: 1.1.0
             strtok3: 6.3.0
@@ -25167,7 +25167,7 @@ snapshots:
             jsdoc: 4.0.5
             minimist: 1.2.8
             protobufjs: 7.5.4
-            semver: 7.7.2
+            semver: 7.7.3
             tmp: 0.2.5
             uglify-js: 3.19.3
 
