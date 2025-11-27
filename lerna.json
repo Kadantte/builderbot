@@ -13,6 +13,7 @@
     "packages/provider-evolution-api",
     "packages/provider-baileys",
     "packages/provider-facebook-messenger",
+    "packages/provider-sherpa",
     "packages/provider-twilio",
     "packages/provider-web-whatsapp",
     "packages/provider-wppconnect",
