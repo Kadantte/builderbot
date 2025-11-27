@@ -26,6 +26,7 @@ export const PROVIDER_LIST: Provider[] = [
     { value: 'twilio', label: 'Twilio' },
     { value: 'meta', label: 'Meta' },
     { value: 'facebook-messenger', label: 'Facebook Messenger' },
+    { value: 'instagram', label: 'Instagram' },
 ]
 
 export const PROVIDER_DATA: ValueLabel[] = [
