@@ -46,6 +46,8 @@
         "uvu": "^0.5.6"
     },
     "dependencies": {
+        "@ffmpeg-installer/ffmpeg": "^1.1.0",
+        "fluent-ffmpeg": "^2.1.3",
         "polka": "^0.5.2",
         "zod": "^3.23.8"
     },
