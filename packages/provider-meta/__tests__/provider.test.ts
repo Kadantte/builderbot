@@ -1,7 +1,8 @@
+import { utils } from '@builderbot/bot'
 import { beforeEach, describe, expect, jest, test } from '@jest/globals'
 import axios from 'axios'
 import mime from 'mime-types'
-import { utils } from '@builderbot/bot'
+
 import { MetaProvider } from '../src/meta/provider'
 import { Localization, MetaGlobalVendorArgs, MetaList, ParsedContact, WhatsAppProfile } from '../src/types'
 import { downloadFile } from '../src/utils'

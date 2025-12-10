@@ -1,9 +1,10 @@
+import { utils } from '@builderbot/bot'
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals'
 import { writeFile } from 'fs/promises'
-import { utils } from '@builderbot/bot'
-import path from 'path'
 import mime from 'mime-types'
+import path from 'path'
 import venom from 'venom-bot'
+
 import { VenomProvider } from '../src'
 
 const phoneNumber = '1234567890'

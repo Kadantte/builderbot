@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals'
 import Queue from 'queue-promise'
+
 import { MetaCoreVendor } from '../src/meta/core'
 import { Message } from '../src/types'
 
