@@ -565,6 +565,14 @@ class SherpaProvider extends ProviderClass<WASocket> {
                     const fromParse = remoteJid?.includes('@lid') ? remoteJidAlt : remoteJid
                     const from = senderPhoneNumber ? senderPhoneNumber : senderLid ? senderLid : fromParse
 
+                    console.log('from', from)
+                    console.log('senderPhoneNumber', senderPhoneNumber)
+                    console.log('senderLid', senderLid)
+                    console.log('fromParse', fromParse)
+                    console.log('remoteJid', remoteJid)
+                    console.log('remoteJidAlt', remoteJidAlt)
+                    console.log('messageCtx', messageCtx)
+
                     let payload = {
                         ...messageCtx,
                         body: textToBody,
