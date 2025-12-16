@@ -560,13 +560,16 @@ class SherpaProvider extends ProviderClass<WASocket> {
                     // Buscar siempre el que tenga formato @s.whatsapp.net (puede estar en remoteJid o remoteJidAlt)
                     const remoteJid = (messageCtx?.key as any)?.remoteJid
                     const remoteJidAlt = (messageCtx?.key as any)?.remoteJidAlt
+                    const senderPhoneNumber = messageCtx?.key?.senderPn
+                    const senderLid = messageCtx?.key?.senderLid
                     const fromParse = remoteJid?.includes('@lid') ? remoteJidAlt : remoteJid
+                    const from = senderPhoneNumber ? senderPhoneNumber : senderLid ? senderLid : fromParse
 
                     let payload = {
                         ...messageCtx,
                         body: textToBody,
                         name: messageCtx?.pushName,
-                        from: baileyCleanNumber(fromParse),
+                        from: baileyCleanNumber(from),
                     }
 
                     if (messageCtx.message?.locationMessage) {
