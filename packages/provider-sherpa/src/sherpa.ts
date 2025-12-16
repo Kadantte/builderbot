@@ -439,13 +439,9 @@ class SherpaProvider extends ProviderClass<WASocket> {
     private extractFromFromMessage(messageCtx: WAMessage): string | undefined {
         const remoteJid = (messageCtx?.key as any)?.remoteJid
         const remoteJidAlt = (messageCtx?.key as any)?.remoteJidAlt
-        const senderPhoneNumber = messageCtx?.key?.senderPn
-        const senderLid = messageCtx?.key?.senderLid
-
         // Si remoteJid contiene @lid, usar remoteJidAlt si existe, sino extraer el número de remoteJid
         const fromParse = remoteJid?.includes('@lid') ? remoteJidAlt || remoteJid?.split('@')[0] : remoteJid
-
-        return senderPhoneNumber ? senderPhoneNumber : senderLid ? senderLid : fromParse
+        return fromParse
     }
 
     /**
