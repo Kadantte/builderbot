@@ -63,6 +63,7 @@ class BaileysProvider extends ProviderClass<WASocket> {
 
     msgRetryCounterCache?: NodeCache
     userDevicesCache?: NodeCache
+    messageCache?: NodeCache
 
     private logger: Console
     private logStream: NodeJS.WritableStream
@@ -98,6 +99,17 @@ class BaileysProvider extends ProviderClass<WASocket> {
             stdTTL: 7200, // 2 horas (dispositivos cambian poco)
             checkperiod: 600, // Limpieza cada 10 minutos
             maxKeys: 5000, // Más dispositivos
+            deleteOnExpire: true,
+            useClones: false,
+            forceString: false,
+            errorOnMissing: false,
+        })
+
+        // Cache para almacenar mensajes enviados (soluciona el problema "this message can take a while" en iOS)
+        this.messageCache = new NodeCache({
+            stdTTL: 43200, // 12 horas (optimizado para alto volumen)
+            checkperiod: 1800, // Limpieza cada 30 minutos
+            maxKeys: 20000, // 20K mensajes
             deleteOnExpire: true,
             useClones: false,
             forceString: false,
@@ -183,6 +195,11 @@ class BaileysProvider extends ProviderClass<WASocket> {
                 this.userDevicesCache = undefined
             }
 
+            if (this.messageCache) {
+                this.messageCache.close()
+                this.messageCache = undefined
+            }
+
             this.mapSet.clear()
             this.idsDuplicates.length = 0
 
@@ -237,9 +254,16 @@ class BaileysProvider extends ProviderClass<WASocket> {
         }
     }
 
-    protected getMessage = async (key: { remoteJid: string; id: string }) => {
-        // only if store is present
-        return proto.Message.create({})
+    protected getMessage = async (key: { remoteJid: string; id: string }): Promise<proto.IMessage | undefined> => {
+        if (!key.id) return undefined
+
+        // Intentar recuperar el mensaje del cache
+        const cachedMessage = this.messageCache?.get<proto.IMessage>(`msg:${key.id}`)
+        if (cachedMessage) {
+            return cachedMessage
+        }
+
+        return undefined
     }
 
     protected saveCredsGlobal: (() => Promise<void>) | null = null
@@ -442,6 +466,11 @@ class BaileysProvider extends ProviderClass<WASocket> {
                 }
 
                 for (const messageCtx of messages) {
+                    // Almacenar mensaje en cache para poder recuperarlo en getMessage (soluciona iOS "this message can take a while")
+                    if (messageCtx?.key?.id && messageCtx?.message) {
+                        this.messageCache?.set(`msg:${messageCtx.key.id}`, messageCtx.message)
+                    }
+
                     if (
                         messageCtx?.messageStubParameters?.length &&
                         messageCtx.messageStubParameters[0].includes('absent')
