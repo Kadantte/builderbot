@@ -1,11 +1,12 @@
 import { utils } from '@builderbot/bot'
 
+import { parseGHLNumber } from './number'
 import type { GHLMessage, GHLIncomingWebhook } from '~/types'
 
 export const processIncomingMessage = (webhook: GHLIncomingWebhook): GHLMessage | null => {
     if (!webhook || webhook.direction !== 'inbound') return null
 
-    const phone = webhook.phone?.replace(/\+/g, '') ?? ''
+    const phone = parseGHLNumber(webhook.phone ?? '')
     const name = webhook.contactId ?? phone
     const hasAttachments = webhook.attachments && webhook.attachments.length > 0
 
@@ -36,6 +37,8 @@ export const processIncomingMessage = (webhook: GHLIncomingWebhook): GHLMessage 
         }
     }
 
+    const timestamp = webhook.dateAdded ? new Date(webhook.dateAdded).getTime() : Date.now()
+
     const message: GHLMessage = {
         type,
         from: phone,
@@ -44,7 +47,7 @@ export const processIncomingMessage = (webhook: GHLIncomingWebhook): GHLMessage 
         name,
         pushName: name,
         message_id: webhook.messageId,
-        timestamp: webhook.dateAdded ? new Date(webhook.dateAdded).getTime() : Date.now(),
+        timestamp: isNaN(timestamp) ? Date.now() : timestamp,
         contactId: webhook.contactId,
         conversationId: webhook.conversationId,
         channelType: webhook.messageType as GHLMessage['channelType'],

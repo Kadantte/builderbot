@@ -53,6 +53,27 @@ describe('#GoHighLevelProvider', () => {
         test('should initialize contactResolver', () => {
             expect(provider.contactResolver).toBeDefined()
         })
+
+        test('should throw if clientId is missing', () => {
+            expect(() => new GoHighLevelProvider({
+                ...globalVendorArgs,
+                clientId: '',
+            })).toThrow('[GoHighLevel] clientId and clientSecret are required')
+        })
+
+        test('should throw if clientSecret is missing', () => {
+            expect(() => new GoHighLevelProvider({
+                ...globalVendorArgs,
+                clientSecret: '',
+            })).toThrow('[GoHighLevel] clientId and clientSecret are required')
+        })
+
+        test('should throw if locationId is missing', () => {
+            expect(() => new GoHighLevelProvider({
+                ...globalVendorArgs,
+                locationId: '',
+            })).toThrow('[GoHighLevel] locationId is required')
+        })
     })
 
     describe('#getAuthorizationUrl', () => {
@@ -92,7 +113,7 @@ describe('#GoHighLevelProvider', () => {
             expect(responseData).toEqual(fakeResponseData)
         })
 
-        test('should return error when API call fails', async () => {
+        test('should throw when API call fails', async () => {
             const fakeBody = {
                 type: 'SMS' as const,
                 contactId: 'contact_123',
@@ -101,20 +122,19 @@ describe('#GoHighLevelProvider', () => {
             const error = new Error('Network error')
             ;(axios.post as jest.MockedFunction<typeof axios.post>).mockRejectedValue(error)
 
-            const result = await provider.sendMessageToApi(fakeBody)
-            expect(result).toBe(error)
+            await expect(provider.sendMessageToApi(fakeBody)).rejects.toThrow('Network error')
         })
     })
 
     describe('#sendText', () => {
-        test('should resolve contactId and send text message', async () => {
+        test('should resolve contactId and send text message via queue', async () => {
             jest.spyOn(provider, 'resolveContactId').mockResolvedValue('contact_123')
-            jest.spyOn(provider, 'sendMessageToApi').mockResolvedValue({ success: true })
+            jest.spyOn(provider, 'sendMessageGHL').mockResolvedValue({ success: true })
 
             await provider.sendText('1234567890', 'Hello, World!')
 
             expect(provider.resolveContactId).toHaveBeenCalledWith('1234567890')
-            expect(provider.sendMessageToApi).toHaveBeenCalledWith({
+            expect(provider.sendMessageGHL).toHaveBeenCalledWith({
                 type: 'SMS',
                 contactId: 'contact_123',
                 message: 'Hello, World!',
@@ -288,6 +308,18 @@ describe('#GoHighLevelProvider', () => {
                 'test_access_token'
             )
             expect(result).toBe('contact_123')
+        })
+    })
+
+    describe('#stop', () => {
+        test('should destroy tokenManager and clear cache', () => {
+            jest.spyOn(provider.tokenManager, 'destroy')
+            jest.spyOn(provider.contactResolver, 'clearCache')
+
+            provider.stop()
+
+            expect(provider.tokenManager.destroy).toHaveBeenCalled()
+            expect(provider.contactResolver.clearCache).toHaveBeenCalled()
         })
     })
 })

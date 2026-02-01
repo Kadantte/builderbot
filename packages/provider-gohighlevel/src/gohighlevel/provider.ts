@@ -23,7 +23,7 @@ class GoHighLevelProvider extends ProviderClass<GoHighLevelInterface> implements
     public vendor: Vendor<any>
     public queue: Queue = new Queue()
     public tokenManager: TokenManager
-    public contactResolver: ContactResolver = new ContactResolver()
+    public contactResolver: ContactResolver
 
     public globalVendorArgs: GHLGlobalVendorArgs = {
         name: 'bot',
@@ -39,6 +39,14 @@ class GoHighLevelProvider extends ProviderClass<GoHighLevelInterface> implements
     constructor(args: GHLGlobalVendorArgs) {
         super()
         this.globalVendorArgs = { ...this.globalVendorArgs, ...args }
+
+        if (!this.globalVendorArgs.clientId || !this.globalVendorArgs.clientSecret) {
+            throw new Error('[GoHighLevel] clientId and clientSecret are required')
+        }
+        if (!this.globalVendorArgs.locationId) {
+            throw new Error('[GoHighLevel] locationId is required')
+        }
+
         this.queue = new Queue({
             concurrent: 1,
             interval: 100,
@@ -49,6 +57,7 @@ class GoHighLevelProvider extends ProviderClass<GoHighLevelInterface> implements
             this.globalVendorArgs.clientSecret,
             this.globalVendorArgs.redirectUri
         )
+        this.contactResolver = new ContactResolver(this.globalVendorArgs.apiVersion)
 
         if (this.globalVendorArgs.accessToken) {
             this.tokenManager.setTokens({
@@ -60,14 +69,7 @@ class GoHighLevelProvider extends ProviderClass<GoHighLevelInterface> implements
     }
 
     protected beforeHttpServerInit(): void {
-        this.server = this.server
-            .use((req, _, next) => {
-                req['globalVendorArgs'] = this.globalVendorArgs
-                return next()
-            })
-            .get('/', this.vendor.indexHome)
-            .get('/oauth/callback', this.vendor.oauthCallback)
-            .post('/webhook', this.vendor.incomingMsg)
+        // Routes are registered in initVendor() to avoid duplicates
     }
 
     protected async afterHttpServerInit(): Promise<void> {
@@ -114,6 +116,7 @@ class GoHighLevelProvider extends ProviderClass<GoHighLevelInterface> implements
                 req['globalVendorArgs'] = this.globalVendorArgs
                 return next()
             })
+            .get('/', vendor.indexHome)
             .get('/oauth/callback', vendor.oauthCallback)
             .post('/webhook', vendor.incomingMsg)
 
@@ -124,6 +127,12 @@ class GoHighLevelProvider extends ProviderClass<GoHighLevelInterface> implements
 
         this.vendor = vendor
         return Promise.resolve(this.vendor)
+    }
+
+    public async stop(): Promise<void> {
+        this.tokenManager.destroy()
+        this.contactResolver.clearCache()
+        await super.stop()
     }
 
     public getAuthorizationUrl(): string {
@@ -210,7 +219,7 @@ class GoHighLevelProvider extends ProviderClass<GoHighLevelInterface> implements
             body.conversationProviderId = this.globalVendorArgs.conversationProviderId
         }
 
-        return this.sendMessageToApi(body)
+        return this.sendMessageGHL(body)
     }
 
     sendMedia = async (to: string, text: string = '', mediaInput: string): Promise<any> => {
@@ -238,7 +247,7 @@ class GoHighLevelProvider extends ProviderClass<GoHighLevelInterface> implements
             body.conversationProviderId = this.globalVendorArgs.conversationProviderId
         }
 
-        return this.sendMessageToApi(body)
+        return this.sendMessageGHL(body)
     }
 
     sendButtons = async (to: string, buttons: Button[] = [], text: string): Promise<any> => {
@@ -256,33 +265,32 @@ class GoHighLevelProvider extends ProviderClass<GoHighLevelInterface> implements
     }
 
     sendMessageGHL = (body: GHLSendMessageBody): Promise<any> => {
-        return new Promise((resolve) =>
+        return new Promise((resolve, reject) =>
             this.queue.add(async () => {
-                const resp = await this.sendMessageToApi(body)
-                resolve(resp)
+                try {
+                    const resp = await this.sendMessageToApi(body)
+                    resolve(resp)
+                } catch (error) {
+                    reject(error)
+                }
             })
         )
     }
 
     sendMessageToApi = async (body: GHLSendMessageBody): Promise<any> => {
-        try {
-            const token = await this.tokenManager.getValidToken()
-            const response = await axios.post(
-                `${GHL_API_URL}/conversations/messages`,
-                body,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        Version: this.globalVendorArgs.apiVersion,
-                        'Content-Type': 'application/json',
-                    },
-                }
-            )
-            return response.data
-        } catch (error) {
-            console.error(`[GoHighLevel] sendMessageToApi error:`, error?.response?.data || error.message)
-            return error
-        }
+        const token = await this.tokenManager.getValidToken()
+        const response = await axios.post(
+            `${GHL_API_URL}/conversations/messages`,
+            body,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    Version: this.globalVendorArgs.apiVersion,
+                    'Content-Type': 'application/json',
+                },
+            }
+        )
+        return response.data
     }
 }
 

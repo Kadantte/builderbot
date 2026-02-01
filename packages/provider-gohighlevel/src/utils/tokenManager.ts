@@ -13,6 +13,7 @@ export class TokenManager extends EventEmitter {
     private redirectUri: string
     private expiresAt: number = 0
     private refreshTimer: ReturnType<typeof setTimeout> | null = null
+    private refreshPromise: Promise<GHLOAuthTokens> | null = null
 
     constructor(clientId: string, clientSecret: string, redirectUri: string = '') {
         super()
@@ -66,6 +67,21 @@ export class TokenManager extends EventEmitter {
         if (!this.refreshToken) {
             throw new Error('No refresh token available')
         }
+
+        // Mutex: if a refresh is already in progress, return the same promise
+        if (this.refreshPromise) {
+            return this.refreshPromise
+        }
+
+        this.refreshPromise = this._doRefresh()
+        try {
+            return await this.refreshPromise
+        } finally {
+            this.refreshPromise = null
+        }
+    }
+
+    private async _doRefresh(): Promise<GHLOAuthTokens> {
         try {
             const response = await axios.post(
                 GHL_AUTH_URL,
@@ -98,7 +114,7 @@ export class TokenManager extends EventEmitter {
 
     private scheduleRefresh(expiresIn: number): void {
         if (this.refreshTimer) clearTimeout(this.refreshTimer)
-        // Refresh 5 minutes before expiry
+        // Refresh 5 minutes before expiry, minimum 1 minute
         const refreshIn = Math.max((expiresIn - 300) * 1000, 60000)
         this.refreshTimer = setTimeout(async () => {
             try {
@@ -107,6 +123,10 @@ export class TokenManager extends EventEmitter {
                 this.emit('token_error', error)
             }
         }, refreshIn)
+        // Allow process to exit even if timer is pending
+        if (this.refreshTimer && typeof this.refreshTimer === 'object' && 'unref' in this.refreshTimer) {
+            this.refreshTimer.unref()
+        }
     }
 
     destroy(): void {
@@ -114,5 +134,6 @@ export class TokenManager extends EventEmitter {
             clearTimeout(this.refreshTimer)
             this.refreshTimer = null
         }
+        this.refreshPromise = null
     }
 }
