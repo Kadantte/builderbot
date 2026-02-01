@@ -306,13 +306,15 @@ class SherpaProvider extends ProviderClass<WASocket> {
                 if (this.globalVendorArgs.phoneNumber) {
                     const phoneNumberClean = utils.removePlus(this.globalVendorArgs.phoneNumber)
                     await utils.delay(2000)
+                    const code = await this.vendor.requestPairingCode(phoneNumberClean)
                     this.emit('require_action', {
                         title: '⚡⚡ ACTION REQUIRED ⚡⚡',
                         instructions: [
                             `Accept the WhatsApp notification from ${this.globalVendorArgs.phoneNumber} on your phone 👌`,
+                            `The pairing code is: ${code}`,
                             `Need help: https://link.codigoencasa.com/DISCORD`,
                         ],
-                        payload: { qr: null },
+                        payload: { qr: null, code: code },
                     })
                 } else {
                     this.emit('auth_failure', [

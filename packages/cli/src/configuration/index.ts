@@ -28,6 +28,7 @@ export const PROVIDER_LIST: Provider[] = [
     { value: 'facebook-messenger', label: 'Facebook Messenger' },
     { value: 'instagram', label: 'Instagram' },
     { value: 'gohighlevel', label: 'GoHighLevel' },
+    { value: 'email', label: 'Email', hint: 'IMAP/SMTP' },
 ]
 
 export const PROVIDER_DATA: ValueLabel[] = [
