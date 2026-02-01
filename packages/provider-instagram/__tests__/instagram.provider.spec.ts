@@ -17,6 +17,7 @@ jest.mock('@builderbot/bot', () => ({
 jest.mock('../src/instagram.events', () => ({
     InstagramEvents: jest.fn().mockImplementation(() => ({
         eventInMsg: jest.fn(),
+        setListenMode: jest.fn(),
         emitter: {},
         emit: jest.fn(),
         on: jest.fn(),
@@ -91,6 +92,21 @@ describe('InstagramProvider', () => {
             expect(() => new InstagramProvider({ ...mockConfig, verifyToken: undefined as any })).toThrow(
                 'Must provide Instagram Verify Token'
             )
+        })
+
+        it('should default listenMode to message', () => {
+            const provider = new InstagramProvider(mockConfig)
+            expect(provider.globalVendorArgs.listenMode).toBe('message')
+        })
+
+        it('should accept listenMode configuration', () => {
+            const provider = new InstagramProvider({ ...mockConfig, listenMode: 'both' })
+            expect(provider.globalVendorArgs.listenMode).toBe('both')
+        })
+
+        it('should accept comment listenMode', () => {
+            const provider = new InstagramProvider({ ...mockConfig, listenMode: 'comment' })
+            expect(provider.globalVendorArgs.listenMode).toBe('comment')
         })
     })
 
@@ -321,6 +337,73 @@ describe('InstagramProvider', () => {
                     title: '❌ CONNECTION FAILED ❌',
                 })
             )
+        })
+    })
+
+    describe('replyComment', () => {
+        let provider: InstagramProvider
+
+        beforeEach(() => {
+            provider = new InstagramProvider(mockConfig)
+        })
+
+        it('should reply to a comment successfully', async () => {
+            const axios = require('axios')
+            axios.post.mockResolvedValue({
+                status: 200,
+                data: { id: 'reply_123' },
+            })
+
+            const result = await provider.replyComment('comment_456', 'Thanks for your comment!')
+
+            expect(axios.post).toHaveBeenCalledWith(
+                `https://graph.instagram.com/${mockConfig.version}/comment_456/replies`,
+                expect.objectContaining({
+                    message: 'Thanks for your comment!',
+                    access_token: mockConfig.accessToken,
+                })
+            )
+            expect(result).toEqual({ id: 'reply_123' })
+        })
+
+        it('should handle reply comment error', async () => {
+            const axios = require('axios')
+            axios.post.mockRejectedValue({
+                response: { data: 'API Error' },
+                message: 'Network error',
+            })
+
+            await expect(provider.replyComment('comment_456', 'Reply')).rejects.toThrow(
+                'Failed to reply to comment'
+            )
+        })
+    })
+
+    describe('sendCommentDM', () => {
+        let provider: InstagramProvider
+
+        beforeEach(() => {
+            provider = new InstagramProvider(mockConfig)
+        })
+
+        it('should send a DM via sendCommentDM', async () => {
+            const axios = require('axios')
+            axios.post.mockResolvedValue({
+                status: 200,
+                data: { message_id: 'msg_789' },
+            })
+
+            const result = await provider.sendCommentDM('user123', 'Hey, saw your comment!')
+
+            expect(axios.post).toHaveBeenCalledWith(
+                `https://graph.instagram.com/${mockConfig.version}/${mockConfig.igAccountId}/messages`,
+                expect.objectContaining({
+                    recipient: { id: 'user123' },
+                    message: { text: 'Hey, saw your comment!' },
+                    access_token: mockConfig.accessToken,
+                })
+            )
+            expect(result).toEqual({ message_id: 'msg_789' })
         })
     })
 

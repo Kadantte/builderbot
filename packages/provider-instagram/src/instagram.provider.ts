@@ -7,7 +7,7 @@ import { tmpdir } from 'os'
 import { join, resolve } from 'path'
 import type { Middleware } from 'polka'
 
-import { InstagramEvents } from './instagram.events'
+import { InstagramEvents, InstagramListenMode } from './instagram.events'
 
 const INSTAGRAM_API_URL = 'https://graph.instagram.com/'
 
@@ -16,6 +16,7 @@ export type InstagramArgs = GlobalVendorArgs & {
     igAccountId: string
     version?: string
     verifyToken: string
+    listenMode?: InstagramListenMode
 }
 
 /**
@@ -30,6 +31,7 @@ class InstagramProvider extends ProviderClass<InstagramEvents> {
         igAccountId: undefined,
         version: 'v19.0',
         verifyToken: undefined,
+        listenMode: 'message',
     }
 
     constructor(args?: InstagramArgs) {
@@ -49,6 +51,7 @@ class InstagramProvider extends ProviderClass<InstagramEvents> {
 
     protected async initVendor(): Promise<any> {
         const vendor = new InstagramEvents()
+        vendor.setListenMode(this.globalVendorArgs.listenMode || 'message')
         this.vendor = vendor
         this.server = this.server.post('/webhook', this.ctrlInMsg).get('/webhook', this.ctrlVerify)
 
@@ -320,6 +323,38 @@ class InstagramProvider extends ProviderClass<InstagramEvents> {
             })
             throw new Error('Failed to send quick replies')
         }
+    }
+
+    /**
+     * Reply to a comment on a media post
+     * @param commentId - The ID of the comment to reply to
+     * @param message - The reply text
+     */
+    replyComment = async (commentId: string, message: string): Promise<any> => {
+        const url = `${INSTAGRAM_API_URL}${this.globalVendorArgs.version}/${commentId}/replies`
+        try {
+            const body = {
+                message,
+                access_token: this.globalVendorArgs.accessToken,
+            }
+            const response = await axios.post(url, body)
+            console.info('[Instagram] Comment reply sent successfully')
+            return response.data
+        } catch (error) {
+            console.error('[Instagram] Error replying to comment:', {
+                error: error.response?.data || error.message,
+            })
+            throw new Error('Failed to reply to comment')
+        }
+    }
+
+    /**
+     * Send a direct message to a user (useful for responding via DM from a comment context)
+     * @param userId - The Instagram-scoped user ID
+     * @param message - The message text to send via DM
+     */
+    sendCommentDM = async (userId: string, message: string): Promise<any> => {
+        return this.sendMessage(userId, message)
     }
 
     /**
