@@ -9,7 +9,9 @@
   "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
-    "build": "rimraf dist && rollup --config"
+    "build": "rimraf dist && rollup --config",
+    "test": "jest --forceExit",
+    "test:coverage": "jest --coverage"
   },
   "files": [
     "./dist/"
