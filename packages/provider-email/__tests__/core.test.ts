@@ -63,7 +63,7 @@ const createMockParsedMail = (options: {
             html: '',
             text: 'recipient@example.com',
         } as AddressObject,
-        subject: options.subject || 'Test Subject',
+        subject: options.subject !== undefined ? options.subject : 'Test Subject',
         messageId: options.messageId || '<test123@example.com>',
         text: options.text || '',
         html: options.html || false,
@@ -354,6 +354,104 @@ describe('EmailCoreVendor', () => {
 
             expect(result).not.toBeNull()
             expect(result.subject).toBe('(no subject)')
+        })
+    })
+
+    describe('parseEmailToContext - messageSource option', () => {
+        test('should use body by default', () => {
+            const vendorDefault = new EmailCoreVendor(mockConfig)
+            const parsed = createMockParsedMail({
+                text: 'This is the body',
+                subject: 'This is the subject',
+            })
+
+            const result = (vendorDefault as any).parseEmailToContext(parsed, 1) as EmailBotContext
+
+            expect(result).not.toBeNull()
+            expect(result.body).toBe('This is the body')
+        })
+
+        test('should use subject when messageSource is "subject"', () => {
+            const vendorSubject = new EmailCoreVendor({
+                ...mockConfig,
+                messageSource: 'subject',
+            })
+            const parsed = createMockParsedMail({
+                text: 'This is the body',
+                subject: 'This is the subject',
+            })
+
+            const result = (vendorSubject as any).parseEmailToContext(parsed, 1) as EmailBotContext
+
+            expect(result).not.toBeNull()
+            expect(result.body).toBe('This is the subject')
+        })
+
+        test('should use both when messageSource is "both"', () => {
+            const vendorBoth = new EmailCoreVendor({
+                ...mockConfig,
+                messageSource: 'both',
+            })
+            const parsed = createMockParsedMail({
+                text: 'This is the body',
+                subject: 'This is the subject',
+            })
+
+            const result = (vendorBoth as any).parseEmailToContext(parsed, 1) as EmailBotContext
+
+            expect(result).not.toBeNull()
+            expect(result.body).toBe('This is the subject\n\nThis is the body')
+        })
+
+        test('should handle empty body with messageSource "both"', () => {
+            const vendorBoth = new EmailCoreVendor({
+                ...mockConfig,
+                messageSource: 'both',
+            })
+            const parsed = createMockParsedMail({
+                text: '',
+                subject: 'Only subject',
+            })
+
+            const result = (vendorBoth as any).parseEmailToContext(parsed, 1) as EmailBotContext
+
+            expect(result).not.toBeNull()
+            expect(result.body).toBe('Only subject')
+        })
+
+        test('should handle empty subject with messageSource "both"', () => {
+            const vendorBoth = new EmailCoreVendor({
+                ...mockConfig,
+                messageSource: 'both',
+            })
+            const parsed = createMockParsedMail({
+                text: 'Only body',
+                subject: '',
+            })
+
+            const result = (vendorBoth as any).parseEmailToContext(parsed, 1) as EmailBotContext
+
+            expect(result).not.toBeNull()
+            // Note: subject in context will be '(no subject)' but body uses the raw value
+            expect(result.body).toBe('Only body')
+        })
+
+        test('messageSource should not affect MEDIA event detection', () => {
+            const vendorSubject = new EmailCoreVendor({
+                ...mockConfig,
+                messageSource: 'subject',
+            })
+            const parsed = createMockParsedMail({
+                text: 'Check this image',
+                subject: 'Photo for you',
+                attachments: [{ contentType: 'image/png', filename: 'photo.png' }],
+            })
+
+            const result = (vendorSubject as any).parseEmailToContext(parsed, 1) as EmailBotContext
+
+            expect(result).not.toBeNull()
+            // MEDIA event should override messageSource
+            expect(result.body).toBe('REF:_event_media_')
         })
     })
 })

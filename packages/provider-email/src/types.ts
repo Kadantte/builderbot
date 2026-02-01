@@ -18,6 +18,14 @@ export interface ImapConfig {
 }
 
 /**
+ * Source for the message body
+ * - 'body': Use email body only (default)
+ * - 'subject': Use email subject only
+ * - 'both': Use both subject and body (format: "subject\n\nbody")
+ */
+export type MessageSource = 'body' | 'subject' | 'both'
+
+/**
  * SMTP server configuration
  */
 export interface SmtpConfig {
@@ -50,6 +58,8 @@ export interface IEmailProviderArgs extends GlobalVendorArgs {
     fromEmail?: string
     /** From name for outgoing emails */
     fromName?: string
+    /** Source for message body: 'body', 'subject', or 'both' (default: 'body') */
+    messageSource?: MessageSource
 }
 
 /**

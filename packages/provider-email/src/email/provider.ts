@@ -41,6 +41,7 @@ class EmailProvider extends ProviderClass<EmailCoreVendor> {
             writeMyself: 'none',
             mailbox: 'INBOX',
             markAsRead: true,
+            messageSource: 'body',
             ...args,
         }
     }

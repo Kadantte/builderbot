@@ -276,9 +276,24 @@ export class EmailCoreVendor extends EventEmitter {
             return false
         })
 
+        // Determine base body based on messageSource config
+        let body = ''
+        const messageSource = this.config.messageSource || 'body'
+        switch (messageSource) {
+            case 'subject':
+                body = parsed.subject || ''
+                break
+            case 'both':
+                body = [parsed.subject, parsed.text].filter(Boolean).join('\n\n')
+                break
+            case 'body':
+            default:
+                body = parsed.text || ''
+                break
+        }
+
         // Build body - generate special events for attachments
         // Priority: MEDIA > VOICE_NOTE > DOCUMENT > text
-        let body = parsed.text || ''
         if (hasMedia) {
             // Media attachments always trigger MEDIA event
             body = utils.generateRefProvider('_event_media_')
