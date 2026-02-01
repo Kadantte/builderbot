@@ -1,20 +1,50 @@
+/* eslint-disable import/order */
 import { beforeEach, describe, expect, jest, test } from '@jest/globals'
+
+// Mock path module
+jest.mock('path', () => ({
+    __esModule: true,
+    default: {
+        join: (...args: string[]) => args.join('/'),
+    },
+    join: (...args: string[]) => args.join('/'),
+}))
+
+// Mock fs module - use __esModule and default for ESM compatibility
+jest.mock('fs', () => ({
+    __esModule: true,
+    default: {
+        existsSync: jest.fn(() => true),
+        mkdirSync: jest.fn(),
+        readFileSync: jest.fn(() => 'saved-session'),
+        writeFileSync: jest.fn(),
+        unlinkSync: jest.fn(),
+    },
+    existsSync: jest.fn(() => true),
+    mkdirSync: jest.fn(),
+    readFileSync: jest.fn(() => 'saved-session'),
+    writeFileSync: jest.fn(),
+    unlinkSync: jest.fn(),
+}))
+
+// Imports must come after jest.mock() to get mocked versions
 import fs from 'fs'
 import path from 'path'
+/* eslint-enable import/order */
 
 jest.mock('telegram', () => ({
     TelegramClient: jest.fn().mockImplementation(() => ({
-        start: jest.fn().mockResolvedValue(undefined),
-        sendMessage: jest.fn().mockResolvedValue(undefined),
-        sendFile: jest.fn().mockResolvedValue(undefined),
-        getMe: jest.fn().mockResolvedValue({ id: '12345' }),
+        start: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+        sendMessage: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+        sendFile: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+        getMe: jest.fn<() => Promise<{ id: string }>>().mockResolvedValue({ id: '12345' }),
         iterDialogs: jest.fn().mockReturnValue({
             [Symbol.asyncIterator]: () => ({
-                next: jest.fn().mockResolvedValue({ done: true }),
+                next: jest.fn<() => Promise<{ done: boolean }>>().mockResolvedValue({ done: true }),
             }),
         }),
-        markAsRead: jest.fn().mockResolvedValue(undefined),
-        downloadMedia: jest.fn().mockResolvedValue(Buffer.from('media-data')),
+        markAsRead: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
+        downloadMedia: jest.fn<() => Promise<Buffer>>().mockResolvedValue(Buffer.from('media-data')),
         addEventHandler: jest.fn(),
         session: { save: jest.fn().mockReturnValue('session-string') },
     })),
@@ -33,28 +63,23 @@ jest.mock('telegram/sessions/index.js', () => ({
 }))
 
 jest.mock('@builderbot/bot', () => {
+    const EventEmitter = require('events')
     class MockProviderClass {
         emit = jest.fn()
         on = jest.fn()
         server = null
         vendor = null
     }
+    class MockEventEmitterClass extends EventEmitter {}
     return {
         ProviderClass: MockProviderClass,
+        EventEmitterClass: MockEventEmitterClass,
         utils: {
             generateRefProvider: jest.fn().mockImplementation((prefix: string) => `${prefix}_mock-uuid`),
-            delay: jest.fn().mockResolvedValue(undefined),
+            delay: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
         },
     }
 })
-
-jest.mock('fs', () => ({
-    existsSync: jest.fn().mockReturnValue(true),
-    mkdirSync: jest.fn(),
-    readFileSync: jest.fn().mockReturnValue('saved-session'),
-    writeFileSync: jest.fn(),
-    unlinkSync: jest.fn(),
-}))
 
 import { TelegramProvider } from '../src/telegram.provider'
 
@@ -63,7 +88,7 @@ describe('#TelegramProvider', () => {
 
     beforeEach(() => {
         jest.clearAllMocks()
-        ;(fs.existsSync as jest.MockedFunction<typeof fs.existsSync>).mockReturnValue(true)
+        ;(fs.existsSync as jest.Mock).mockReturnValue(true)
 
         provider = new TelegramProvider({
             name: 'test-telegram',
@@ -105,7 +130,7 @@ describe('#TelegramProvider', () => {
         })
 
         test('should create session directory if it does not exist', () => {
-            ;(fs.existsSync as jest.MockedFunction<typeof fs.existsSync>).mockReturnValue(false)
+            ;(fs.existsSync as jest.Mock).mockReturnValue(false)
 
             new TelegramProvider({
                 apiId: 12345,
@@ -163,51 +188,53 @@ describe('#TelegramProvider', () => {
     describe('#sendMedia', () => {
         test('should fetch media, write to disk, and send via client', async () => {
             const mockBuffer = new ArrayBuffer(8)
-            const mockHeaders = new Map([['content-type', 'image/png']])
-            global.fetch = jest.fn().mockResolvedValue({
+            global.fetch = jest.fn<() => Promise<Response>>().mockResolvedValue({
                 arrayBuffer: () => Promise.resolve(mockBuffer),
-                headers: { get: (key: string) => 'image/png' },
-            }) as any
-
-            jest.spyOn(path, 'join').mockReturnValue('/tmp/media/test.png')
+                headers: { get: () => 'image/png' },
+            } as unknown as Response)
 
             await provider.sendMedia('user123', 'https://example.com/img.png', 'caption')
 
             expect(fs.writeFileSync).toHaveBeenCalled()
-            expect(provider.client.sendFile).toHaveBeenCalledWith('user123', expect.objectContaining({
-                file: expect.any(String),
-                caption: 'caption',
-            }))
+            expect(provider.client.sendFile).toHaveBeenCalledWith(
+                'user123',
+                expect.objectContaining({
+                    file: expect.any(String),
+                    caption: 'caption',
+                })
+            )
         })
 
         test('should handle voice note extensions', async () => {
-            global.fetch = jest.fn().mockResolvedValue({
+            global.fetch = jest.fn<() => Promise<Response>>().mockResolvedValue({
                 arrayBuffer: () => Promise.resolve(new ArrayBuffer(8)),
                 headers: { get: () => 'audio/ogg' },
-            }) as any
-
-            jest.spyOn(path, 'join').mockReturnValue('/tmp/media/test.ogg')
+            } as unknown as Response)
 
             await provider.sendMedia('user123', 'https://example.com/voice.ogg', 'caption')
 
-            expect(provider.client.sendFile).toHaveBeenCalledWith('user123', expect.objectContaining({
-                voiceNote: true,
-            }))
+            expect(provider.client.sendFile).toHaveBeenCalledWith(
+                'user123',
+                expect.objectContaining({
+                    voiceNote: true,
+                })
+            )
         })
 
         test('should handle video_note caption with mp4', async () => {
-            global.fetch = jest.fn().mockResolvedValue({
+            global.fetch = jest.fn<() => Promise<Response>>().mockResolvedValue({
                 arrayBuffer: () => Promise.resolve(new ArrayBuffer(8)),
                 headers: { get: () => 'video/mp4' },
-            }) as any
-
-            jest.spyOn(path, 'join').mockReturnValue('/tmp/media/test.mp4')
+            } as unknown as Response)
 
             await provider.sendMedia('user123', 'https://example.com/vid.mp4', 'video_note')
 
-            expect(provider.client.sendFile).toHaveBeenCalledWith('user123', expect.objectContaining({
-                videoNote: true,
-            }))
+            expect(provider.client.sendFile).toHaveBeenCalledWith(
+                'user123',
+                expect.objectContaining({
+                    videoNote: true,
+                })
+            )
         })
     })
 
@@ -223,13 +250,12 @@ describe('#TelegramProvider', () => {
             }
             const options = { path: '/tmp/saved' }
 
-            jest.spyOn(path, 'join').mockReturnValue('/tmp/saved/12345-user123.jpeg')
-
             const result = await provider.saveFile(ctx as any, options)
 
             expect(provider.client.downloadMedia).toHaveBeenCalled()
             expect(fs.writeFileSync).toHaveBeenCalled()
-            expect(result).toBe('/tmp/saved/12345-user123.jpeg')
+            expect(result).toContain('/tmp/saved')
+            expect(result).toContain('.jpeg')
         })
 
         test('should return empty string if message has no file', async () => {
@@ -251,7 +277,9 @@ describe('#TelegramProvider', () => {
                 from: 'user123',
             }
 
-            provider.client.downloadMedia = jest.fn().mockRejectedValue(new Error('Download failed')) as any
+            provider.client.downloadMedia = jest
+                .fn<() => Promise<Buffer>>()
+                .mockRejectedValue(new Error('Download failed'))
 
             const result = await provider.saveFile(ctx as any, { path: '/tmp' })
 
@@ -326,7 +354,7 @@ describe('#TelegramProvider', () => {
     describe('#_getStringSession', () => {
         test('should use telegramJwt when available', () => {
             provider.globalVendorArgs.telegramJwt = 'jwt-token'
-            ;(fs.existsSync as jest.MockedFunction<typeof fs.existsSync>).mockReturnValue(false)
+            ;(fs.existsSync as jest.Mock).mockReturnValue(false)
 
             const session = provider['_getStringSession']()
             expect(session).toBeDefined()
@@ -334,7 +362,7 @@ describe('#TelegramProvider', () => {
 
         test('should read session from file if no jwt', () => {
             provider.globalVendorArgs.telegramJwt = undefined
-            ;(fs.existsSync as jest.MockedFunction<typeof fs.existsSync>).mockReturnValue(true)
+            ;(fs.existsSync as jest.Mock).mockReturnValue(true)
 
             provider['_getStringSession']()
 
