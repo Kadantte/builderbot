@@ -357,7 +357,7 @@ describe('InstagramProvider', () => {
             const result = await provider.replyComment('comment_456', 'Thanks for your comment!')
 
             expect(axios.post).toHaveBeenCalledWith(
-                `https://graph.instagram.com/${mockConfig.version}/comment_456/replies`,
+                `https://graph.facebook.com/${mockConfig.version}/comment_456/replies`,
                 expect.objectContaining({
                     message: 'Thanks for your comment!',
                     access_token: mockConfig.accessToken,
@@ -386,24 +386,36 @@ describe('InstagramProvider', () => {
             provider = new InstagramProvider(mockConfig)
         })
 
-        it('should send a DM via sendCommentDM', async () => {
+        it('should send a private reply DM using comment_id as recipient', async () => {
             const axios = require('axios')
             axios.post.mockResolvedValue({
                 status: 200,
                 data: { message_id: 'msg_789' },
             })
 
-            const result = await provider.sendCommentDM('user123', 'Hey, saw your comment!')
+            const result = await provider.sendCommentDM('comment_456', 'Hey, saw your comment!')
 
             expect(axios.post).toHaveBeenCalledWith(
-                `https://graph.instagram.com/${mockConfig.version}/${mockConfig.igAccountId}/messages`,
+                `https://graph.instagram.com/${mockConfig.version}/me/messages`,
                 expect.objectContaining({
-                    recipient: { id: 'user123' },
+                    recipient: { comment_id: 'comment_456' },
                     message: { text: 'Hey, saw your comment!' },
                     access_token: mockConfig.accessToken,
                 })
             )
             expect(result).toEqual({ message_id: 'msg_789' })
+        })
+
+        it('should handle private reply error', async () => {
+            const axios = require('axios')
+            axios.post.mockRejectedValue({
+                response: { data: 'API Error' },
+                message: 'Network error',
+            })
+
+            await expect(provider.sendCommentDM('comment_456', 'Hey!')).rejects.toThrow(
+                'Failed to send private reply'
+            )
         })
     })
 

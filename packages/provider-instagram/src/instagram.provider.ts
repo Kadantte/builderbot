@@ -10,6 +10,7 @@ import type { Middleware } from 'polka'
 import { InstagramEvents, InstagramListenMode } from './instagram.events'
 
 const INSTAGRAM_API_URL = 'https://graph.instagram.com/'
+const FACEBOOK_GRAPH_API_URL = 'https://graph.facebook.com/'
 
 export type InstagramArgs = GlobalVendorArgs & {
     accessToken: string
@@ -326,12 +327,13 @@ class InstagramProvider extends ProviderClass<InstagramEvents> {
     }
 
     /**
-     * Reply to a comment on a media post
+     * Reply to a comment on a media post (public reply visible on the post)
+     * Uses the Facebook Graph API endpoint: POST /{comment-id}/replies
      * @param commentId - The ID of the comment to reply to
      * @param message - The reply text
      */
     replyComment = async (commentId: string, message: string): Promise<any> => {
-        const url = `${INSTAGRAM_API_URL}${this.globalVendorArgs.version}/${commentId}/replies`
+        const url = `${FACEBOOK_GRAPH_API_URL}${this.globalVendorArgs.version}/${commentId}/replies`
         try {
             const body = {
                 message,
@@ -349,12 +351,31 @@ class InstagramProvider extends ProviderClass<InstagramEvents> {
     }
 
     /**
-     * Send a direct message to a user (useful for responding via DM from a comment context)
-     * @param userId - The Instagram-scoped user ID
+     * Send a private reply (DM) to a user who commented on your post.
+     * Uses Instagram Private Replies: recipient is identified by comment_id.
+     * The DM goes to the user's inbox (or Message Requests if they don't follow you).
+     * Note: This does NOT open a full conversation window — an additional
+     * message from the user is required to open one.
+     * @param commentId - The ID of the comment to privately reply to
      * @param message - The message text to send via DM
      */
-    sendCommentDM = async (userId: string, message: string): Promise<any> => {
-        return this.sendMessage(userId, message)
+    sendCommentDM = async (commentId: string, message: string): Promise<any> => {
+        const url = `${INSTAGRAM_API_URL}${this.globalVendorArgs.version}/me/messages`
+        try {
+            const body = {
+                recipient: { comment_id: commentId },
+                message: { text: message },
+                access_token: this.globalVendorArgs.accessToken,
+            }
+            const response = await axios.post(url, body)
+            console.info('[Instagram] Private reply sent successfully')
+            return response.data
+        } catch (error) {
+            console.error('[Instagram] Error sending private reply:', {
+                error: error.response?.data || error.message,
+            })
+            throw new Error('Failed to send private reply')
+        }
     }
 
     /**
