@@ -7,15 +7,17 @@ import { tmpdir } from 'os'
 import { join, resolve } from 'path'
 import type { Middleware } from 'polka'
 
-import { InstagramEvents } from './instagram.events'
+import { InstagramEvents, InstagramListenMode } from './instagram.events'
 
 const INSTAGRAM_API_URL = 'https://graph.instagram.com/'
+const FACEBOOK_GRAPH_API_URL = 'https://graph.facebook.com/'
 
 export type InstagramArgs = GlobalVendorArgs & {
     accessToken: string
     igAccountId: string
     version?: string
     verifyToken: string
+    listenMode?: InstagramListenMode
 }
 
 /**
@@ -30,6 +32,7 @@ class InstagramProvider extends ProviderClass<InstagramEvents> {
         igAccountId: undefined,
         version: 'v19.0',
         verifyToken: undefined,
+        listenMode: 'message',
     }
 
     constructor(args?: InstagramArgs) {
@@ -49,6 +52,7 @@ class InstagramProvider extends ProviderClass<InstagramEvents> {
 
     protected async initVendor(): Promise<any> {
         const vendor = new InstagramEvents()
+        vendor.setListenMode(this.globalVendorArgs.listenMode || 'message')
         this.vendor = vendor
         this.server = this.server.post('/webhook', this.ctrlInMsg).get('/webhook', this.ctrlVerify)
 
@@ -319,6 +323,58 @@ class InstagramProvider extends ProviderClass<InstagramEvents> {
                 error: error.response?.data || error.message,
             })
             throw new Error('Failed to send quick replies')
+        }
+    }
+
+    /**
+     * Reply to a comment on a media post (public reply visible on the post)
+     * Uses the Facebook Graph API endpoint: POST /{comment-id}/replies
+     * @param commentId - The ID of the comment to reply to
+     * @param message - The reply text
+     */
+    replyComment = async (commentId: string, message: string): Promise<any> => {
+        const url = `${FACEBOOK_GRAPH_API_URL}${this.globalVendorArgs.version}/${commentId}/replies`
+        try {
+            const body = {
+                message,
+                access_token: this.globalVendorArgs.accessToken,
+            }
+            const response = await axios.post(url, body)
+            console.info('[Instagram] Comment reply sent successfully')
+            return response.data
+        } catch (error) {
+            console.error('[Instagram] Error replying to comment:', {
+                error: error.response?.data || error.message,
+            })
+            throw new Error('Failed to reply to comment')
+        }
+    }
+
+    /**
+     * Send a private reply (DM) to a user who commented on your post.
+     * Uses Instagram Private Replies: recipient is identified by comment_id.
+     * The DM goes to the user's inbox (or Message Requests if they don't follow you).
+     * Note: This does NOT open a full conversation window — an additional
+     * message from the user is required to open one.
+     * @param commentId - The ID of the comment to privately reply to
+     * @param message - The message text to send via DM
+     */
+    sendCommentDM = async (commentId: string, message: string): Promise<any> => {
+        const url = `${INSTAGRAM_API_URL}${this.globalVendorArgs.version}/me/messages`
+        try {
+            const body = {
+                recipient: { comment_id: commentId },
+                message: { text: message },
+                access_token: this.globalVendorArgs.accessToken,
+            }
+            const response = await axios.post(url, body)
+            console.info('[Instagram] Private reply sent successfully')
+            return response.data
+        } catch (error) {
+            console.error('[Instagram] Error sending private reply:', {
+                error: error.response?.data || error.message,
+            })
+            throw new Error('Failed to send private reply')
         }
     }
 
