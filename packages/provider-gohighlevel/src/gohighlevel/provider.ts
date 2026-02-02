@@ -16,7 +16,7 @@ import { parseGHLNumber } from '../utils/number'
 import { TokenManager } from '../utils/tokenManager'
 
 import type { GoHighLevelInterface } from '~/interface/gohighlevel'
-import type { GHLGlobalVendorArgs, GHLMessage, GHLSendMessageBody, SaveFileOptions } from '~/types'
+import type { GHLChannelType, GHLGlobalVendorArgs, GHLMessage, GHLSendMessageBody, SaveFileOptions } from '~/types'
 
 const GHL_API_URL = 'https://services.leadconnectorhq.com'
 
@@ -43,6 +43,8 @@ class GoHighLevelProvider extends ProviderClass<GoHighLevelInterface> implements
     public contactResolver: ContactResolver
     public channelLister: ChannelLister
     private isReady: boolean = false
+    /** Cache to store the channel type per contactId for auto-reply on same channel */
+    private contactChannelCache: Map<string, GHLChannelType> = new Map()
 
     public globalVendorArgs: GHLGlobalVendorArgs = {
         name: 'bot',
@@ -246,10 +248,8 @@ class GoHighLevelProvider extends ProviderClass<GoHighLevelInterface> implements
     protected initVendor(): Promise<any> {
         const vendor = new GoHighLevelCoreVendor(this.queue, this.tokenManager, this.globalVendorArgs.webhookSecret)
 
-        // Register busEvents listeners on the vendor to forward events to provider
-        this.busEvents().forEach(({ event, func }) => {
-            vendor.on(event, func)
-        })
+        // NOTE: Event listeners are registered by ProviderClass.listenOnEvents()
+        // Do NOT register them here to avoid duplicates
 
         this.server = this.server
             .use((req, _, next) => {
@@ -285,10 +285,13 @@ class GoHighLevelProvider extends ProviderClass<GoHighLevelInterface> implements
     public getAuthorizationUrl(): string {
         const params = new URLSearchParams({
             response_type: 'code',
-            client_id: this.globalVendorArgs.clientId,
             redirect_uri: this.globalVendorArgs.redirectUri || '',
-            scope: 'conversations.message.readonly conversations.message.write contacts.readonly contacts.write locations.readonly',
+            client_id: this.globalVendorArgs.clientId,
+            scope: 'conversations.readonly conversations.write conversations/message.readonly conversations/message.write',
         })
+        if (this.globalVendorArgs.versionId) {
+            params.append('version_id', this.globalVendorArgs.versionId)
+        }
         return `https://marketplace.gohighlevel.com/oauth/chooselocation?${params.toString()}`
     }
 
@@ -339,6 +342,11 @@ class GoHighLevelProvider extends ProviderClass<GoHighLevelInterface> implements
         {
             event: 'message',
             func: (payload: BotContext) => {
+                // Cache the channel type for this contact to auto-reply on same channel
+                const msg = payload as unknown as GHLMessage
+                if (msg.contactId && msg.channelType) {
+                    this.contactChannelCache.set(msg.contactId, msg.channelType)
+                }
                 this.emit('message', payload)
             },
         },
@@ -368,16 +376,46 @@ class GoHighLevelProvider extends ProviderClass<GoHighLevelInterface> implements
     }
 
     /**
+     * Checks if a string looks like a GHL contactId rather than a phone number
+     * ContactIds are alphanumeric strings, while phones are mostly digits
+     * @param value - String to check
+     * @returns true if the value appears to be a contactId
+     */
+    private isContactId(value: string): boolean {
+        if (!value || value.length === 0) return false
+        // Phone numbers are mostly digits (with optional + prefix, spaces, dashes)
+        // ContactIds are alphanumeric strings like '8ctXFfVOgXyBgJ4fAqox'
+        return !/^\+?\d[\d\s-]*$/.test(value)
+    }
+
+    /**
+     * Gets the channel type to use for a contact
+     * Returns the cached channel (from last incoming message) or falls back to global config
+     * @param contactId - The contact ID to look up
+     * @returns The channel type to use for sending messages
+     */
+    private getChannelForContact(contactId: string): GHLChannelType {
+        return this.contactChannelCache.get(contactId) || this.globalVendorArgs.channelType
+    }
+
+    /**
      * Sends a text message to a contact
-     * @param to - Recipient phone number
+     * @param to - Recipient phone number or contactId
      * @param message - Text message content
      */
     sendText = async (to: string, message: string): Promise<any> => {
-        const contactId = await this.resolveContactId(to)
-        if (!contactId) throw new Error(`Contact not found for phone: ${to}`)
+        // Debug logs
+        console.log('[GHL DEBUG] sendText called with to:', to)
+        console.log('[GHL DEBUG] isContactId(to):', this.isContactId(to))
+
+        // If 'to' is already a contactId, use it directly; otherwise resolve from phone
+        const contactId = this.isContactId(to) ? to : await this.resolveContactId(to)
+        console.log('[GHL DEBUG] resolved contactId:', contactId)
+
+        if (!contactId) throw new Error(`Contact not found for: ${to}`)
 
         const body: GHLSendMessageBody = {
-            type: this.globalVendorArgs.channelType,
+            type: this.getChannelForContact(contactId),
             contactId,
             message,
         }
@@ -391,13 +429,14 @@ class GoHighLevelProvider extends ProviderClass<GoHighLevelInterface> implements
 
     /**
      * Sends a media message (image, audio, video, document)
-     * @param to - Recipient phone number
+     * @param to - Recipient phone number or contactId
      * @param text - Optional caption text
      * @param mediaInput - URL or path to media file
      */
     sendMedia = async (to: string, text: string = '', mediaInput: string): Promise<any> => {
-        const contactId = await this.resolveContactId(to)
-        if (!contactId) throw new Error(`Contact not found for phone: ${to}`)
+        // If 'to' is already a contactId, use it directly; otherwise resolve from phone
+        const contactId = this.isContactId(to) ? to : await this.resolveContactId(to)
+        if (!contactId) throw new Error(`Contact not found for: ${to}`)
 
         const fileDownloaded = await utils.generalDownload(mediaInput)
         const mimeType = mime.lookup(fileDownloaded)
@@ -410,7 +449,7 @@ class GoHighLevelProvider extends ProviderClass<GoHighLevelInterface> implements
         }
 
         const body: GHLSendMessageBody = {
-            type: this.globalVendorArgs.channelType,
+            type: this.getChannelForContact(contactId),
             contactId,
             message: text,
             attachments: [mediaInput],
@@ -437,12 +476,15 @@ class GoHighLevelProvider extends ProviderClass<GoHighLevelInterface> implements
 
     /**
      * Sends a message with optional media or buttons
-     * @param to - Recipient phone number
+     * @param to - Recipient phone number or contactId
      * @param message - Message text
      * @param options - Optional send options (media, buttons)
      */
     sendMessage = async (to: string, message: string, options?: SendOptions): Promise<any> => {
-        to = parseGHLNumber(to)
+        // Only parse phone numbers, not contactIds (contactIds contain letters)
+        if (!this.isContactId(to)) {
+            to = parseGHLNumber(to)
+        }
         options = { ...options, ...options?.['options'] }
         if (options?.buttons?.length) return this.sendButtons(to, options.buttons, message)
         if (options?.media) return this.sendMedia(to, message, options.media)

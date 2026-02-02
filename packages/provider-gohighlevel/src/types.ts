@@ -14,6 +14,8 @@ export interface GHLGlobalVendorArgs extends GlobalVendorArgs {
     conversationProviderId?: string
     /** Optional webhook secret for signature verification (HMAC SHA256) */
     webhookSecret?: string
+    /** Optional version ID for OAuth authorization URL */
+    versionId?: string
 }
 
 export interface GHLOAuthTokens {

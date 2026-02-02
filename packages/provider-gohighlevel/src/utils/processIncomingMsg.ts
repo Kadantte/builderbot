@@ -1,13 +1,24 @@
 import { utils } from '@builderbot/bot'
 
 import { parseGHLNumber } from './number'
+
 import type { GHLMessage, GHLIncomingWebhook } from '~/types'
 
 export const processIncomingMessage = (webhook: GHLIncomingWebhook): GHLMessage | null => {
     if (!webhook || webhook.direction !== 'inbound') return null
 
     const phone = parseGHLNumber(webhook.phone ?? '')
+    // PRIORITY: Use contactId when available (more reliable than phone which can be partial/invalid)
+    const from = webhook.contactId || phone || ''
     const name = webhook.contactId ?? phone
+
+    // Debug log
+    console.log('[GHL DEBUG] processIncomingMessage:', {
+        'webhook.phone': webhook.phone,
+        'webhook.contactId': webhook.contactId,
+        'parsed phone': phone,
+        'final from': from,
+    })
     const hasAttachments = webhook.attachments && webhook.attachments.length > 0
 
     let body = webhook.body ?? ''
@@ -41,7 +52,7 @@ export const processIncomingMessage = (webhook: GHLIncomingWebhook): GHLMessage 
 
     const message: GHLMessage = {
         type,
-        from: phone,
+        from,
         to: webhook.locationId ?? '',
         body,
         name,

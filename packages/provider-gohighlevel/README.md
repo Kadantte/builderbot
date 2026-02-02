@@ -40,10 +40,10 @@ Before using this provider, you need to configure your GoHighLevel App in the Ma
 In your app settings, enable the following scopes:
 
 ```
-conversations.message.readonly
-conversations.message.write
-contacts.readonly
-contacts.write
+conversations.readonly
+conversations.write
+conversations/message.readonly
+conversations/message.write
 ```
 
 ### Step 3: Get Client Credentials
@@ -178,8 +178,23 @@ ngrok http 3000
 2. Click **"Add Webhook"**
 3. Configure:
    - **Webhook URL**: `https://your-domain.com/webhook`
-   - **Events**: Select `InboundMessage`
+   - **Events**: See table below
 4. (Optional) Set a **Webhook Secret** for HMAC verification
+
+### Webhook Events
+
+#### Required Event
+
+| Event | Scope Required | Description |
+|-------|----------------|-------------|
+| **InboundMessage** | `conversations/message.readonly` | **REQUIRED** - Receives incoming messages from users |
+
+#### Optional Events (Recommended)
+
+| Event | Scope Required | Description |
+|-------|----------------|-------------|
+| OutboundMessage | `conversations/message.readonly` | Track outbound messages |
+| ConversationUnreadUpdate | `conversations.readonly` | Know when there are unread conversations |
 
 ### Step 3: Verify Webhook is Working
 
@@ -228,6 +243,7 @@ Send a test message to your GHL number/channel. You should see the bot respond.
 | `accessToken` | string | No | - | Pre-existing access token |
 | `refreshToken` | string | No | - | Pre-existing refresh token |
 | `conversationProviderId` | string | No | - | Custom conversation provider ID |
+| `versionId` | string | No | - | App version ID for OAuth authorization URL |
 | `port` | number | No | `3000` | HTTP server port |
 | `apiVersion` | string | No | `'2021-07-28'` | GHL API version |
 

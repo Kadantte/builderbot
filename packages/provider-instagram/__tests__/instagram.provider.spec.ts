@@ -12,6 +12,9 @@ jest.mock('@builderbot/bot', () => ({
         vendor: any
         constructor() {}
     },
+    utils: {
+        generalDownload: jest.fn().mockResolvedValue('/tmp/downloaded-file.jpg'),
+    },
 }))
 
 jest.mock('../src/instagram.events', () => ({
@@ -46,6 +49,18 @@ jest.mock('mime-types', () => ({
 jest.mock('fs/promises', () => ({
     writeFile: jest.fn(),
 }))
+
+jest.mock('fs', () => ({
+    createReadStream: jest.fn().mockReturnValue('mock-read-stream'),
+    existsSync: jest.fn().mockReturnValue(true),
+}))
+
+jest.mock('form-data', () => {
+    return jest.fn().mockImplementation(() => ({
+        append: jest.fn(),
+        getHeaders: jest.fn().mockReturnValue({ 'content-type': 'multipart/form-data' }),
+    }))
+})
 
 describe('InstagramProvider', () => {
     const mockConfig = {
@@ -110,7 +125,7 @@ describe('InstagramProvider', () => {
         })
     })
 
-    describe('sendMessage', () => {
+    describe('sendText', () => {
         let provider: InstagramProvider
 
         beforeEach(() => {
@@ -118,6 +133,44 @@ describe('InstagramProvider', () => {
         })
 
         it('should send text message successfully', async () => {
+            const axios = require('axios')
+            axios.post.mockResolvedValue({
+                status: 200,
+                data: { message_id: 'msg_123' },
+            })
+
+            const result = await provider.sendText('user123', 'Hello World')
+
+            expect(axios.post).toHaveBeenCalledWith(
+                `https://graph.instagram.com/${mockConfig.version}/${mockConfig.igAccountId}/messages`,
+                expect.objectContaining({
+                    recipient: { id: 'user123' },
+                    message: { text: 'Hello World' },
+                    access_token: mockConfig.accessToken,
+                })
+            )
+            expect(result).toEqual({ message_id: 'msg_123' })
+        })
+
+        it('should handle send text error', async () => {
+            const axios = require('axios')
+            axios.post.mockRejectedValue({
+                response: { data: 'API Error' },
+                message: 'Network error',
+            })
+
+            await expect(provider.sendText('user123', 'Hello')).rejects.toThrow('Failed to send message')
+        })
+    })
+
+    describe('sendMessage', () => {
+        let provider: InstagramProvider
+
+        beforeEach(() => {
+            provider = new InstagramProvider(mockConfig)
+        })
+
+        it('should send text message when no media option', async () => {
             const axios = require('axios')
             axios.post.mockResolvedValue({
                 status: 200,
@@ -137,6 +190,29 @@ describe('InstagramProvider', () => {
             expect(result).toEqual({ message_id: 'msg_123' })
         })
 
+        it('should call sendMedia when media option is provided', async () => {
+            const axios = require('axios')
+            const mime = require('mime-types')
+            mime.lookup.mockReturnValue('image/jpeg')
+
+            // Mock for upload attachment
+            axios.post.mockResolvedValueOnce({
+                status: 200,
+                data: { attachment_id: 'attach_123' },
+            })
+            // Mock for send attachment
+            axios.post.mockResolvedValueOnce({
+                status: 200,
+                data: { message_id: 'msg_123' },
+            })
+
+            const result = await provider.sendMessage('user123', 'Check this image', {
+                media: 'https://example.com/image.jpg',
+            })
+
+            expect(result).toBeDefined()
+        })
+
         it('should handle send message error', async () => {
             const axios = require('axios')
             axios.post.mockRejectedValue({
@@ -145,6 +221,116 @@ describe('InstagramProvider', () => {
             })
 
             await expect(provider.sendMessage('user123', 'Hello')).rejects.toThrow('Failed to send message')
+        })
+    })
+
+    describe('sendMedia', () => {
+        let provider: InstagramProvider
+
+        beforeEach(() => {
+            provider = new InstagramProvider(mockConfig)
+            jest.clearAllMocks()
+        })
+
+        it('should send image when mime type is image', async () => {
+            const axios = require('axios')
+            const mime = require('mime-types')
+            mime.lookup.mockReturnValue('image/jpeg')
+
+            // Mock for upload attachment
+            axios.post.mockResolvedValueOnce({
+                status: 200,
+                data: { attachment_id: 'attach_123' },
+            })
+            // Mock for send attachment
+            axios.post.mockResolvedValueOnce({
+                status: 200,
+                data: { message_id: 'msg_123' },
+            })
+
+            const result = await provider.sendMedia('user123', '', 'https://example.com/image.jpg')
+
+            expect(result).toEqual({ message_id: 'msg_123' })
+        })
+
+        it('should send video when mime type is video', async () => {
+            const axios = require('axios')
+            const mime = require('mime-types')
+            mime.lookup.mockReturnValue('video/mp4')
+
+            // Mock for upload attachment
+            axios.post.mockResolvedValueOnce({
+                status: 200,
+                data: { attachment_id: 'attach_123' },
+            })
+            // Mock for send attachment
+            axios.post.mockResolvedValueOnce({
+                status: 200,
+                data: { message_id: 'msg_123' },
+            })
+
+            const result = await provider.sendMedia('user123', '', 'https://example.com/video.mp4')
+
+            expect(result).toEqual({ message_id: 'msg_123' })
+        })
+
+        it('should send audio when mime type is audio', async () => {
+            const axios = require('axios')
+            const mime = require('mime-types')
+            mime.lookup.mockReturnValue('audio/mp3')
+
+            // Mock for upload attachment
+            axios.post.mockResolvedValueOnce({
+                status: 200,
+                data: { attachment_id: 'attach_123' },
+            })
+            // Mock for send attachment
+            axios.post.mockResolvedValueOnce({
+                status: 200,
+                data: { message_id: 'msg_123' },
+            })
+
+            const result = await provider.sendMedia('user123', '', 'https://example.com/audio.mp3')
+
+            expect(result).toEqual({ message_id: 'msg_123' })
+        })
+
+        it('should warn and return when file type is not supported', async () => {
+            const axios = require('axios')
+            const mime = require('mime-types')
+            mime.lookup.mockReturnValue('application/pdf')
+
+            const consoleSpy = jest.spyOn(console, 'warn').mockImplementation()
+
+            const result = await provider.sendMedia('user123', '', 'https://example.com/file.pdf')
+
+            expect(consoleSpy).toHaveBeenCalledWith(
+                expect.stringContaining('File type not supported'),
+                expect.any(Object)
+            )
+            expect(result).toEqual({ warning: 'Unsupported file type, no message sent' })
+
+            consoleSpy.mockRestore()
+        })
+
+        it('should send text when file type not supported but text is provided', async () => {
+            const axios = require('axios')
+            const mime = require('mime-types')
+            mime.lookup.mockReturnValue('application/pdf')
+
+            axios.post.mockResolvedValue({
+                status: 200,
+                data: { message_id: 'msg_text' },
+            })
+
+            const consoleSpy = jest.spyOn(console, 'warn').mockImplementation()
+
+            const result = await provider.sendMedia('user123', 'Here is a file', 'https://example.com/file.pdf')
+
+            expect(consoleSpy).toHaveBeenCalled()
+            expect(result).toEqual({ message_id: 'msg_text' })
+
+            consoleSpy.mockRestore()
         })
     })
 

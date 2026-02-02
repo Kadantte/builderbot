@@ -80,6 +80,22 @@ export class GoHighLevelCoreVendor extends EventEmitter {
     public incomingMsg: polka.Middleware = async (req: any, res: any) => {
         const body = req?.body as GHLIncomingWebhook
 
+        // Debug log for incoming webhook
+        console.log(
+            '[GHL DEBUG] Webhook received:',
+            JSON.stringify(
+                {
+                    type: body?.type,
+                    contactId: body?.contactId,
+                    phone: body?.phone,
+                    messageType: body?.messageType,
+                    direction: body?.direction,
+                },
+                null,
+                2
+            )
+        )
+
         // Verify webhook signature if secret is configured
         if (this.webhookSecret) {
             const signature = extractSignatureFromHeaders(req.headers)
