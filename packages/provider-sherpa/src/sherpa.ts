@@ -67,6 +67,7 @@ class SherpaProvider extends ProviderClass<WASocket> {
     private reconnectDelay = 1000 // 1 segundo inicial
     private healthCheckInterval?: ReturnType<typeof setInterval>
     private presenceInterval?: ReturnType<typeof setTimeout>
+    private periodicCleanupInterval?: ReturnType<typeof setInterval>
     private badSessionCount = 0
 
     msgRetryCounterCache?: NodeCache
@@ -160,7 +161,7 @@ class SherpaProvider extends ProviderClass<WASocket> {
 
     private setupPeriodicCleanup() {
         // Limpiar duplicados cada 10 minutos para evitar memory leaks
-        setInterval(() => {
+        this.periodicCleanupInterval = setInterval(() => {
             const maxSize = 1000
             if (this.idsDuplicates.length > maxSize) {
                 this.logger.log(
@@ -182,6 +183,10 @@ class SherpaProvider extends ProviderClass<WASocket> {
     private cleanup() {
         try {
             this.stopHealthCheck()
+            if (this.periodicCleanupInterval) {
+                clearInterval(this.periodicCleanupInterval)
+                this.periodicCleanupInterval = undefined
+            }
             if (this.msgRetryCounterCache) {
                 this.msgRetryCounterCache.close()
                 this.msgRetryCounterCache = undefined
@@ -275,6 +280,18 @@ class SherpaProvider extends ProviderClass<WASocket> {
         }
 
         try {
+            // Close previous socket to prevent leaked connections and event listeners
+            if (this.vendor) {
+                try {
+                    this.vendor.ev?.removeAllListeners()
+                    this.vendor.ws?.close()
+                    this.vendor.end(undefined)
+                } catch (e) {
+                    this.logger.log(`[${new Date().toISOString()}] Error closing previous socket:`, e)
+                }
+                this.vendor = undefined
+            }
+
             const waVersion = this.globalVendorArgs.version ?? [2, 3000, 1023223821]
 
             const sock = makeWASocketOther({
@@ -1164,6 +1181,9 @@ class SherpaProvider extends ProviderClass<WASocket> {
 
         // Presence update with random interval (3-8 min) to mimic human behavior
         const schedulePresenceHeartbeat = () => {
+            // Guard: don't schedule if health check was stopped (prevents orphaned timers)
+            if (!this.healthCheckInterval) return
+
             const minDelay = 180_000 // 3 minutes
             const maxDelay = 480_000 // 8 minutes
             const randomDelay = minDelay + Math.floor(Math.random() * (maxDelay - minDelay))
