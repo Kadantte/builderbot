@@ -283,7 +283,21 @@ class SherpaProvider extends ProviderClass<WASocket> {
             // Close previous socket to prevent leaked connections and event listeners
             if (this.vendor) {
                 try {
-                    this.vendor.ev?.removeAllListeners()
+                    // Remove all event listeners by event type (whaileys requires event argument)
+                    const events: (keyof BaileysEventMap)[] = [
+                        'connection.update',
+                        'creds.update',
+                        'messages.upsert',
+                        'messages.update',
+                        'call',
+                    ]
+                    events.forEach((event) => {
+                        try {
+                            this.vendor?.ev?.removeAllListeners(event)
+                        } catch {
+                            // Ignore if event doesn't exist
+                        }
+                    })
                     this.vendor.ws?.close()
                     this.vendor.end(undefined)
                 } catch (e) {
@@ -315,17 +329,6 @@ class SherpaProvider extends ProviderClass<WASocket> {
                 qrTimeout: 40_000, // 40 segundos para QR
                 defaultQueryTimeoutMs: 60_000, // 1 minuto para queries
                 emitOwnEvents: false, // No emitir eventos propios
-                patchMessageBeforeSending: async (msg) => {
-                    // Upload pre-keys proactively to prevent decryption failures
-                    try {
-                        if (sock?.uploadPreKeysToServerIfRequired) {
-                            await sock.uploadPreKeysToServerIfRequired()
-                        }
-                    } catch (e) {
-                        this.logger.log(`[${new Date().toISOString()}] Pre-key upload error:`, e)
-                    }
-                    return msg
-                },
                 shouldIgnoreJid: (jid: string) => {
                     if (this.globalVendorArgs.groupsIgnore) {
                         return isJidGroup(jid) || isJidBroadcast(jid)
