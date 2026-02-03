@@ -63,8 +63,9 @@ class SherpaProvider extends ProviderClass<WASocket> {
     }
 
     private reconnectAttempts = 0
-    private maxReconnectAttempts = 10
+    private maxReconnectAttempts = 50
     private reconnectDelay = 1000 // 1 segundo inicial
+    private healthCheckInterval?: ReturnType<typeof setInterval>
 
     msgRetryCounterCache?: NodeCache
     userDevicesCache?: NodeCache
@@ -178,6 +179,7 @@ class SherpaProvider extends ProviderClass<WASocket> {
 
     private cleanup() {
         try {
+            this.stopHealthCheck()
             if (this.msgRetryCounterCache) {
                 this.msgRetryCounterCache.close()
                 this.msgRetryCounterCache = undefined
@@ -336,6 +338,7 @@ class SherpaProvider extends ProviderClass<WASocket> {
 
                 /** Connection closed for various reasons */
                 if (connection === 'close') {
+                    this.stopHealthCheck()
                     this.logger.log(
                         `[${new Date().toISOString()}] Connection closed. Status: ${statusCode}, Reason: ${reason}`
                     )
@@ -360,6 +363,7 @@ class SherpaProvider extends ProviderClass<WASocket> {
                             `You can also check a log that has been created sherpa.log`,
                             `Need help: https://link.codigoencasa.com/DISCORD`,
                         ])
+                        return
                     }
 
                     // Casos donde NO debemos reconectar
@@ -374,6 +378,15 @@ class SherpaProvider extends ProviderClass<WASocket> {
 
                     // Casos donde debemos reconectar con backoff
                     if (this.shouldReconnect(statusCode)) {
+                        await this.delayedReconnect()
+                        return
+                    }
+
+                    // If statusCode is undefined/unknown, attempt reconnect rather than dying
+                    if (statusCode === undefined || statusCode === null) {
+                        this.logger.log(
+                            `[${new Date().toISOString()}] Unknown disconnect (no status code), attempting reconnect...`
+                        )
                         await this.delayedReconnect()
                         return
                     }
@@ -393,6 +406,7 @@ class SherpaProvider extends ProviderClass<WASocket> {
                     this.logger.log(`[${new Date().toISOString()}] Connection opened successfully`)
                     this.reconnectAttempts = 0 // Reset counter on successful connection
                     this.reconnectDelay = 1000 // Reset delay
+                    this.startHealthCheck()
 
                     const parseNumber = `${sock?.user?.id}`.split(':').shift()
                     const host = { ...sock?.user, phone: parseNumber }
@@ -1087,6 +1101,39 @@ class SherpaProvider extends ProviderClass<WASocket> {
         return resolve(pathFile)
     }
 
+    /**
+     * Starts a periodic health check that verifies the WebSocket connection is alive.
+     * If the connection is detected as dead (zombie), it triggers a reconnect.
+     */
+    private startHealthCheck() {
+        this.stopHealthCheck()
+        this.healthCheckInterval = setInterval(() => {
+            try {
+                const sock = this.vendor
+                if (!sock) return
+
+                const wsState = sock?.ws?.readyState
+                // WebSocket.OPEN = 1, if it's not open and not connecting, connection is dead
+                if (wsState !== undefined && wsState !== 1 && wsState !== 0) {
+                    this.logger.log(
+                        `[${new Date().toISOString()}] Health check: WebSocket dead (state=${wsState}), triggering reconnect...`
+                    )
+                    this.stopHealthCheck()
+                    this.delayedReconnect()
+                }
+            } catch (error) {
+                this.logger.log(`[${new Date().toISOString()}] Health check error:`, error)
+            }
+        }, 30_000) // Check every 30 seconds
+    }
+
+    private stopHealthCheck() {
+        if (this.healthCheckInterval) {
+            clearInterval(this.healthCheckInterval)
+            this.healthCheckInterval = undefined
+        }
+    }
+
     private shouldReconnect(statusCode: number): boolean {
         // Lista de códigos donde SÍ debemos reconectar
         const reconnectableCodes = [
@@ -1129,12 +1176,15 @@ class SherpaProvider extends ProviderClass<WASocket> {
             } in ${delay}ms`
         )
 
-        setTimeout(async () => {
-            try {
-                this.initVendor().then((v) => this.listenOnEvents(v))
-            } catch (error) {
-                this.logger.log(`[${new Date().toISOString()}] Reconnection failed:`, error)
-            }
+        setTimeout(() => {
+            this.initVendor()
+                .then((v) => this.listenOnEvents(v))
+                .catch((error) => {
+                    this.logger.log(`[${new Date().toISOString()}] Reconnection failed:`, error)
+                    if (this.reconnectAttempts < this.maxReconnectAttempts) {
+                        this.delayedReconnect()
+                    }
+                })
         }, delay)
     }
 }
