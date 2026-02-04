@@ -13,7 +13,7 @@ jest.mock('@builderbot/bot', () => ({
         constructor() {}
     },
     utils: {
-        generalDownload: jest.fn().mockResolvedValue('/tmp/downloaded-file.jpg'),
+        generalDownload: jest.fn<(url: string) => Promise<string>>().mockResolvedValue('/tmp/downloaded-file.jpg'),
     },
 }))
 
@@ -300,7 +300,7 @@ describe('InstagramProvider', () => {
             const mime = require('mime-types')
             mime.lookup.mockReturnValue('application/pdf')
 
-            const consoleSpy = jest.spyOn(console, 'warn').mockImplementation()
+            const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
 
             const result = await provider.sendMedia('user123', '', 'https://example.com/file.pdf')
 
@@ -323,7 +323,7 @@ describe('InstagramProvider', () => {
                 data: { message_id: 'msg_text' },
             })
 
-            const consoleSpy = jest.spyOn(console, 'warn').mockImplementation()
+            const consoleSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
 
             const result = await provider.sendMedia('user123', 'Here is a file', 'https://example.com/file.pdf')
 
