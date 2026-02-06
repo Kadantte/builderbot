@@ -263,7 +263,7 @@ class GoHighLevelProvider extends ProviderClass<GoHighLevelInterface> implements
         this.tokenManager.on('tokens_updated', (tokens) => {
             this.globalVendorArgs.accessToken = tokens.access_token
             this.globalVendorArgs.refreshToken = tokens.refresh_token
-
+            this.emit('tokens_updated', tokens)
             // If bot is already running, this is an automatic refresh - show new tokens
             if (this.isReady) {
                 this.emitTokensNotice(tokens)
