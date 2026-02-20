@@ -21,6 +21,9 @@ const createBot = async <P extends ProviderClass = any, D extends MemoryDB = any
         blackList: [],
         listEvents: EVENTS,
         delay: 0,
+        logs: {
+            notices: true,
+        },
         globalState: {},
         extensions: [],
         queue: {

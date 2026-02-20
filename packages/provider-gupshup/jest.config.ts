@@ -9,6 +9,14 @@ const config: Config = {
     preset: 'ts-jest',
     verbose: true,
     cache: true,
+    coverageThreshold: {
+        global: {
+            statements: 50,
+            branches: 40,
+            functions: 45,
+            lines: 50,
+        },
+    },
 }
 
 export default config

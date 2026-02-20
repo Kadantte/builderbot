@@ -1,5 +1,5 @@
 {
-  "name": "base-ts-gupshup-memory",
+  "name": "base-bailey-json",
   "version": "1.0.0",
   "description": "",
   "main": "dist/app.js",
@@ -13,10 +13,10 @@
   "keywords": [],
   "dependencies": {
     "@builderbot/bot": "latest",
-    "@builderbot/provider-gupshup": "workspace:*"
+    "@builderbot/provider-gupshup": "latest"
   },
   "devDependencies": {
-    "@types/node": "^21.0.0",
+    "@types/node": "^25.0.0",
     "typescript-eslint": "^8.0.0",
     "eslint": "^9.0.0",
     "eslint-plugin-builderbot": "latest",

@@ -61,10 +61,10 @@ const fullSamplesFlow = addKeyword<Provider, Database>(['samples', utils.setEven
 const main = async () => {
     const adapterFlow = createFlow([welcomeFlow, registerFlow, fullSamplesFlow])
     const adapterProvider = createProvider(Provider, {
-        apiKey: 'YOUR_GUPSHUP_API_KEY',
-        phoneNumber: 'YOUR_PHONE_NUMBER',
-        srcName: 'YOUR_APP_NAME',
-    })
+    apiKey: 'YOUR_API_KEY',
+    srcName: 'YOUR_APP_NAME',
+    phoneNumber: 'YOUR_SOURCE_NUMBER',
+})
     const adapterDB = new Database()
 
     const { handleCtx, httpServer } = await createBot({
