@@ -14,6 +14,7 @@
     "packages/provider-evolution-api",
     "packages/provider-baileys",
     "packages/provider-facebook-messenger",
+    "packages/provider-gupshup",
     "packages/provider-instagram",
     "packages/provider-sherpa",
     "packages/provider-twilio",
