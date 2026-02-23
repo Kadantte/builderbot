@@ -17,7 +17,7 @@ export type GlobalVendorArgs<V = { [key: string]: any }> = {
 export type ProviderEventTypes = {
     message: [arg1: BotContext]
     require_action: [
-        arg1: { title: string; instructions: string[]; payload?: { qr?: string; code?: string; [key: string]: any } }
+        arg1: { title: string; instructions: string[]; payload?: { qr?: string; code?: string; [key: string]: any } },
     ]
     notice: [arg1: { title: string; instructions: string[] }]
     ready: any
@@ -30,6 +30,9 @@ export type GeneralArgs = {
     blackList?: string[]
     listEvents?: Record<string, any>
     delay?: number
+    logs?: {
+        notices?: boolean
+    }
     globalState?: Record<string, any>
     extensions?: Record<string, any>
     queue?: {

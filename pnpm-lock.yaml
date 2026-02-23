@@ -1004,6 +1004,64 @@ importers:
                 specifier: ^2.6.2
                 version: 2.8.1
 
+    packages/provider-gupshup:
+        dependencies:
+            axios:
+                specifier: ^1.6.0
+                version: 1.13.2
+            form-data:
+                specifier: ^4.0.5
+                version: 4.0.5
+            mime-types:
+                specifier: ^3.0.2
+                version: 3.0.2
+            polka:
+                specifier: ^0.5.2
+                version: 0.5.2
+        devDependencies:
+            '@builderbot/bot':
+                specifier: workspace:*
+                version: link:../bot
+            '@jest/globals':
+                specifier: ^30.0.0
+                version: 30.2.0
+            '@rollup/plugin-commonjs':
+                specifier: ^25.0.0
+                version: 25.0.8(rollup@4.53.3)
+            '@rollup/plugin-json':
+                specifier: ^6.0.0
+                version: 6.1.0(rollup@4.53.3)
+            '@rollup/plugin-node-resolve':
+                specifier: ^15.0.0
+                version: 15.3.1(rollup@4.53.3)
+            '@types/jest':
+                specifier: ^30.0.0
+                version: 30.0.0
+            '@types/node':
+                specifier: ^20.0.0
+                version: 20.19.32
+            '@types/polka':
+                specifier: ^0.5.7
+                version: 0.5.8
+            jest:
+                specifier: ^30.0.0
+                version: 30.2.0(@types/node@20.19.32)(ts-node@10.9.2(@types/node@20.19.32)(typescript@5.9.3))
+            rimraf:
+                specifier: ^5.0.0
+                version: 5.0.10
+            rollup:
+                specifier: ^4.0.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            ts-jest:
+                specifier: ^29.0.0
+                version: 29.4.6(@babel/core@7.28.5)(@jest/transform@30.2.0)(@jest/types@30.2.0)(babel-jest@30.2.0(@babel/core@7.28.5))(jest-util@30.2.0)(jest@30.2.0(@types/node@20.19.32)(ts-node@10.9.2(@types/node@20.19.32)(typescript@5.9.3)))(typescript@5.9.3)
+            typescript:
+                specifier: ^5.0.0
+                version: 5.9.3
+
     packages/provider-instagram:
         dependencies:
             axios:
@@ -1474,9 +1532,6 @@ importers:
             rollup-plugin-typescript2:
                 specifier: ^0.36.0
                 version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
-            sino:
-                specifier: ^0.0.3
-                version: 0.0.3
             sinon:
                 specifier: ^17.0.1
                 version: 17.0.2
@@ -4496,6 +4551,18 @@ packages:
         engines: { node: '>=18' }
         hasBin: true
 
+    '@rollup/plugin-commonjs@25.0.8':
+        resolution:
+            {
+                integrity: sha512-ZEZWTK5n6Qde0to4vS9Mr5x/0UZoqCxPVR9KRUjU4kA2sO7GEUn1fop0DAwpO6z0Nw/kJON9bDmSxdWxO/TT1A==,
+            }
+        engines: { node: '>=14.0.0' }
+        peerDependencies:
+            rollup: ^2.68.0||^3.0.0||^4.0.0
+        peerDependenciesMeta:
+            rollup:
+                optional: true
+
     '@rollup/plugin-commonjs@29.0.0':
         resolution:
             {
@@ -4516,6 +4583,18 @@ packages:
         engines: { node: '>=14.0.0' }
         peerDependencies:
             rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
+        peerDependenciesMeta:
+            rollup:
+                optional: true
+
+    '@rollup/plugin-node-resolve@15.3.1':
+        resolution:
+            {
+                integrity: sha512-tgg6b91pAybXHJQMAAwW9VuWBO6Thi+q7BCNARLwSqlmsHz0XYURtGvh/AuwSADXSI4h/2uHbs7s4FzlZDGSGA==,
+            }
+        engines: { node: '>=14.0.0' }
+        peerDependencies:
+            rollup: ^2.78.0||^3.0.0||^4.0.0
         peerDependenciesMeta:
             rollup:
                 optional: true
@@ -5582,6 +5661,12 @@ packages:
         resolution:
             {
                 integrity: sha512-QpLcX9ZSsq3YYUUnD3nFDY8H7wctAhQj/TFKL8Ya8v5fMm3CFXxo8zStsLAl780ltoYoo1WvKUVGBQK+1ifr7g==,
+            }
+
+    '@types/node@20.19.32':
+        resolution:
+            {
+                integrity: sha512-Ez8QE4DMfhjjTsES9K2dwfV258qBui7qxUsoaixZDiTzbde4U12e1pXGNu/ECsUIOi5/zoCxAQxIhQnaUQ2VvA==,
             }
 
     '@types/node@24.10.2':
@@ -7906,12 +7991,6 @@ packages:
             }
         engines: { node: '>= 8' }
 
-    crypt3@0.2.0:
-        resolution:
-            {
-                integrity: sha512-riA574RPPPCDBb6+9ESQObLwFyLnrggsMPmG1SVoMx4BkHe8gttoBQXIvCAAPtH/UTRQ++n+jxJ+2h7pNb1Kyg==,
-            }
-
     crypto-random-string@4.0.0:
         resolution:
             {
@@ -9946,6 +10025,7 @@ packages:
             {
                 integrity: sha512-DfXN8DfhJ7NH3Oe7cFmu3NCu1wKbkReJ8TorzSAFbSKrlNaQSKfIzqYqVY8zlbs2NLBbWpRiU52GX2PbaBVNkg==,
             }
+        deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
         hasBin: true
 
     glob@11.1.0:
@@ -9954,6 +10034,7 @@ packages:
                 integrity: sha512-vuNwKSaKiqm7g0THUBu2x7ckSs3XJLXE+2ssL7/MfTGPLLcrJQ/4Uq1CjPTtO5cCIiRxqvN6Twy1qOwhL0Xjcw==,
             }
         engines: { node: 20 || >=22 }
+        deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
         hasBin: true
 
     glob@13.0.0:
@@ -9968,7 +10049,7 @@ packages:
             {
                 integrity: sha512-MKZeRNyYZAVVVG1oZeLaWie1uweH40m9AZwIwxyPbTSX4hHrVYSzLg0Ro5Z5R7XKkIX+Cc6oD1rqeDJnwsB8/A==,
             }
-        deprecated: Glob versions prior to v9 are no longer supported
+        deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
     glob@7.2.3:
         resolution:
@@ -9983,7 +10064,7 @@ packages:
                 integrity: sha512-r8hpEjiQEYlF2QU0df3dS+nxxSIreXQS1qRhMJM0Q5NDdR386C7jb7Hwwod8Fgiuex+k0GFjgft18yvxm5XoCQ==,
             }
         engines: { node: '>=12' }
-        deprecated: Glob versions prior to v9 are no longer supported
+        deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
     glob@9.3.5:
         resolution:
@@ -9991,6 +10072,7 @@ packages:
                 integrity: sha512-e1LleDykUz2Iu+MTYdkSsuWX8lvAjAcs0Xef0lNIu0S2wOAzuTxCJtcd9S3cijlwYF18EsU3rzb8jPVobxDh9Q==,
             }
         engines: { node: '>=16 || 14 >=14.17' }
+        deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
     global-directory@4.0.1:
         resolution:
@@ -15517,14 +15599,6 @@ packages:
             }
         engines: { node: '>=20.12.2' }
 
-    sino@0.0.3:
-        resolution:
-            {
-                integrity: sha512-KxYjMjG978zCXYy52g6rdsIC6W4kTy7ZBsJbZallrWQWaTSAFE8THEVQ+JYGFKwcxDB24tkFBYFlV+iThXn0Mg==,
-            }
-        engines: { node: '>=4' }
-        hasBin: true
-
     sinon@17.0.1:
         resolution:
             {
@@ -15537,12 +15611,6 @@ packages:
                 integrity: sha512-uihLiaB9FhzesElPDFZA7hDcNABzsVHwr3YfmM9sBllVwab3l0ltGlRV1XhpNfIacNDLGD1QRZNLs5nU5+hTuA==,
             }
         deprecated: There
-
-    sinopia-htpasswd@0.4.5:
-        resolution:
-            {
-                integrity: sha512-UKFJ4foiRCRNT3Fz/fHI7cTc2B/we2rqKPi6GUg5Go9xMqtq/k8ntXzbEvPAK8b5WK761pYDV1EF/VXTewwVQA==,
-            }
 
     sisteransi@1.0.5:
         resolution:
@@ -16737,6 +16805,12 @@ packages:
         resolution:
             {
                 integrity: sha512-GMXzWtsc57XAtguZgaQViUOzs0KTkk8ojr3/xAxXLITqf/3EMwxC0inyETfDFjH/Krbhuep0HNbbjI9i/q3F3g==,
+            }
+
+    undici-types@6.21.0:
+        resolution:
+            {
+                integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==,
             }
 
     undici-types@7.16.0:
@@ -19007,6 +19081,42 @@ snapshots:
             jest-util: 30.2.0
             slash: 3.0.0
 
+    '@jest/core@30.2.0(ts-node@10.9.2(@types/node@20.19.32)(typescript@5.9.3))':
+        dependencies:
+            '@jest/console': 30.2.0
+            '@jest/pattern': 30.0.1
+            '@jest/reporters': 30.2.0
+            '@jest/test-result': 30.2.0
+            '@jest/transform': 30.2.0
+            '@jest/types': 30.2.0
+            '@types/node': 24.10.2
+            ansi-escapes: 4.3.2
+            chalk: 4.1.2
+            ci-info: 4.3.1
+            exit-x: 0.2.2
+            graceful-fs: 4.2.11
+            jest-changed-files: 30.2.0
+            jest-config: 30.2.0(@types/node@24.10.2)(ts-node@10.9.2(@types/node@20.19.32)(typescript@5.9.3))
+            jest-haste-map: 30.2.0
+            jest-message-util: 30.2.0
+            jest-regex-util: 30.0.1
+            jest-resolve: 30.2.0
+            jest-resolve-dependencies: 30.2.0
+            jest-runner: 30.2.0
+            jest-runtime: 30.2.0
+            jest-snapshot: 30.2.0
+            jest-util: 30.2.0
+            jest-validate: 30.2.0
+            jest-watcher: 30.2.0
+            micromatch: 4.0.8
+            pretty-format: 30.2.0
+            slash: 3.0.0
+        transitivePeerDependencies:
+            - babel-plugin-macros
+            - esbuild-register
+            - supports-color
+            - ts-node
+
     '@jest/core@30.2.0(ts-node@10.9.2(@types/node@24.10.2)(typescript@5.9.3))':
         dependencies:
             '@jest/console': 30.2.0
@@ -20024,6 +20134,17 @@ snapshots:
             - react-native-b4a
             - supports-color
 
+    '@rollup/plugin-commonjs@25.0.8(rollup@4.53.3)':
+        dependencies:
+            '@rollup/pluginutils': 5.3.0(rollup@4.53.3)
+            commondir: 1.0.1
+            estree-walker: 2.0.2
+            glob: 8.1.0
+            is-reference: 1.2.1
+            magic-string: 0.30.21
+        optionalDependencies:
+            rollup: 4.53.3
+
     '@rollup/plugin-commonjs@29.0.0(rollup@4.53.3)':
         dependencies:
             '@rollup/pluginutils': 5.3.0(rollup@4.53.3)
@@ -20039,6 +20160,16 @@ snapshots:
     '@rollup/plugin-json@6.1.0(rollup@4.53.3)':
         dependencies:
             '@rollup/pluginutils': 5.3.0(rollup@4.53.3)
+        optionalDependencies:
+            rollup: 4.53.3
+
+    '@rollup/plugin-node-resolve@15.3.1(rollup@4.53.3)':
+        dependencies:
+            '@rollup/pluginutils': 5.3.0(rollup@4.53.3)
+            '@types/resolve': 1.20.2
+            deepmerge: 4.3.1
+            is-module: 1.0.0
+            resolve: 1.22.11
         optionalDependencies:
             rollup: 4.53.3
 
@@ -20786,6 +20917,10 @@ snapshots:
     '@types/node@10.17.60': {}
 
     '@types/node@16.9.1': {}
+
+    '@types/node@20.19.32':
+        dependencies:
+            undici-types: 6.21.0
 
     '@types/node@24.10.2':
         dependencies:
@@ -22426,11 +22561,6 @@ snapshots:
             path-key: 3.1.1
             shebang-command: 2.0.0
             which: 2.0.2
-
-    crypt3@0.2.0:
-        dependencies:
-            nan: 2.23.1
-        optional: true
 
     crypto-random-string@4.0.0:
         dependencies:
@@ -24455,6 +24585,25 @@ snapshots:
             - babel-plugin-macros
             - supports-color
 
+    jest-cli@30.2.0(@types/node@20.19.32)(ts-node@10.9.2(@types/node@20.19.32)(typescript@5.9.3)):
+        dependencies:
+            '@jest/core': 30.2.0(ts-node@10.9.2(@types/node@20.19.32)(typescript@5.9.3))
+            '@jest/test-result': 30.2.0
+            '@jest/types': 30.2.0
+            chalk: 4.1.2
+            exit-x: 0.2.2
+            import-local: 3.2.0
+            jest-config: 30.2.0(@types/node@20.19.32)(ts-node@10.9.2(@types/node@20.19.32)(typescript@5.9.3))
+            jest-util: 30.2.0
+            jest-validate: 30.2.0
+            yargs: 17.7.2
+        transitivePeerDependencies:
+            - '@types/node'
+            - babel-plugin-macros
+            - esbuild-register
+            - supports-color
+            - ts-node
+
     jest-cli@30.2.0(@types/node@24.10.2)(ts-node@10.9.2(@types/node@24.10.2)(typescript@5.9.3)):
         dependencies:
             '@jest/core': 30.2.0(ts-node@10.9.2(@types/node@24.10.2)(typescript@5.9.3))
@@ -24473,6 +24622,72 @@ snapshots:
             - esbuild-register
             - supports-color
             - ts-node
+
+    jest-config@30.2.0(@types/node@20.19.32)(ts-node@10.9.2(@types/node@20.19.32)(typescript@5.9.3)):
+        dependencies:
+            '@babel/core': 7.28.5
+            '@jest/get-type': 30.1.0
+            '@jest/pattern': 30.0.1
+            '@jest/test-sequencer': 30.2.0
+            '@jest/types': 30.2.0
+            babel-jest: 30.2.0(@babel/core@7.28.5)
+            chalk: 4.1.2
+            ci-info: 4.3.1
+            deepmerge: 4.3.1
+            glob: 10.5.0
+            graceful-fs: 4.2.11
+            jest-circus: 30.2.0
+            jest-docblock: 30.2.0
+            jest-environment-node: 30.2.0
+            jest-regex-util: 30.0.1
+            jest-resolve: 30.2.0
+            jest-runner: 30.2.0
+            jest-util: 30.2.0
+            jest-validate: 30.2.0
+            micromatch: 4.0.8
+            parse-json: 5.2.0
+            pretty-format: 30.2.0
+            slash: 3.0.0
+            strip-json-comments: 3.1.1
+        optionalDependencies:
+            '@types/node': 20.19.32
+            ts-node: 10.9.2(@types/node@20.19.32)(typescript@5.9.3)
+        transitivePeerDependencies:
+            - babel-plugin-macros
+            - supports-color
+
+    jest-config@30.2.0(@types/node@24.10.2)(ts-node@10.9.2(@types/node@20.19.32)(typescript@5.9.3)):
+        dependencies:
+            '@babel/core': 7.28.5
+            '@jest/get-type': 30.1.0
+            '@jest/pattern': 30.0.1
+            '@jest/test-sequencer': 30.2.0
+            '@jest/types': 30.2.0
+            babel-jest: 30.2.0(@babel/core@7.28.5)
+            chalk: 4.1.2
+            ci-info: 4.3.1
+            deepmerge: 4.3.1
+            glob: 10.5.0
+            graceful-fs: 4.2.11
+            jest-circus: 30.2.0
+            jest-docblock: 30.2.0
+            jest-environment-node: 30.2.0
+            jest-regex-util: 30.0.1
+            jest-resolve: 30.2.0
+            jest-runner: 30.2.0
+            jest-util: 30.2.0
+            jest-validate: 30.2.0
+            micromatch: 4.0.8
+            parse-json: 5.2.0
+            pretty-format: 30.2.0
+            slash: 3.0.0
+            strip-json-comments: 3.1.1
+        optionalDependencies:
+            '@types/node': 24.10.2
+            ts-node: 10.9.2(@types/node@20.19.32)(typescript@5.9.3)
+        transitivePeerDependencies:
+            - babel-plugin-macros
+            - supports-color
 
     jest-config@30.2.0(@types/node@24.10.2)(ts-node@10.9.2(@types/node@24.10.2)(typescript@5.9.3)):
         dependencies:
@@ -24721,6 +24936,19 @@ snapshots:
             jest-util: 30.2.0
             merge-stream: 2.0.0
             supports-color: 8.1.1
+
+    jest@30.2.0(@types/node@20.19.32)(ts-node@10.9.2(@types/node@20.19.32)(typescript@5.9.3)):
+        dependencies:
+            '@jest/core': 30.2.0(ts-node@10.9.2(@types/node@20.19.32)(typescript@5.9.3))
+            '@jest/types': 30.2.0
+            import-local: 3.2.0
+            jest-cli: 30.2.0(@types/node@20.19.32)(ts-node@10.9.2(@types/node@20.19.32)(typescript@5.9.3))
+        transitivePeerDependencies:
+            - '@types/node'
+            - babel-plugin-macros
+            - esbuild-register
+            - supports-color
+            - ts-node
 
     jest@30.2.0(@types/node@24.10.2)(ts-node@10.9.2(@types/node@24.10.2)(typescript@5.9.3)):
         dependencies:
@@ -27809,33 +28037,6 @@ snapshots:
 
     simple-xml-to-json@1.2.3: {}
 
-    sino@0.0.3:
-        dependencies:
-            JSONStream: 1.3.5
-            async: 2.6.4
-            body-parser: 1.20.4
-            bunyan: 1.8.15
-            commander: 2.20.3
-            compression: 1.8.1
-            cookies: 0.7.3
-            es6-shim: 0.35.8
-            express: 4.21.2
-            handlebars: 4.7.8
-            highlight.js: 9.18.5
-            http-errors: 1.8.1
-            jju: 1.4.0
-            js-yaml: 3.14.2
-            lunr: 1.0.0
-            minimatch: 3.1.2
-            mkdirp: 0.5.6
-            readable-stream: 2.3.8
-            render-readme: 1.3.1
-            request: 2.88.2
-            semver: 5.7.2
-            sinopia-htpasswd: 0.4.5
-        transitivePeerDependencies:
-            - supports-color
-
     sinon@17.0.1:
         dependencies:
             '@sinonjs/commons': 3.0.1
@@ -27853,11 +28054,6 @@ snapshots:
             diff: 5.2.0
             nise: 5.1.9
             supports-color: 7.2.0
-
-    sinopia-htpasswd@0.4.5:
-        optionalDependencies:
-            crypt3: 0.2.0
-            fs-ext: 2.1.1
 
     sisteransi@1.0.5: {}
 
@@ -28428,6 +28624,26 @@ snapshots:
 
     ts-custom-error@3.3.1: {}
 
+    ts-jest@29.4.6(@babel/core@7.28.5)(@jest/transform@30.2.0)(@jest/types@30.2.0)(babel-jest@30.2.0(@babel/core@7.28.5))(jest-util@30.2.0)(jest@30.2.0(@types/node@20.19.32)(ts-node@10.9.2(@types/node@20.19.32)(typescript@5.9.3)))(typescript@5.9.3):
+        dependencies:
+            bs-logger: 0.2.6
+            fast-json-stable-stringify: 2.1.0
+            handlebars: 4.7.8
+            jest: 30.2.0(@types/node@20.19.32)(ts-node@10.9.2(@types/node@20.19.32)(typescript@5.9.3))
+            json5: 2.2.3
+            lodash.memoize: 4.1.2
+            make-error: 1.3.6
+            semver: 7.7.3
+            type-fest: 4.41.0
+            typescript: 5.9.3
+            yargs-parser: 21.1.1
+        optionalDependencies:
+            '@babel/core': 7.28.5
+            '@jest/transform': 30.2.0
+            '@jest/types': 30.2.0
+            babel-jest: 30.2.0(@babel/core@7.28.5)
+            jest-util: 30.2.0
+
     ts-jest@29.4.6(@babel/core@7.28.5)(@jest/transform@30.2.0)(@jest/types@30.2.0)(babel-jest@30.2.0(@babel/core@7.28.5))(jest-util@30.2.0)(jest@30.2.0(@types/node@24.10.2)(ts-node@10.9.2(@types/node@24.10.2)(typescript@5.9.3)))(typescript@5.9.3):
         dependencies:
             bs-logger: 0.2.6
@@ -28447,6 +28663,25 @@ snapshots:
             '@jest/types': 30.2.0
             babel-jest: 30.2.0(@babel/core@7.28.5)
             jest-util: 30.2.0
+
+    ts-node@10.9.2(@types/node@20.19.32)(typescript@5.9.3):
+        dependencies:
+            '@cspotcode/source-map-support': 0.8.1
+            '@tsconfig/node10': 1.0.12
+            '@tsconfig/node12': 1.0.11
+            '@tsconfig/node14': 1.0.3
+            '@tsconfig/node16': 1.0.4
+            '@types/node': 20.19.32
+            acorn: 8.15.0
+            acorn-walk: 8.3.4
+            arg: 4.1.3
+            create-require: 1.1.1
+            diff: 4.0.2
+            make-error: 1.3.6
+            typescript: 5.9.3
+            v8-compile-cache-lib: 3.0.1
+            yn: 3.1.1
+        optional: true
 
     ts-node@10.9.2(@types/node@24.10.2)(typescript@5.9.3):
         dependencies:
@@ -28640,6 +28875,8 @@ snapshots:
             through: 2.3.8
 
     underscore@1.13.7: {}
+
+    undici-types@6.21.0: {}
 
     undici-types@7.16.0: {}
 

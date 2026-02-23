@@ -12,33 +12,41 @@ concurrency:
 
 env:
     NODE_VERSION: 22.20.0
+    PUPPETEER_SKIP_DOWNLOAD: 'true'
+    PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
+    PUPPETEER_SKIP_FIREFOX_DOWNLOAD: 'true'
+    MONGOMS_DOWNLOAD_DIR: ~/.cache/mongodb-binaries
 
 jobs:
     ############ TEST ############
     test:
         name: 🧪 Tests
         runs-on: ubuntu-latest
+        timeout-minutes: 45
         steps:
             - name: Checkout
               uses: actions/checkout@v4
 
             - uses: pnpm/action-setup@v4
 
-            - name: Cache pnpm store
+            - name: Cache heavy binaries
               uses: actions/cache@v4
               with:
-                  path: ~/.pnpm-store
-                  key: pnpm-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-                  restore-keys: pnpm-${{ runner.os }}-
+                  path: |
+                      ~/.cache/puppeteer
+                      ~/.cache/mongodb-binaries
+                  key: heavy-binaries-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+                  restore-keys: heavy-binaries-${{ runner.os }}-
 
             - name: Setup Node
               uses: actions/setup-node@v4
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   cache: 'pnpm'
+                  cache-dependency-path: pnpm-lock.yaml
 
             - name: Install Dependencies
-              run: pnpm install --frozen-lockfile
+              run: pnpm install --frozen-lockfile --prefer-offline --reporter=append-only
 
             - name: Run Tests
               run: pnpm test
@@ -53,21 +61,24 @@ jobs:
 
             - uses: pnpm/action-setup@v4
 
-            - name: Cache pnpm store
+            - name: Cache heavy binaries
               uses: actions/cache@v4
               with:
-                  path: ~/.pnpm-store
-                  key: pnpm-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-                  restore-keys: pnpm-${{ runner.os }}-
+                  path: |
+                      ~/.cache/puppeteer
+                      ~/.cache/mongodb-binaries
+                  key: heavy-binaries-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+                  restore-keys: heavy-binaries-${{ runner.os }}-
 
             - name: Setup Node
               uses: actions/setup-node@v4
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   cache: 'pnpm'
+                  cache-dependency-path: pnpm-lock.yaml
 
             - name: Install Dependencies
-              run: pnpm install --frozen-lockfile
+              run: pnpm install --frozen-lockfile --prefer-offline --reporter=append-only
 
             - name: Build Packages
               run: pnpm run clean.lib && pnpm run build
@@ -97,22 +108,25 @@ jobs:
 
             - uses: pnpm/action-setup@v4
 
-            - name: Cache pnpm store
+            - name: Cache heavy binaries
               uses: actions/cache@v4
               with:
-                  path: ~/.pnpm-store
-                  key: pnpm-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-                  restore-keys: pnpm-${{ runner.os }}-
+                  path: |
+                      ~/.cache/puppeteer
+                      ~/.cache/mongodb-binaries
+                  key: heavy-binaries-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+                  restore-keys: heavy-binaries-${{ runner.os }}-
 
             - name: Setup Node
               uses: actions/setup-node@v4
               with:
                   node-version: ${{ env.NODE_VERSION }}
                   cache: 'pnpm'
+                  cache-dependency-path: pnpm-lock.yaml
                   registry-url: 'https://registry.npmjs.org'
 
             - name: Install Dependencies
-              run: pnpm install --frozen-lockfile
+              run: pnpm install --frozen-lockfile --prefer-offline --reporter=append-only
 
             - name: Download build artifacts
               uses: actions/download-artifact@v4
