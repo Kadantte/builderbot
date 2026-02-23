@@ -63,8 +63,12 @@ class SherpaProvider extends ProviderClass<WASocket> {
     }
 
     private reconnectAttempts = 0
-    private maxReconnectAttempts = 10
+    private maxReconnectAttempts = 50
     private reconnectDelay = 1000 // 1 segundo inicial
+    private healthCheckInterval?: ReturnType<typeof setInterval>
+    private presenceInterval?: ReturnType<typeof setTimeout>
+    private periodicCleanupInterval?: ReturnType<typeof setInterval>
+    private badSessionCount = 0
 
     msgRetryCounterCache?: NodeCache
     userDevicesCache?: NodeCache
@@ -157,7 +161,7 @@ class SherpaProvider extends ProviderClass<WASocket> {
 
     private setupPeriodicCleanup() {
         // Limpiar duplicados cada 10 minutos para evitar memory leaks
-        setInterval(() => {
+        this.periodicCleanupInterval = setInterval(() => {
             const maxSize = 1000
             if (this.idsDuplicates.length > maxSize) {
                 this.logger.log(
@@ -178,6 +182,11 @@ class SherpaProvider extends ProviderClass<WASocket> {
 
     private cleanup() {
         try {
+            this.stopHealthCheck()
+            if (this.periodicCleanupInterval) {
+                clearInterval(this.periodicCleanupInterval)
+                this.periodicCleanupInterval = undefined
+            }
             if (this.msgRetryCounterCache) {
                 this.msgRetryCounterCache.close()
                 this.msgRetryCounterCache = undefined
@@ -271,9 +280,37 @@ class SherpaProvider extends ProviderClass<WASocket> {
         }
 
         try {
+            // Close previous socket to prevent leaked connections and event listeners
+            if (this.vendor) {
+                try {
+                    // Remove all event listeners by event type (whaileys requires event argument)
+                    const events: (keyof BaileysEventMap)[] = [
+                        'connection.update',
+                        'creds.update',
+                        'messages.upsert',
+                        'messages.update',
+                        'call',
+                    ]
+                    events.forEach((event) => {
+                        try {
+                            this.vendor?.ev?.removeAllListeners(event)
+                        } catch {
+                            // Ignore if event doesn't exist
+                        }
+                    })
+                    this.vendor.ws?.close()
+                    this.vendor.end(undefined)
+                } catch (e) {
+                    this.logger.log(`[${new Date().toISOString()}] Error closing previous socket:`, e)
+                }
+                this.vendor = undefined
+            }
+
+            const waVersion = this.globalVendorArgs.version ?? [2, 3000, 1023223821]
+
             const sock = makeWASocketOther({
                 logger: loggerSherpa,
-                version: [2, 3000, 1023223821] as WAVersion,
+                version: waVersion as WAVersion,
                 printQRInTerminal: false,
                 auth: {
                     creds: state.creds,
@@ -286,9 +323,9 @@ class SherpaProvider extends ProviderClass<WASocket> {
                 getMessage: this.getMessage,
                 msgRetryCounterMap: {},
                 userDevicesCache: this.userDevicesCache as any,
-                retryRequestDelayMs: 1000, // Mayor delay entre reintentos
+                retryRequestDelayMs: 2000, // Delay entre reintentos (2s para evitar rate-limit)
                 connectTimeoutMs: 60_000, // 1 minuto timeout conexión
-                keepAliveIntervalMs: 10_000, // Keep alive cada 10 segundos
+                keepAliveIntervalMs: 15_000, // Keep alive cada 15 segundos (recomendado por comunidad)
                 qrTimeout: 40_000, // 40 segundos para QR
                 defaultQueryTimeoutMs: 60_000, // 1 minuto para queries
                 emitOwnEvents: false, // No emitir eventos propios
@@ -306,13 +343,15 @@ class SherpaProvider extends ProviderClass<WASocket> {
                 if (this.globalVendorArgs.phoneNumber) {
                     const phoneNumberClean = utils.removePlus(this.globalVendorArgs.phoneNumber)
                     await utils.delay(2000)
+                    const code = await this.vendor.requestPairingCode(phoneNumberClean)
                     this.emit('require_action', {
                         title: '⚡⚡ ACTION REQUIRED ⚡⚡',
                         instructions: [
                             `Accept the WhatsApp notification from ${this.globalVendorArgs.phoneNumber} on your phone 👌`,
+                            `The pairing code is: ${code}`,
                             `Need help: https://link.codigoencasa.com/DISCORD`,
                         ],
-                        payload: { qr: null },
+                        payload: { qr: null, code: code },
                     })
                 } else {
                     this.emit('auth_failure', [
@@ -334,6 +373,7 @@ class SherpaProvider extends ProviderClass<WASocket> {
 
                 /** Connection closed for various reasons */
                 if (connection === 'close') {
+                    this.stopHealthCheck()
                     this.logger.log(
                         `[${new Date().toISOString()}] Connection closed. Status: ${statusCode}, Reason: ${reason}`
                     )
@@ -358,6 +398,7 @@ class SherpaProvider extends ProviderClass<WASocket> {
                             `You can also check a log that has been created sherpa.log`,
                             `Need help: https://link.codigoencasa.com/DISCORD`,
                         ])
+                        return
                     }
 
                     // Casos donde NO debemos reconectar
@@ -370,8 +411,33 @@ class SherpaProvider extends ProviderClass<WASocket> {
                         return
                     }
 
+                    // badSession: try reconnecting first, but if it repeats too many times, clear session
+                    if (statusCode === DisconnectReason.badSession) {
+                        this.badSessionCount++
+                        if (this.badSessionCount >= 3) {
+                            this.logger.log(
+                                `[${new Date().toISOString()}] Bad session repeated ${this.badSessionCount} times, clearing session...`
+                            )
+                            const PATH_BASE = join(process.cwd(), `${this.globalVendorArgs.name}_sessions`)
+                            await emptyDirSessions(PATH_BASE)
+                            this.badSessionCount = 0
+                            this.reconnectAttempts = 0
+                        }
+                        await this.delayedReconnect()
+                        return
+                    }
+
                     // Casos donde debemos reconectar con backoff
                     if (this.shouldReconnect(statusCode)) {
+                        await this.delayedReconnect()
+                        return
+                    }
+
+                    // If statusCode is undefined/unknown, attempt reconnect rather than dying
+                    if (statusCode === undefined || statusCode === null) {
+                        this.logger.log(
+                            `[${new Date().toISOString()}] Unknown disconnect (no status code), attempting reconnect...`
+                        )
                         await this.delayedReconnect()
                         return
                     }
@@ -391,6 +457,8 @@ class SherpaProvider extends ProviderClass<WASocket> {
                     this.logger.log(`[${new Date().toISOString()}] Connection opened successfully`)
                     this.reconnectAttempts = 0 // Reset counter on successful connection
                     this.reconnectDelay = 1000 // Reset delay
+                    this.badSessionCount = 0 // Reset bad session counter
+                    this.startHealthCheck()
 
                     const parseNumber = `${sock?.user?.id}`.split(':').shift()
                     const host = { ...sock?.user, phone: parseNumber }
@@ -1085,6 +1153,73 @@ class SherpaProvider extends ProviderClass<WASocket> {
         return resolve(pathFile)
     }
 
+    /**
+     * Starts a periodic health check that verifies the WebSocket connection is alive.
+     * If the connection is detected as dead (zombie), it triggers a reconnect.
+     * Also sends periodic presence updates as an application-level heartbeat
+     * to prevent WhatsApp from considering the connection inactive.
+     */
+    private startHealthCheck() {
+        this.stopHealthCheck()
+
+        // WebSocket state check every 30 seconds
+        this.healthCheckInterval = setInterval(() => {
+            try {
+                const sock = this.vendor
+                if (!sock) return
+
+                const wsState = sock?.ws?.readyState
+                // WebSocket.OPEN = 1, if it's not open and not connecting, connection is dead
+                if (wsState !== undefined && wsState !== 1 && wsState !== 0) {
+                    this.logger.log(
+                        `[${new Date().toISOString()}] Health check: WebSocket dead (state=${wsState}), triggering reconnect...`
+                    )
+                    this.stopHealthCheck()
+                    this.delayedReconnect()
+                }
+            } catch (error) {
+                this.logger.log(`[${new Date().toISOString()}] Health check error:`, error)
+            }
+        }, 30_000) // Check every 30 seconds
+
+        // Presence update with random interval (3-8 min) to mimic human behavior
+        const schedulePresenceHeartbeat = () => {
+            // Guard: don't schedule if health check was stopped (prevents orphaned timers)
+            if (!this.healthCheckInterval) return
+
+            const minDelay = 180_000 // 3 minutes
+            const maxDelay = 480_000 // 8 minutes
+            const randomDelay = minDelay + Math.floor(Math.random() * (maxDelay - minDelay))
+
+            this.presenceInterval = setTimeout(async () => {
+                try {
+                    const sock = this.vendor
+                    if (!sock) return
+                    await sock.sendPresenceUpdate('available')
+                    this.logger.log(
+                        `[${new Date().toISOString()}] Presence heartbeat sent (next in ~${Math.round(randomDelay / 60_000)}min)`
+                    )
+                } catch (error) {
+                    this.logger.log(`[${new Date().toISOString()}] Presence heartbeat error:`, error)
+                }
+                // Schedule the next one with a new random delay
+                schedulePresenceHeartbeat()
+            }, randomDelay)
+        }
+        schedulePresenceHeartbeat()
+    }
+
+    private stopHealthCheck() {
+        if (this.healthCheckInterval) {
+            clearInterval(this.healthCheckInterval)
+            this.healthCheckInterval = undefined
+        }
+        if (this.presenceInterval) {
+            clearTimeout(this.presenceInterval)
+            this.presenceInterval = undefined
+        }
+    }
+
     private shouldReconnect(statusCode: number): boolean {
         // Lista de códigos donde SÍ debemos reconectar
         const reconnectableCodes = [
@@ -1127,12 +1262,15 @@ class SherpaProvider extends ProviderClass<WASocket> {
             } in ${delay}ms`
         )
 
-        setTimeout(async () => {
-            try {
-                this.initVendor().then((v) => this.listenOnEvents(v))
-            } catch (error) {
-                this.logger.log(`[${new Date().toISOString()}] Reconnection failed:`, error)
-            }
+        setTimeout(() => {
+            this.initVendor()
+                .then((v) => this.listenOnEvents(v))
+                .catch((error) => {
+                    this.logger.log(`[${new Date().toISOString()}] Reconnection failed:`, error)
+                    if (this.reconnectAttempts < this.maxReconnectAttempts) {
+                        this.delayedReconnect()
+                    }
+                })
         }, delay)
     }
 }

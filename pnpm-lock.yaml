@@ -253,7 +253,7 @@ importers:
     packages/contexts-dialogflow:
         dependencies:
             '@builderbot/bot':
-                specifier: ^1.3.15-alpha.4
+                specifier: ^1.3.15-alpha.14
                 version: 1.3.15
             '@google-cloud/dialogflow':
                 specifier: ^7.4.0
@@ -293,7 +293,7 @@ importers:
     packages/contexts-dialogflow-cx:
         dependencies:
             '@builderbot/bot':
-                specifier: ^1.3.15-alpha.4
+                specifier: ^1.3.15-alpha.14
                 version: 1.3.15
             '@google-cloud/dialogflow-cx':
                 specifier: ^5.5.0
@@ -333,7 +333,7 @@ importers:
     packages/create-builderbot:
         dependencies:
             '@builderbot/cli':
-                specifier: ^1.3.15-alpha.4
+                specifier: ^1.3.15-alpha.14
                 version: 1.3.15
         devDependencies:
             '@rollup/plugin-commonjs':
@@ -358,7 +358,7 @@ importers:
     packages/database-json:
         dependencies:
             '@builderbot/bot':
-                specifier: ^1.3.15-alpha.4
+                specifier: ^1.3.15-alpha.14
                 version: 1.3.15
         devDependencies:
             '@rollup/plugin-commonjs':
@@ -392,7 +392,7 @@ importers:
     packages/database-mongo:
         dependencies:
             '@builderbot/bot':
-                specifier: ^1.3.15-alpha.4
+                specifier: ^1.3.15-alpha.14
                 version: 1.3.15
             mongodb:
                 specifier: ^7.0.0
@@ -438,7 +438,7 @@ importers:
     packages/database-mysql:
         dependencies:
             '@builderbot/bot':
-                specifier: ^1.3.15-alpha.4
+                specifier: ^1.3.15-alpha.14
                 version: 1.3.15
             mysql2:
                 specifier: ^3.15.3
@@ -481,7 +481,7 @@ importers:
     packages/database-postgres:
         dependencies:
             '@builderbot/bot':
-                specifier: ^1.3.15-alpha.4
+                specifier: ^1.3.15-alpha.14
                 version: 1.3.15
             pg:
                 specifier: ^8.11.5
@@ -649,7 +649,7 @@ importers:
                 version: 0.33.3
         devDependencies:
             '@builderbot/bot':
-                specifier: ^1.3.15-alpha.4
+                specifier: ^1.3.15-alpha.14
                 version: 1.3.15
             '@hapi/boom':
                 specifier: ^10.0.1
@@ -727,6 +727,58 @@ importers:
                 specifier: ^0.10.1
                 version: 0.10.1
 
+    packages/provider-email:
+        dependencies:
+            body-parser:
+                specifier: ^2.2.1
+                version: 2.2.1
+            imapflow:
+                specifier: ^1.0.171
+                version: 1.2.8
+            mailparser:
+                specifier: ^3.7.2
+                version: 3.9.3
+            nodemailer:
+                specifier: ^6.10.1
+                version: 6.10.1
+            polka:
+                specifier: ^0.5.2
+                version: 0.5.2
+        devDependencies:
+            '@builderbot/bot':
+                specifier: ^1.3.15-alpha.14
+                version: 1.3.15
+            '@jest/globals':
+                specifier: ^30.2.0
+                version: 30.2.0
+            '@rollup/plugin-commonjs':
+                specifier: ^29.0.0
+                version: 29.0.0(rollup@4.53.3)
+            '@rollup/plugin-json':
+                specifier: ^6.1.0
+                version: 6.1.0(rollup@4.53.3)
+            '@rollup/plugin-node-resolve':
+                specifier: ^16.0.3
+                version: 16.0.3(rollup@4.53.3)
+            '@types/node':
+                specifier: ^24.10.2
+                version: 24.10.2
+            '@types/nodemailer':
+                specifier: ^6.4.17
+                version: 6.4.22
+            '@types/polka':
+                specifier: ^0.5.7
+                version: 0.5.8
+            cors:
+                specifier: ^2.8.5
+                version: 2.8.5
+            rimraf:
+                specifier: ^6.1.2
+                version: 6.1.2
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+
     packages/provider-evolution-api:
         dependencies:
             '@polka/parse':
@@ -758,7 +810,7 @@ importers:
                 version: 2.2.1
         devDependencies:
             '@builderbot/bot':
-                specifier: ^1.3.15-alpha.4
+                specifier: ^1.3.15-alpha.14
                 version: 1.3.15
             '@jest/globals':
                 specifier: ^30.2.0
@@ -843,7 +895,7 @@ importers:
                 version: 0.5.2
         devDependencies:
             '@builderbot/bot':
-                specifier: ^1.3.15-alpha.4
+                specifier: ^1.3.15-alpha.14
                 version: 1.3.15
             '@jest/globals':
                 specifier: ^30.2.0
@@ -885,7 +937,74 @@ importers:
                 specifier: ^5.9.3
                 version: 5.9.3
 
-    packages/provider-gupshup:
+    packages/provider-gohighlevel:
+        dependencies:
+            axios:
+                specifier: ^1.13.2
+                version: 1.13.2
+            body-parser:
+                specifier: ^2.2.1
+                version: 2.2.1
+            file-type:
+                specifier: ^19.0.0
+                version: 19.6.0
+            form-data:
+                specifier: ^4.0.5
+                version: 4.0.5
+            mime-types:
+                specifier: ^3.0.2
+                version: 3.0.2
+            polka:
+                specifier: ^0.5.2
+                version: 0.5.2
+            queue-promise:
+                specifier: ^2.2.1
+                version: 2.2.1
+        devDependencies:
+            '@builderbot/bot':
+                specifier: ^1.3.15-alpha.14
+                version: 1.3.15
+            '@jest/globals':
+                specifier: ^30.2.0
+                version: 30.2.0
+            '@rollup/plugin-commonjs':
+                specifier: ^29.0.0
+                version: 29.0.0(rollup@4.53.3)
+            '@rollup/plugin-json':
+                specifier: ^6.1.0
+                version: 6.1.0(rollup@4.53.3)
+            '@rollup/plugin-node-resolve':
+                specifier: ^16.0.3
+                version: 16.0.3(rollup@4.53.3)
+            '@rollup/plugin-terser':
+                specifier: ^0.4.4
+                version: 0.4.4(rollup@4.53.3)
+            '@types/jest':
+                specifier: ^30.0.0
+                version: 30.0.0
+            '@types/node':
+                specifier: ^24.10.2
+                version: 24.10.2
+            '@types/polka':
+                specifier: ^0.5.7
+                version: 0.5.8
+            jest:
+                specifier: ^30.2.0
+                version: 30.2.0(@types/node@24.10.2)(ts-node@10.9.2(@types/node@24.10.2)(typescript@5.9.3))
+            rimraf:
+                specifier: ^6.1.2
+                version: 6.1.2
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            ts-jest:
+                specifier: ^29.4.6
+                version: 29.4.6(@babel/core@7.28.5)(@jest/transform@30.2.0)(@jest/types@30.2.0)(babel-jest@30.2.0(@babel/core@7.28.5))(jest-util@30.2.0)(jest@30.2.0(@types/node@24.10.2)(ts-node@10.9.2(@types/node@24.10.2)(typescript@5.9.3)))(typescript@5.9.3)
+            tslib:
+                specifier: ^2.6.2
+                version: 2.8.1
+                
+     packages/provider-gupshup:
         dependencies:
             axios:
                 specifier: ^1.6.0
@@ -948,6 +1067,9 @@ importers:
             axios:
                 specifier: ^1.13.2
                 version: 1.13.2
+            form-data:
+                specifier: ^4.0.5
+                version: 4.0.5
             mime-types:
                 specifier: ^3.0.2
                 version: 3.0.2
@@ -956,7 +1078,7 @@ importers:
                 version: 0.5.2
         devDependencies:
             '@builderbot/bot':
-                specifier: ^1.3.15-alpha.4
+                specifier: ^1.3.15-alpha.14
                 version: 1.3.15
             '@jest/globals':
                 specifier: ^30.2.0
@@ -970,6 +1092,9 @@ importers:
             '@rollup/plugin-node-resolve':
                 specifier: ^16.0.3
                 version: 16.0.3(rollup@4.53.3)
+            '@types/form-data':
+                specifier: ^2.5.2
+                version: 2.5.2
             '@types/jest':
                 specifier: ^30.0.0
                 version: 30.0.0
@@ -1023,7 +1148,7 @@ importers:
                 version: 2.2.1
         devDependencies:
             '@builderbot/bot':
-                specifier: ^1.3.15-alpha.4
+                specifier: ^1.3.15-alpha.14
                 version: 1.3.15
             '@jest/globals':
                 specifier: ^30.2.0
@@ -1132,7 +1257,7 @@ importers:
                 version: 6.3.8(@adiwajshing/keyed-db@0.2.4)(bufferutil@4.0.9)(jimp@1.6.0)(qrcode-terminal@0.12.0)(sharp@0.33.3)(utf-8-validate@5.0.10)
         devDependencies:
             '@builderbot/bot':
-                specifier: ^1.3.15-alpha.4
+                specifier: ^1.3.15-alpha.14
                 version: 1.3.15
             '@hapi/boom':
                 specifier: ^10.0.1
@@ -1217,7 +1342,7 @@ importers:
                 version: 2.26.22
         devDependencies:
             '@builderbot/bot':
-                specifier: ^1.3.15-alpha.4
+                specifier: ^1.3.15-alpha.14
                 version: 1.3.15
             '@hapi/boom':
                 specifier: ^10.0.1
@@ -1275,7 +1400,7 @@ importers:
                 version: 5.10.7
         devDependencies:
             '@builderbot/bot':
-                specifier: ^1.3.15-alpha.4
+                specifier: ^1.3.15-alpha.14
                 version: 1.3.15
             '@jest/globals':
                 specifier: ^30.2.0
@@ -1348,7 +1473,7 @@ importers:
                 version: 5.3.0(bufferutil@4.0.9)(encoding@0.1.13)(typescript@5.9.3)(utf-8-validate@5.0.10)
         devDependencies:
             '@builderbot/bot':
-                specifier: ^1.3.15-alpha.4
+                specifier: ^1.3.15-alpha.14
                 version: 1.3.15
             '@jest/globals':
                 specifier: ^30.2.0
@@ -1430,7 +1555,7 @@ importers:
                 version: 1.34.2(bufferutil@4.0.9)(encoding@0.1.13)(utf-8-validate@5.0.10)
         devDependencies:
             '@builderbot/bot':
-                specifier: ^1.3.15-alpha.4
+                specifier: ^1.3.15-alpha.14
                 version: 1.3.15
             '@jest/globals':
                 specifier: ^30.2.0
@@ -1506,7 +1631,7 @@ importers:
                 version: 0.33.5
         devDependencies:
             '@builderbot/bot':
-                specifier: ^1.3.15-alpha.4
+                specifier: ^1.3.15-alpha.14
                 version: 1.3.15
             '@rollup/plugin-commonjs':
                 specifier: ^29.0.0
@@ -4769,6 +4894,12 @@ packages:
                 integrity: sha512-831qok9r2t8AlxLko40y2ebgSDhenenCatLVeW/uBtnHPyhHOvG0C7TvfgecV+wHzIm5KUICgzmVpWS+IMEAeg==,
             }
 
+    '@selderee/plugin-htmlparser2@0.11.0':
+        resolution:
+            {
+                integrity: sha512-P33hHGdldxGabLFjPPpaTxVolMrzrcegejx+0GxjrIb9Zv48D8yAIA/QTDR2dFl7Uz7urX8aX6+5bCZslr+gWQ==,
+            }
+
     '@sigstore/bundle@1.1.0':
         resolution:
             {
@@ -5402,6 +5533,13 @@ packages:
                 integrity: sha512-GWXfsD0Jc1RWiFmMuMFCpXMzi9L7oPDVwxUnZdg89kDNnqsRfUKXEtUYtA98A6lig1WXH/CYY/fvPW9HuN5fTA==,
             }
 
+    '@types/form-data@2.5.2':
+        resolution:
+            {
+                integrity: sha512-tfmcyHn1Pp9YHAO5r40+UuZUPAZbUEgqTel3EuEKpmF9hPkXgR4l41853raliXnb4gwyPNoQOfvgGGlHN5WSog==,
+            }
+        deprecated: This is a stub types definition. form-data provides its own type definitions, so you do not need this installed.
+
     '@types/fs-extra@11.0.4':
         resolution:
             {
@@ -5538,6 +5676,12 @@ packages:
         resolution:
             {
                 integrity: sha512-WOhQTZ4G8xZ1tjJTvKOpyEVSGgOTvJAfDK3FNFgELyaTpzhdgHVHeqW8V+UJvzF5BT+/B54T/1S2K6gd9c7bbA==,
+            }
+
+    '@types/nodemailer@6.4.22':
+        resolution:
+            {
+                integrity: sha512-HV16KRsW7UyZBITE07B62k8PRAKFqRSFXn1T7vslurVjN761tMDBhk5Lbt17ehyTzK6XcyJnAgUpevrvkcVOzw==,
             }
 
     '@types/normalize-package-data@2.4.4':
@@ -5976,6 +6120,12 @@ packages:
                 integrity: sha512-nrUSn7hzt7J6JWgWGz78ZYI8wj+gdIJdk0Ynjpp8l+trkn58Uqsf6RYrYkEK+3X18EX+TNdtJI0WxAtc+L84SQ==,
             }
         hasBin: true
+
+    '@zone-eu/mailsplit@5.4.8':
+        resolution:
+            {
+                integrity: sha512-eEyACj4JZ7sjzRvy26QhLgKEMWwQbsw1+QZnlLX+/gihcNH07lVPOcnwf5U6UAL7gkc//J3jVd76o/WS+taUiA==,
+            }
 
     JSONStream@1.3.5:
         resolution:
@@ -8489,6 +8639,13 @@ packages:
             }
         engines: { node: '>= 0.8' }
 
+    encoding-japanese@2.2.0:
+        resolution:
+            {
+                integrity: sha512-EuJWwlHPZ1LbADuKTClvHtwbaFn4rOD+dRAbWysqEOXRc2Uui0hJInNJrsdH0c+OhJA4nrCBdSkW4DD5YxAo6A==,
+            }
+        engines: { node: '>=8.10.0' }
+
     encoding-sniffer@0.2.1:
         resolution:
             {
@@ -10134,6 +10291,13 @@ packages:
             }
         engines: { node: '>= 0.4' }
 
+    he@1.2.0:
+        resolution:
+            {
+                integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==,
+            }
+        hasBin: true
+
     highlight.js@8.9.1:
         resolution:
             {
@@ -10201,6 +10365,13 @@ packages:
                 integrity: sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==,
             }
 
+    html-to-text@9.0.5:
+        resolution:
+            {
+                integrity: sha512-qY60FjREgVZL03vJU6IfMV4GDjGBIoOyvuFdpBDIX9yTlDw0TjxVBQp+P8NvpdIXNJvfWBTNul7fsAQJq2FNpg==,
+            }
+        engines: { node: '>=14' }
+
     htmlparser2@10.0.0:
         resolution:
             {
@@ -10217,6 +10388,12 @@ packages:
         resolution:
             {
                 integrity: sha512-gyyPk6rgonLFEDGoeRgQNaEUvdJ4ktTmmUh/h2t7s+M8oPpIPxgNACWa+6ESR57kXstwqPiCut0V8NRpcwgU7A==,
+            }
+
+    htmlparser2@8.0.2:
+        resolution:
+            {
+                integrity: sha512-GYdjWKDkbRLkZ5geuHs5NY1puJ+PXwP7+fHPRz06Eirsb9ugf6d8kkXav6ADhcODhFFPMIXyxkxSuMf3D6NCFA==,
             }
 
     http-cache-semantics@4.2.0:
@@ -10344,6 +10521,13 @@ packages:
             }
         engines: { node: '>=0.10.0' }
 
+    iconv-lite@0.7.2:
+        resolution:
+            {
+                integrity: sha512-im9DjEDQ55s9fL4EYzOAv0yMqmMBSZp6G0VvFyTMPKWxiSBHUj9NW/qqLmXUwXrrM7AvqSlTCfvqRb0cM8yYqw==,
+            }
+        engines: { node: '>=0.10.0' }
+
     ieee754@1.2.1:
         resolution:
             {
@@ -10391,6 +10575,12 @@ packages:
             }
         engines: { node: '>=16.x' }
         hasBin: true
+
+    imapflow@1.2.8:
+        resolution:
+            {
+                integrity: sha512-ym7FF2tKOlOzfRvxehs4eLkhjP8Mme3sSp2tcxEbyoeJuJwtEWxaVDv12+DnaMG2LXm0zuQGWZiClq31FLPUNg==,
+            }
 
     import-fresh@3.3.1:
         resolution:
@@ -11622,6 +11812,12 @@ packages:
             }
         engines: { node: '>= 0.6.3' }
 
+    leac@0.6.0:
+        resolution:
+            {
+                integrity: sha512-y+SqErxb8h7nE/fiEX07jsbuhrpO9lL8eca7/Y1nuWV2moNlXhyd59iDGcRf6moVyDMbmTNzL40SUyrFU/yDpg==,
+            }
+
     lerna-lcov-aggregate@1.0.0:
         resolution:
             {
@@ -11660,6 +11856,18 @@ packages:
             }
         engines: { node: '>= 0.8.0' }
 
+    libbase64@1.3.0:
+        resolution:
+            {
+                integrity: sha512-GgOXd0Eo6phYgh0DJtjQ2tO8dc0IVINtZJeARPeiIJqge+HdsWSuaDTe8ztQ7j/cONByDZ3zeB325AHiv5O0dg==,
+            }
+
+    libmime@5.3.7:
+        resolution:
+            {
+                integrity: sha512-FlDb3Wtha8P01kTL3P9M+ZDNDWPKPmKHWaU/cG/lg5pfuAwdflVpZE+wm9m7pKmC5ww6s+zTxBKS1p6yl3KpSw==,
+            }
+
     libnpmaccess@10.0.3:
         resolution:
             {
@@ -11673,6 +11881,12 @@ packages:
                 integrity: sha512-tNcU3cLH7toloAzhOOrBDhjzgbxpyuYvkf+BPPnnJCdc5EIcdJ8JcT+SglvCQKKyZ6m9dVXtCVlJcA6csxKdEA==,
             }
         engines: { node: ^20.17.0 || >=22.9.0 }
+
+    libqp@2.1.1:
+        resolution:
+            {
+                integrity: sha512-0Wd+GPz1O134cP62YU2GTOPNA7Qgl09XwCqM5zpBv87ERCXdfDtyKXvV7c9U22yWJh44QZqBocFnXN11K96qow==,
+            }
 
     libsignal@https://codeload.github.com/canove/libsignal-node/tar.gz/105ad38dc8d7668b5d5e3688e710915bef5cdc7f:
         resolution:
@@ -12033,6 +12247,12 @@ packages:
         resolution:
             {
                 integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==,
+            }
+
+    mailparser@3.9.3:
+        resolution:
+            {
+                integrity: sha512-AnB0a3zROum6fLaa52L+/K2SoRJVyFDk78Ea6q1D0ofcZLxWEWDtsS1+OrVqKbV7r5dulKL/AwYQccFGAPpuYQ==,
             }
 
     make-dir@2.1.0:
@@ -12925,6 +13145,20 @@ packages:
                 integrity: sha512-MKgpq9nFgo44pIVNx/umD3nkqb2E8oqQTfmstVsfNdx9uV4cX7a4LqA+d8AZd3v5tgJXwENKUFsXNP3bRLP8nQ==,
             }
 
+    nodemailer@6.10.1:
+        resolution:
+            {
+                integrity: sha512-Z+iLaBGVaSjbIzQ4pX6XV41HrooLsQ10ZWPUehGmuantvzWoDVBnmsdUcOIDM1t+yPor5pDhVlDESgOMEGxhHA==,
+            }
+        engines: { node: '>=6.0.0' }
+
+    nodemailer@7.0.13:
+        resolution:
+            {
+                integrity: sha512-PNDFSJdP+KFgdsG3ZzMXCgquO7I6McjY2vlqILjtJd0hy8wEvtugS9xKRF2NWlPNGxvLCXlTNIae4serI7dinw==,
+            }
+        engines: { node: '>=6.0.0' }
+
     nopt@6.0.0:
         resolution:
             {
@@ -13671,6 +13905,12 @@ packages:
                 integrity: sha512-IInvU7fabl34qmi9gY8XOVxhYyMyuH2xUNpb2q8/Y+7552KlejkRvqvD19nMoUW/uQGGbqNpA6Tufu5FL5BZgw==,
             }
 
+    parseley@0.12.1:
+        resolution:
+            {
+                integrity: sha512-e6qHKe3a9HWr0oMRVDTRhKce+bRO8VGQR3NyVwcjwrbhMmFCX9KszEV35+rn4AdilFAq9VPxP/Fe1wC9Qjd2lw==,
+            }
+
     parseurl@1.3.3:
         resolution:
             {
@@ -13764,6 +14004,12 @@ packages:
                 integrity: sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==,
             }
         engines: { node: '>=8' }
+
+    peberminta@0.9.0:
+        resolution:
+            {
+                integrity: sha512-XIxfHpEuSJbITd1H3EeQwpcZbTLHc+VVr8ANI9t5sit565tsI4/xK3KWTUFE2e6QiangUkh3B0jihzmGnNrRsQ==,
+            }
 
     peek-readable@4.1.0:
         resolution:
@@ -13915,6 +14161,12 @@ packages:
                 integrity: sha512-F63x5tizV6WCh4R6RHyi2Ml+M70DNRXt/+HANowMflpgGFMAym/VKm6G7ZOQRjqN7XbGxK1Lg9t6ZrtzOaivMw==,
             }
 
+    pino-abstract-transport@3.0.0:
+        resolution:
+            {
+                integrity: sha512-wlfUczU+n7Hy/Ha5j9a/gZNy7We5+cXp8YL+X+PG8S0KXxw7n/JXA3c46Y0zQznIJ83URJiwy7Lh56WLokNuxg==,
+            }
+
     pino-std-serializers@4.0.0:
         resolution:
             {
@@ -13931,6 +14183,13 @@ packages:
         resolution:
             {
                 integrity: sha512-0zZC2ygfdqvqK8zJIr1e+wT1T/L+LF6qvqvbzEQ6tiMAoTqEVK9a1K3YRu8HEUvGEvNqZyPJTtb2sNIoTkB83w==,
+            }
+        hasBin: true
+
+    pino@10.3.0:
+        resolution:
+            {
+                integrity: sha512-0GNPNzHXBKw6U/InGe79A3Crzyk9bcSyObF9/Gfo9DLEf5qj5RF50RSjsu0W1rZ6ZqRGdzDFCRBQvi9/rSGPtA==,
             }
         hasBin: true
 
@@ -15097,6 +15356,12 @@ packages:
                 integrity: sha512-o/mRQGk9Rcer/jEEw/yw4mwo3EU/NvYvp577/Btqrym9Qy5/MdWGBqipbALgd2lrdWTJ5/gqDusxfnQBxOxT2Q==,
             }
 
+    selderee@0.11.0:
+        resolution:
+            {
+                integrity: sha512-5TF+l7p4+OsnP8BCCvSyZiSPc4x4//p5uPwK8TCnVPJYRmU2aYKMpOXvw8zM5a5JvuuCGN1jmsMwuU2W02ukfA==,
+            }
+
     semver-diff@4.0.0:
         resolution:
             {
@@ -16019,6 +16284,13 @@ packages:
                 integrity: sha512-OqyPZ9u96VohAyMfJykzmivOrY2wfMSf3C5TtFJVgN+Hm6aj+voFhlK+kZEIv2FBh1X6Xp3DlnCOfEQ3B2J86A==,
             }
 
+    thread-stream@4.0.0:
+        resolution:
+            {
+                integrity: sha512-4iMVL6HAINXWf1ZKZjIPcz5wYaOdPhtO8ATvZ+Xqp3BTdaqtAwQkNmKORqcIo5YkQqGXq5cwfswDwMqqQNrpJA==,
+            }
+        engines: { node: '>=20' }
+
     through2@2.0.5:
         resolution:
             {
@@ -16076,6 +16348,13 @@ packages:
                 integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==,
             }
         engines: { node: '>=12.0.0' }
+
+    tlds@1.261.0:
+        resolution:
+            {
+                integrity: sha512-QXqwfEl9ddlGBaRFXIvNKK6OhipSiLXuRuLJX5DErz0o0Q0rYxulWLdFryTkV5PkdZct5iMInwYEGe/eR++1AA==,
+            }
+        hasBin: true
 
     tmp@0.2.5:
         resolution:
@@ -16949,6 +17228,7 @@ packages:
                 integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==,
             }
         engines: { node: '>=18' }
+        deprecated: Use @exodus/bytes instead for a more spec-conformant and faster implementation
 
     whatwg-mimetype@4.0.0:
         resolution:
@@ -18710,7 +18990,7 @@ snapshots:
     '@inquirer/external-editor@1.0.3(@types/node@24.10.2)':
         dependencies:
             chardet: 2.1.1
-            iconv-lite: 0.7.0
+            iconv-lite: 0.7.2
         optionalDependencies:
             '@types/node': 24.10.2
 
@@ -20065,6 +20345,11 @@ snapshots:
 
     '@sec-ant/readable-stream@0.4.1': {}
 
+    '@selderee/plugin-htmlparser2@0.11.0':
+        dependencies:
+            domhandler: 5.0.3
+            selderee: 0.11.0
+
     '@sigstore/bundle@1.1.0':
         dependencies:
             '@sigstore/protobuf-specs': 0.2.1
@@ -20593,6 +20878,10 @@ snapshots:
         dependencies:
             '@types/node': 24.10.2
 
+    '@types/form-data@2.5.2':
+        dependencies:
+            form-data: 4.0.5
+
     '@types/fs-extra@11.0.4':
         dependencies:
             '@types/jsonfile': 6.1.4
@@ -20659,6 +20948,10 @@ snapshots:
     '@types/node@24.10.2':
         dependencies:
             undici-types: 7.16.0
+
+    '@types/nodemailer@6.4.22':
+        dependencies:
+            '@types/node': 24.10.2
 
     '@types/normalize-package-data@2.4.4': {}
 
@@ -20965,6 +21258,12 @@ snapshots:
     '@zkochan/js-yaml@0.0.7':
         dependencies:
             argparse: 2.0.1
+
+    '@zone-eu/mailsplit@5.4.8':
+        dependencies:
+            libbase64: 1.3.0
+            libmime: 5.3.7
+            libqp: 2.1.1
 
     JSONStream@1.3.5:
         dependencies:
@@ -21481,7 +21780,7 @@ snapshots:
             content-type: 1.0.5
             debug: 4.4.3
             http-errors: 2.0.1
-            iconv-lite: 0.7.0
+            iconv-lite: 0.7.2
             on-finished: 2.4.1
             qs: 6.14.0
             raw-body: 3.0.2
@@ -22587,6 +22886,8 @@ snapshots:
     encodeurl@1.0.2: {}
 
     encodeurl@2.0.0: {}
+
+    encoding-japanese@2.2.0: {}
 
     encoding-sniffer@0.2.1:
         dependencies:
@@ -23752,6 +24053,8 @@ snapshots:
         dependencies:
             function-bind: 1.1.2
 
+    he@1.2.0: {}
+
     highlight.js@8.9.1: {}
 
     highlight.js@9.18.5: {}
@@ -23782,6 +24085,14 @@ snapshots:
 
     html-escaper@2.0.2: {}
 
+    html-to-text@9.0.5:
+        dependencies:
+            '@selderee/plugin-htmlparser2': 0.11.0
+            deepmerge: 4.3.1
+            dom-serializer: 2.0.0
+            htmlparser2: 8.0.2
+            selderee: 0.11.0
+
     htmlparser2@10.0.0:
         dependencies:
             domelementtype: 2.3.0
@@ -23802,6 +24113,13 @@ snapshots:
             domhandler: 4.3.1
             domutils: 2.8.0
             entities: 2.2.0
+
+    htmlparser2@8.0.2:
+        dependencies:
+            domelementtype: 2.3.0
+            domhandler: 5.0.3
+            domutils: 3.2.2
+            entities: 4.5.0
 
     http-cache-semantics@4.2.0: {}
 
@@ -23893,6 +24211,10 @@ snapshots:
         dependencies:
             safer-buffer: 2.1.2
 
+    iconv-lite@0.7.2:
+        dependencies:
+            safer-buffer: 2.1.2
+
     ieee754@1.2.1: {}
 
     ignore-walk@6.0.5:
@@ -23914,6 +24236,18 @@ snapshots:
     image-size@1.2.1:
         dependencies:
             queue: 6.0.2
+
+    imapflow@1.2.8:
+        dependencies:
+            '@zone-eu/mailsplit': 5.4.8
+            encoding-japanese: 2.2.0
+            iconv-lite: 0.7.2
+            libbase64: 1.3.0
+            libmime: 5.3.7
+            libqp: 2.1.1
+            nodemailer: 7.0.13
+            pino: 10.3.0
+            socks: 2.8.7
 
     import-fresh@3.3.1:
         dependencies:
@@ -24874,6 +25208,8 @@ snapshots:
             readable-stream: 2.3.8
         optional: true
 
+    leac@0.6.0: {}
+
     lerna-lcov-aggregate@1.0.0:
         dependencies:
             chalk: 4.1.2
@@ -24979,6 +25315,15 @@ snapshots:
             prelude-ls: 1.2.1
             type-check: 0.4.0
 
+    libbase64@1.3.0: {}
+
+    libmime@5.3.7:
+        dependencies:
+            encoding-japanese: 2.2.0
+            iconv-lite: 0.6.3
+            libbase64: 1.3.0
+            libqp: 2.1.1
+
     libnpmaccess@10.0.3:
         dependencies:
             npm-package-arg: 13.0.1
@@ -24998,6 +25343,8 @@ snapshots:
             ssri: 12.0.0
         transitivePeerDependencies:
             - supports-color
+
+    libqp@2.1.1: {}
 
     libsignal@https://codeload.github.com/canove/libsignal-node/tar.gz/105ad38dc8d7668b5d5e3688e710915bef5cdc7f:
         dependencies:
@@ -25176,6 +25523,19 @@ snapshots:
     magic-string@0.30.21:
         dependencies:
             '@jridgewell/sourcemap-codec': 1.5.5
+
+    mailparser@3.9.3:
+        dependencies:
+            '@zone-eu/mailsplit': 5.4.8
+            encoding-japanese: 2.2.0
+            he: 1.2.0
+            html-to-text: 9.0.5
+            iconv-lite: 0.7.2
+            libmime: 5.3.7
+            linkify-it: 5.0.0
+            nodemailer: 7.0.13
+            punycode.js: 2.3.1
+            tlds: 1.261.0
 
     make-dir@2.1.0:
         dependencies:
@@ -25760,6 +26120,10 @@ snapshots:
     node-webpmux@3.1.7: {}
 
     node-webpmux@3.2.1: {}
+
+    nodemailer@6.10.1: {}
+
+    nodemailer@7.0.13: {}
 
     nopt@6.0.0:
         dependencies:
@@ -26374,6 +26738,11 @@ snapshots:
         dependencies:
             entities: 6.0.1
 
+    parseley@0.12.1:
+        dependencies:
+            leac: 0.6.0
+            peberminta: 0.9.0
+
     parseurl@1.3.3: {}
 
     path-browserify@1.0.1: {}
@@ -26409,6 +26778,8 @@ snapshots:
             pify: 3.0.0
 
     path-type@4.0.0: {}
+
+    peberminta@0.9.0: {}
 
     peek-readable@4.1.0: {}
 
@@ -26478,6 +26849,10 @@ snapshots:
         dependencies:
             split2: 4.2.0
 
+    pino-abstract-transport@3.0.0:
+        dependencies:
+            split2: 4.2.0
+
     pino-std-serializers@4.0.0: {}
 
     pino-std-serializers@7.0.0: {}
@@ -26495,6 +26870,20 @@ snapshots:
             safe-stable-stringify: 2.5.0
             sonic-boom: 4.2.0
             thread-stream: 3.1.0
+
+    pino@10.3.0:
+        dependencies:
+            '@pinojs/redact': 0.4.0
+            atomic-sleep: 1.0.0
+            on-exit-leak-free: 2.1.2
+            pino-abstract-transport: 3.0.0
+            pino-std-serializers: 7.0.0
+            process-warning: 5.0.0
+            quick-format-unescaped: 4.0.4
+            real-require: 0.2.0
+            safe-stable-stringify: 2.5.0
+            sonic-boom: 4.2.0
+            thread-stream: 4.0.0
 
     pino@7.11.0:
         dependencies:
@@ -27059,7 +27448,7 @@ snapshots:
         dependencies:
             bytes: 3.1.2
             http-errors: 2.0.1
-            iconv-lite: 0.7.0
+            iconv-lite: 0.7.2
             unpipe: 1.0.0
 
     rc-config-loader@4.1.3:
@@ -27417,6 +27806,10 @@ snapshots:
     sax@1.4.3: {}
 
     scmp@2.1.0: {}
+
+    selderee@0.11.0:
+        dependencies:
+            parseley: 0.12.1
 
     semver-diff@4.0.0:
         dependencies:
@@ -28193,6 +28586,10 @@ snapshots:
         dependencies:
             real-require: 0.2.0
 
+    thread-stream@4.0.0:
+        dependencies:
+            real-require: 0.2.0
+
     through2@2.0.5:
         dependencies:
             readable-stream: 2.3.8
@@ -28221,6 +28618,8 @@ snapshots:
         dependencies:
             fdir: 6.5.0(picomatch@4.0.3)
             picomatch: 4.0.3
+
+    tlds@1.261.0: {}
 
     tmp@0.2.5: {}
 

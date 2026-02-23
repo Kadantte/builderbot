@@ -1,6 +1,6 @@
 {
   "name": "@builderbot/provider-sherpa",
-  "version": "1.3.15-alpha.4",
+  "version": "1.3.15-alpha.14",
   "description": "Provider Sherpa for BuilderBot - WhatsApp integration using Whaileys",
   "keywords": [],
   "author": "Leifer Mendez <leifer33@gmail.com>",
@@ -38,7 +38,7 @@
   },
   "homepage": "https://github.com/codigoencasa/bot-whatsapp#readme",
   "devDependencies": {
-    "@builderbot/bot": "^1.3.15-alpha.4",
+    "@builderbot/bot": "^1.3.15-alpha.14",
     "@hapi/boom": "^10.0.1",
     "@jest/globals": "^30.2.0",
     "@rollup/plugin-commonjs": "^29.0.0",
@@ -80,5 +80,5 @@
     "typescript": "^5.9.3",
     "whaileys": "6.3.8"
   },
-  "gitHead": "2f17d4671961943fea80ce3ad509c9a92deff687"
+  "gitHead": "4c82bc8e42da0ec2032d6ebbfaadb4ab08724292"
 }

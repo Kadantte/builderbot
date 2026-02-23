@@ -1,21 +1,25 @@
-import { ProviderClass } from '@builderbot/bot'
+import { ProviderClass, utils } from '@builderbot/bot'
 import type { BotContext, GlobalVendorArgs, SendOptions } from '@builderbot/bot/dist/types'
 import axios, { AxiosResponse } from 'axios'
+import FormData from 'form-data'
+import { createReadStream, existsSync } from 'fs'
 import { writeFile } from 'fs/promises'
 import mime from 'mime-types'
 import { tmpdir } from 'os'
 import { join, resolve } from 'path'
 import type { Middleware } from 'polka'
 
-import { InstagramEvents } from './instagram.events'
+import { InstagramEvents, InstagramListenMode } from './instagram.events'
 
 const INSTAGRAM_API_URL = 'https://graph.instagram.com/'
+const FACEBOOK_GRAPH_API_URL = 'https://graph.facebook.com/'
 
 export type InstagramArgs = GlobalVendorArgs & {
     accessToken: string
     igAccountId: string
     version?: string
     verifyToken: string
+    listenMode?: InstagramListenMode
 }
 
 /**
@@ -30,6 +34,7 @@ class InstagramProvider extends ProviderClass<InstagramEvents> {
         igAccountId: undefined,
         version: 'v19.0',
         verifyToken: undefined,
+        listenMode: 'message',
     }
 
     constructor(args?: InstagramArgs) {
@@ -49,6 +54,7 @@ class InstagramProvider extends ProviderClass<InstagramEvents> {
 
     protected async initVendor(): Promise<any> {
         const vendor = new InstagramEvents()
+        vendor.setListenMode(this.globalVendorArgs.listenMode || 'message')
         this.vendor = vendor
         this.server = this.server.post('/webhook', this.ctrlInMsg).get('/webhook', this.ctrlVerify)
 
@@ -156,7 +162,57 @@ class InstagramProvider extends ProviderClass<InstagramEvents> {
         }
     }
 
-    sendMessage = async (userId: string, message: string, _options?: SendOptions): Promise<any> => {
+    /**
+     * Send a media file (image, video, or audio) to a user.
+     * Automatically detects the media type and calls the appropriate method.
+     * @param userId - The recipient user ID
+     * @param text - Optional text message (not used for Instagram media, logged as info)
+     * @param mediaInput - URL or local file path of the media
+     * @returns Promise with the API response
+     */
+    sendMedia = async (userId: string, text: string, mediaInput: string): Promise<any> => {
+        try {
+            // Download/process the media file
+            const fileDownloaded = await utils.generalDownload(mediaInput)
+            const mimeType = mime.lookup(fileDownloaded) || ''
+
+            if (text) {
+                console.info('[Instagram] Note: Instagram does not support captions with media attachments')
+            }
+
+            // Determine media type and send accordingly
+            if (mimeType.includes('image')) {
+                return this.sendImageFromFile(userId, fileDownloaded)
+            }
+            if (mimeType.includes('video')) {
+                return this.sendVideoFromFile(userId, fileDownloaded)
+            }
+            if (mimeType.includes('audio')) {
+                return this.sendAudioFromFile(userId, fileDownloaded)
+            }
+
+            // Instagram does NOT support file/document attachments
+            console.warn(
+                '[Instagram] File type not supported (Instagram only supports image, video, audio). Sending text only.',
+                { mimeType }
+            )
+            if (text) {
+                return this.sendText(userId, text)
+            }
+            return { warning: 'Unsupported file type, no message sent' }
+        } catch (error) {
+            console.error('[Instagram] Error sending media:', { error: error.message })
+            throw new Error('Failed to send media')
+        }
+    }
+
+    /**
+     * Send a text message to a user
+     * @param userId - The recipient user ID
+     * @param message - The text message to send
+     * @returns Promise with the API response
+     */
+    sendText = async (userId: string, message: string): Promise<any> => {
         const url = `${INSTAGRAM_API_URL}${this.globalVendorArgs.version}/${this.globalVendorArgs.igAccountId}/messages`
         try {
             const body = {
@@ -176,8 +232,125 @@ class InstagramProvider extends ProviderClass<InstagramEvents> {
         }
     }
 
+    sendMessage = async (userId: string, message: string, options?: SendOptions): Promise<any> => {
+        // Check if media is provided in options
+        if (options?.media) {
+            return this.sendMedia(userId, message, options.media)
+        }
+        return this.sendText(userId, message)
+    }
+
     /**
-     * Send an image attachment to a user
+     * Upload an attachment (image, video, audio) to Instagram servers.
+     * Returns an attachment_id that can be used to send the attachment.
+     * @param filePath - Local path to the file
+     * @param type - Type of attachment: 'image', 'video', or 'audio'
+     * @returns Promise with the attachment_id
+     */
+    private uploadAttachment = async (filePath: string, type: 'image' | 'video' | 'audio'): Promise<string> => {
+        const url = `${INSTAGRAM_API_URL}${this.globalVendorArgs.version}/${this.globalVendorArgs.igAccountId}/message_attachments`
+
+        if (!existsSync(filePath)) {
+            throw new Error(`File not found: ${filePath}`)
+        }
+
+        try {
+            const formData = new FormData()
+            const mimeType = mime.lookup(filePath) || 'application/octet-stream'
+
+            formData.append('message', JSON.stringify({ attachment: { type, payload: { is_reusable: true } } }))
+            formData.append('filedata', createReadStream(filePath), {
+                contentType: mimeType,
+            })
+
+            const response = await axios.post(url, formData, {
+                headers: {
+                    ...formData.getHeaders(),
+                    Authorization: `Bearer ${this.globalVendorArgs.accessToken}`,
+                },
+                params: {
+                    access_token: this.globalVendorArgs.accessToken,
+                },
+            })
+
+            console.info('[Instagram] Attachment uploaded successfully')
+            return response.data.attachment_id
+        } catch (error) {
+            console.error('[Instagram] Error uploading attachment:', {
+                error: error.response?.data || error.message,
+            })
+            throw new Error('Failed to upload attachment')
+        }
+    }
+
+    /**
+     * Send an attachment using a previously uploaded attachment_id
+     * @param userId - The recipient user ID
+     * @param attachmentId - The attachment_id from uploadAttachment
+     * @returns Promise with the API response
+     */
+    private sendAttachmentById = async (userId: string, attachmentId: string): Promise<any> => {
+        const url = `${INSTAGRAM_API_URL}${this.globalVendorArgs.version}/${this.globalVendorArgs.igAccountId}/messages`
+        try {
+            const body = {
+                recipient: { id: userId },
+                message: {
+                    attachment: {
+                        type: 'image', // Type is determined by the attachment itself
+                        payload: {
+                            attachment_id: attachmentId,
+                        },
+                    },
+                },
+                access_token: this.globalVendorArgs.accessToken,
+            }
+
+            const response = await axios.post(url, body)
+            console.info('[Instagram] Attachment sent successfully')
+            return response.data
+        } catch (error) {
+            console.error('[Instagram] Error sending attachment:', {
+                error: error.response?.data || error.message,
+            })
+            throw new Error('Failed to send attachment')
+        }
+    }
+
+    /**
+     * Send an image from a local file path
+     * @param userId - The recipient user ID
+     * @param filePath - Local path to the image file
+     * @returns Promise with the API response
+     */
+    sendImageFromFile = async (userId: string, filePath: string): Promise<any> => {
+        const attachmentId = await this.uploadAttachment(filePath, 'image')
+        return this.sendAttachmentById(userId, attachmentId)
+    }
+
+    /**
+     * Send a video from a local file path
+     * @param userId - The recipient user ID
+     * @param filePath - Local path to the video file
+     * @returns Promise with the API response
+     */
+    sendVideoFromFile = async (userId: string, filePath: string): Promise<any> => {
+        const attachmentId = await this.uploadAttachment(filePath, 'video')
+        return this.sendAttachmentById(userId, attachmentId)
+    }
+
+    /**
+     * Send an audio from a local file path
+     * @param userId - The recipient user ID
+     * @param filePath - Local path to the audio file
+     * @returns Promise with the API response
+     */
+    sendAudioFromFile = async (userId: string, filePath: string): Promise<any> => {
+        const attachmentId = await this.uploadAttachment(filePath, 'audio')
+        return this.sendAttachmentById(userId, attachmentId)
+    }
+
+    /**
+     * Send an image attachment to a user (from URL)
      */
     async sendImage(userId: string, imageUrl: string): Promise<any> {
         const url = `${INSTAGRAM_API_URL}${this.globalVendorArgs.version}/${this.globalVendorArgs.igAccountId}/messages`
@@ -319,6 +492,58 @@ class InstagramProvider extends ProviderClass<InstagramEvents> {
                 error: error.response?.data || error.message,
             })
             throw new Error('Failed to send quick replies')
+        }
+    }
+
+    /**
+     * Reply to a comment on a media post (public reply visible on the post)
+     * Uses the Facebook Graph API endpoint: POST /{comment-id}/replies
+     * @param commentId - The ID of the comment to reply to
+     * @param message - The reply text
+     */
+    replyComment = async (commentId: string, message: string): Promise<any> => {
+        const url = `${FACEBOOK_GRAPH_API_URL}${this.globalVendorArgs.version}/${commentId}/replies`
+        try {
+            const body = {
+                message,
+                access_token: this.globalVendorArgs.accessToken,
+            }
+            const response = await axios.post(url, body)
+            console.info('[Instagram] Comment reply sent successfully')
+            return response.data
+        } catch (error) {
+            console.error('[Instagram] Error replying to comment:', {
+                error: error.response?.data || error.message,
+            })
+            throw new Error('Failed to reply to comment')
+        }
+    }
+
+    /**
+     * Send a private reply (DM) to a user who commented on your post.
+     * Uses Instagram Private Replies: recipient is identified by comment_id.
+     * The DM goes to the user's inbox (or Message Requests if they don't follow you).
+     * Note: This does NOT open a full conversation window — an additional
+     * message from the user is required to open one.
+     * @param commentId - The ID of the comment to privately reply to
+     * @param message - The message text to send via DM
+     */
+    sendPrivateReply = async (commentId: string, message: string): Promise<any> => {
+        const url = `${INSTAGRAM_API_URL}${this.globalVendorArgs.version}/me/messages`
+        try {
+            const body = {
+                recipient: { comment_id: commentId },
+                message: { text: message },
+                access_token: this.globalVendorArgs.accessToken,
+            }
+            const response = await axios.post(url, body)
+            console.info('[Instagram] Private reply sent successfully')
+            return response.data
+        } catch (error) {
+            console.error('[Instagram] Error sending private reply:', {
+                error: error.response?.data || error.message,
+            })
+            throw new Error('Failed to send private reply')
         }
     }
 
