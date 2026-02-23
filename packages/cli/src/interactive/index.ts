@@ -5,7 +5,7 @@ import { join } from 'path'
 import color from 'picocolors'
 
 import { checkNodeVersion, checkGit } from '../check'
-import { PROVIDER_LIST, PROVIDER_DATA, AVAILABLE_LANGUAGES } from '../configuration'
+import { AVAILABLE_LANGUAGES, PROVIDER_DATA, PROVIDER_LIST, validateTemplateCombination } from '../configuration'
 import { copyBaseApp } from '../create-app'
 import { startInteractiveLegacy } from '../interactive-legacy'
 
@@ -112,6 +112,16 @@ const createApp = async (templateName: string | null): Promise<string> => {
     return pathTemplate
 }
 
+const validateTemplateSupportOrExit = (provider: string, language: string, database: string): void => {
+    const validation = validateTemplateCombination({ provider, language, database })
+    if (validation.pass) {
+        return
+    }
+
+    cancel(validation.message)
+    process.exit(0)
+}
+
 const startInteractive = async (version: string): Promise<void> => {
     try {
         const stepContinue = await confirm({
@@ -157,6 +167,8 @@ const startInteractive = async (version: string): Promise<void> => {
             cancel('Operation canceled')
             return process.exit(0)
         }
+
+        validateTemplateSupportOrExit(stepProvider as string, stepLanguage as string, stepDatabase as string)
 
         await createBot({
             stepLanguage: stepLanguage as string,
@@ -245,6 +257,8 @@ function validateArgs(args: Record<string, string>): void {
         cancel(`Invalid language: ${args['language']}`)
         process.exit(0)
     }
+
+    validateTemplateSupportOrExit(args['provider'], args['language'], args['database'])
 }
 
 const logError = async (e: any): Promise<void> => {

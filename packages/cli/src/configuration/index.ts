@@ -16,6 +16,17 @@ export interface ValueLabel {
     label: string
 }
 
+export interface TemplateCombination {
+    provider: string
+    language: string
+    database: string
+}
+
+export interface TemplateValidationResult {
+    pass: boolean
+    message: string
+}
+
 export const PROVIDER_LIST: Provider[] = [
     { value: 'baileys', label: 'Baileys', hint: 'opensource' },
     { value: 'sherpa', label: 'Sherpa', hint: 'opensource' },
@@ -38,7 +49,40 @@ export const PROVIDER_DATA: ValueLabel[] = [
     { value: 'postgres', label: 'PostgreSQL' },
 ]
 
+export type ProviderData = ValueLabel
+
 export const AVAILABLE_LANGUAGES: ValueLabel[] = [
     { value: 'ts', label: 'TypeScript' },
     { value: 'js', label: 'JavaScript' },
 ]
+
+const GUPSHUP_SUPPORTED_TEMPLATE_COMBINATIONS: TemplateCombination[] = [
+    { provider: 'gupshup', language: 'ts', database: 'memory' },
+]
+
+export const validateTemplateCombination = ({
+    provider,
+    language,
+    database,
+}: TemplateCombination): TemplateValidationResult => {
+    if (provider !== 'gupshup') {
+        return { pass: true, message: '' }
+    }
+
+    const pass = GUPSHUP_SUPPORTED_TEMPLATE_COMBINATIONS.some(
+        (combo) => combo.provider === provider && combo.language === language && combo.database === database
+    )
+
+    if (pass) {
+        return { pass, message: '' }
+    }
+
+    const supportedCombinations = GUPSHUP_SUPPORTED_TEMPLATE_COMBINATIONS.map(
+        (combo) => `--provider=${combo.provider} --language=${combo.language} --database=${combo.database}`
+    ).join('\n')
+
+    return {
+        pass,
+        message: `Unsupported template combination for provider ${provider}.\nSupported combinations:\n${supportedCombinations}`,
+    }
+}

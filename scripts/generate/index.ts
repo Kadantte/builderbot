@@ -115,28 +115,33 @@ const mergeDependencies = async (
 
 const main = async (): Promise<void> => {
     try {
-        const { PROVIDER_DATA, PROVIDER_LIST } = await import('../../packages/cli/src/configuration/index.ts')
+        const { AVAILABLE_LANGUAGES, PROVIDER_DATA, PROVIDER_LIST, validateTemplateCombination } =
+            await import('../../packages/cli/src/configuration/index.ts')
 
         console.log(`Cleaning...`)
         await cleanTemplates()
 
-        for (const database of PROVIDER_DATA) {
-            for (const provider of PROVIDER_LIST) {
-                await delay(10)
-                const full = await copyBase('js', database.value, provider.value)
-                await replaceZones(full, database.value, provider.value)
-                await mergeDependencies(full, database.value, provider.value, 'js')
-                console.log(`Generated JS 🌟: ${database.value}-${provider.value}`)
-            }
-        }
+        for (const language of AVAILABLE_LANGUAGES) {
+            for (const database of PROVIDER_DATA) {
+                for (const provider of PROVIDER_LIST) {
+                    const validation = validateTemplateCombination({
+                        provider: provider.value,
+                        language: language.value,
+                        database: database.value,
+                    })
 
-        for (const database of PROVIDER_DATA) {
-            for (const provider of PROVIDER_LIST) {
-                await delay(10)
-                const full = await copyBase('ts', database.value, provider.value)
-                await replaceZones(full, database.value, provider.value)
-                await mergeDependencies(full, database.value, provider.value, 'ts')
-                console.log(`Generated TS 👌: ${database.value}-${provider.value}`)
+                    if (!validation.pass) {
+                        console.log(`Skipped ${language.value}: ${database.value}-${provider.value}`)
+                        continue
+                    }
+
+                    const runtimeLanguage = language.value as 'js' | 'ts'
+                    await delay(10)
+                    const full = await copyBase(runtimeLanguage, database.value, provider.value)
+                    await replaceZones(full, database.value, provider.value)
+                    await mergeDependencies(full, database.value, provider.value, runtimeLanguage)
+                    console.log(`Generated ${runtimeLanguage.toUpperCase()} 🌟: ${database.value}-${provider.value}`)
+                }
             }
         }
 

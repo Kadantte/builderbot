@@ -45,6 +45,9 @@ class CoreClass<P extends ProviderClass = any, D extends MemoryDB = any> extends
         blackList: [],
         listEvents: {},
         delay: 0,
+        logs: {
+            notices: true,
+        },
         globalState: {},
         extensions: undefined,
         queue: {
@@ -66,7 +69,14 @@ class CoreClass<P extends ProviderClass = any, D extends MemoryDB = any> extends
         this.flowClass = _flow
         this.database = _database
         this.provider = _provider
-        this.generalArgs = { ...this.generalArgs, ..._args }
+        this.generalArgs = {
+            ...this.generalArgs,
+            ..._args,
+            logs: {
+                ...this.generalArgs.logs,
+                ..._args.logs,
+            },
+        }
 
         this.dynamicBlacklist.add(this.generalArgs.blackList)
 
@@ -98,7 +108,10 @@ class CoreClass<P extends ProviderClass = any, D extends MemoryDB = any> extends
         },
         {
             event: 'notice',
-            func: ({ instructions, title = '' }) => printer(instructions, title, 'bgMagenta'),
+            func: ({ instructions, title = '' }) => {
+                if (this.generalArgs.logs?.notices === false) return
+                printer(instructions, title, 'bgMagenta')
+            },
         },
         {
             event: 'ready',
@@ -180,7 +193,7 @@ class CoreClass<P extends ProviderClass = any, D extends MemoryDB = any> extends
             },
             index = 0
         ) => {
-            const body = typeof payload === 'string' ? payload : payload?.body ?? payload?.answer
+            const body = typeof payload === 'string' ? payload : (payload?.body ?? payload?.answer)
             const media = payload?.media ?? null
             const buttons = payload?.buttons ?? []
             const capture = payload?.capture ?? false
@@ -376,7 +389,7 @@ class CoreClass<P extends ProviderClass = any, D extends MemoryDB = any> extends
                 flag.fallBack = true
                 await this.sendProviderAndSave(from, {
                     ...prevMsg,
-                    answer: typeof message === 'string' ? message : message?.body ?? prevMsg.answer,
+                    answer: typeof message === 'string' ? message : (message?.body ?? prevMsg.answer),
                     options: {
                         ...prevMsg.options,
                         buttons: prevMsg.options?.buttons,
