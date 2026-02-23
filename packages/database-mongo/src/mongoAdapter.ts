@@ -5,6 +5,7 @@ import { MongoClient } from 'mongodb'
 import type { History, MongoAdapterCredentials } from './types'
 
 class MongoAdapter extends MemoryDB {
+    client: MongoClient | null = null
     db: Db | null = null
     listHistory: History[] = []
     credentials: MongoAdapterCredentials = { dbUri: null, dbName: null }
@@ -17,17 +18,30 @@ class MongoAdapter extends MemoryDB {
 
     init = async (): Promise<boolean> => {
         try {
-            const client = new MongoClient(this.credentials.dbUri, {})
-            await client.connect()
+            if (!this.client) {
+                this.client = new MongoClient(this.credentials.dbUri, {})
+            }
+
+            await this.client.connect()
 
             console.log(`🆗 Connection successfully established`)
-            const db = client.db(this.credentials.dbName)
+            const db = this.client.db(this.credentials.dbName)
             this.db = db
             return true
         } catch (e) {
             console.log('Error', e)
+            return false
+        }
+    }
+
+    close = async (): Promise<void> => {
+        if (!this.client) {
             return
         }
+
+        await this.client.close()
+        this.client = null
+        this.db = null
     }
 
     getPrevByNumber = async (from: string): Promise<any> => {
