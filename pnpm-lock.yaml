@@ -1003,8 +1003,8 @@ importers:
             tslib:
                 specifier: ^2.6.2
                 version: 2.8.1
-                
-     packages/provider-gupshup:
+
+    packages/provider-gupshup:
         dependencies:
             axios:
                 specifier: ^1.6.0
