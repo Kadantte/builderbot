@@ -37,6 +37,25 @@ test('Queue - clearQueue does not reject pending tasks and returns 0 length', as
     assert.ok(results.length >= 0)
 })
 
+test('Queue - timeout rejects with Error instead of silently resolving', async () => {
+    // Arrange — uses a 50ms timeout and a promise that never resolves
+    // Before the fix the timer called resolve('timeout'), so the queue considered the item
+    // a success and the message was silently lost with no error logged
+    const queue = new Queue<string>(mockLogger, 1, 50)
+    let caughtError: any = null
+
+    const neverResolves = () => new Promise<string>(() => {})
+
+    // Act
+    await queue.enqueue('C', neverResolves, 'timeout-ref').catch((e) => {
+        caughtError = e
+    })
+
+    // Assert
+    assert.ok(caughtError instanceof Error, 'should reject with an Error instance')
+    assert.ok(caughtError.message.includes('timeout'), 'error message should mention timeout')
+})
+
 test('Queue - duplicate fingerIdRef resolves as success without clearing queue', async () => {
     const queue = new Queue<string>(mockLogger, 2, 50)
     let first = ''

@@ -891,6 +891,14 @@ class SherpaProvider extends ProviderClass<WASocket> {
     }
 
     /**
+     * Returns true only when the underlying WebSocket is fully open (readyState === 1).
+     * Used as a guard before any send call to avoid silent message loss during reconnects.
+     */
+    private isVendorReady(): boolean {
+        return !!(this.vendor && this.vendor.ws?.readyState === 1)
+    }
+
+    /**
      * Enviar imagen
      * @param {*} number
      * @param {*} imageUrl
@@ -898,6 +906,7 @@ class SherpaProvider extends ProviderClass<WASocket> {
      * @returns
      */
     sendImage = async (number: string, filePath: string, text: any) => {
+        if (!this.isVendorReady()) throw new Error('Provider not connected. Cannot send image.')
         const payload: AnyMediaMessageContent = {
             image: { url: filePath },
             caption: text,
@@ -913,6 +922,7 @@ class SherpaProvider extends ProviderClass<WASocket> {
      * @returns
      */
     sendVideo = async (number: string, filePath: PathOrFileDescriptor, text: any) => {
+        if (!this.isVendorReady()) throw new Error('Provider not connected. Cannot send video.')
         const payload: AnyMediaMessageContent = {
             video: readFileSync(filePath),
             caption: text,
@@ -931,6 +941,7 @@ class SherpaProvider extends ProviderClass<WASocket> {
      */
 
     sendAudio = async (number: string, audioUrl: string) => {
+        if (!this.isVendorReady()) throw new Error('Provider not connected. Cannot send audio.')
         const payload: AnyMediaMessageContent = {
             audio: { url: audioUrl },
             ptt: true,
@@ -945,6 +956,7 @@ class SherpaProvider extends ProviderClass<WASocket> {
      * @returns
      */
     sendText = async (number: string, message: string) => {
+        if (!this.isVendorReady()) throw new Error('Provider not connected. Cannot send text.')
         const payload: AnyMessageContent = { text: message }
         return this.vendor.sendMessage(number, payload)
     }
@@ -957,6 +969,7 @@ class SherpaProvider extends ProviderClass<WASocket> {
      */
 
     sendFile = async (number: string, filePath: string, text: string) => {
+        if (!this.isVendorReady()) throw new Error('Provider not connected. Cannot send file.')
         const mimeType = mime.lookup(filePath)
         const fileName = basename(filePath)
 
@@ -981,6 +994,7 @@ class SherpaProvider extends ProviderClass<WASocket> {
      */
 
     sendButtons = async (number: string, text: string, buttons: Button[]) => {
+        if (!this.isVendorReady()) throw new Error('Provider not connected. Cannot send buttons.')
         this.emit('notice', {
             title: 'DEPRECATED',
             instructions: [

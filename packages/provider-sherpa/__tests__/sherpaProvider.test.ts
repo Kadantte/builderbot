@@ -626,6 +626,7 @@ describe('#SherpaProvider', () => {
             const mockEmit = jest.fn()
             provider.emit = mockEmit
             provider.vendor.sendMessage = mockSendSuccess
+            provider.vendor.ws = { readyState: 1 } as any
             // Act
             await provider.sendButtons(number, text, buttons)
 
@@ -648,6 +649,7 @@ describe('#SherpaProvider', () => {
             // Mock del método sendMessage
             const mockSendMessage = mockSendSuccess
             provider.vendor.sendMessage = mockSendMessage
+            provider.vendor.ws = { readyState: 1 } as any
 
             // Act
             const result = await provider.sendButtons(number, text, buttons)
@@ -676,6 +678,7 @@ describe('#SherpaProvider', () => {
             const caption = 'Hello Word'
             const mockSendMessage = mockSendSuccess
             provider.vendor.sendMessage = mockSendMessage
+            provider.vendor.ws = { readyState: 1 } as any
 
             // Act
             const result = await provider.sendFile(number, filePath, caption)
@@ -698,6 +701,7 @@ describe('#SherpaProvider', () => {
             const message = 'This is a test message'
             const mockSendMessage = mockSendSuccess
             provider.vendor.sendMessage = mockSendMessage
+            provider.vendor.ws = { readyState: 1 } as any
 
             // Act
             const result = await provider.sendText(number, message)
@@ -705,6 +709,20 @@ describe('#SherpaProvider', () => {
             // Assert
             expect(result).toEqual('success')
             expect(mockSendMessage).toHaveBeenCalledWith(number, { text: message })
+        })
+
+        test('should throw when vendor is undefined', async () => {
+            // Arrange — simulates the window between old socket teardown and new socket creation
+            provider.vendor = undefined as any
+            // Act & Assert
+            await expect(provider.sendText(phoneNumber, 'hello')).rejects.toThrow('Provider not connected')
+        })
+
+        test('should throw when WebSocket is not open (readyState !== 1)', async () => {
+            // Arrange — simulates a socket that is closed (readyState 3) or connecting (0)
+            provider.vendor = { ws: { readyState: 3 } } as any
+            // Act & Assert
+            await expect(provider.sendText(phoneNumber, 'hello')).rejects.toThrow('Provider not connected')
         })
     })
 
@@ -715,6 +733,7 @@ describe('#SherpaProvider', () => {
             const audioUrl = 'http://example.com/audio.mp3'
             const mockSendMessage = mockSendSuccess
             provider.vendor.sendMessage = mockSendMessage
+            provider.vendor.ws = { readyState: 1 } as any
 
             // Act
             const result = await provider.sendAudio(number, audioUrl)
@@ -736,6 +755,7 @@ describe('#SherpaProvider', () => {
             const text = 'This is a video message'
             const mockSendMessage = mockSendSuccess
             provider.vendor.sendMessage = mockSendMessage
+            provider.vendor.ws = { readyState: 1 } as any
 
             jest.spyOn(fs, 'readFileSync').mockReturnValue(Buffer.from('sticker-buffer'))
             // Act
@@ -760,6 +780,7 @@ describe('#SherpaProvider', () => {
 
             const mockSendMessage = mockSendSuccess
             provider.vendor.sendMessage = mockSendMessage
+            provider.vendor.ws = { readyState: 1 } as any
 
             // Act
             const result = await provider.sendImage(number, filePath, text)
@@ -1231,6 +1252,45 @@ describe('#SherpaProvider', () => {
             provider['indexHome'](req as any, res as any, mockNext)
             // Assert
             expect(res.writeHead).toHaveBeenCalledWith(200, { 'Content-Type': 'image/png' })
+        })
+    })
+
+    describe('#busEvents - call event', () => {
+        test('should emit message with @lid from preserved when call arrives from LID JID', async () => {
+            // Arrange — the bug was that @lid was stripped and @s.whatsapp.net was added,
+            // routing the reply to a completely different (random) phone number
+            const emitSpy = jest.spyOn(provider, 'emit')
+            const { baileyCleanNumber } = require('../src/utils')
+            baileyCleanNumber.mockImplementation((n: string) => n)
+            const callEvent = provider['busEvents']().find((e: any) => e.event === 'call')
+            const mockCall = {
+                from: '16424005304394@lid',
+                status: 'offer',
+                id: 'test-id',
+                chatId: '16424005304394@lid',
+            }
+
+            // Act
+            await callEvent!.func([mockCall])
+
+            // Assert
+            expect(emitSpy).toHaveBeenCalledWith('message', expect.objectContaining({ from: '16424005304394@lid' }))
+        })
+
+        test('should not emit message when call status is not offer', async () => {
+            // Arrange
+            const emitSpy = jest.spyOn(provider, 'emit')
+            const callEvent = provider['busEvents']().find((e: any) => e.event === 'call')
+            const mockCall = { from: '16424005304394@lid', status: 'ringing', id: 'test-id' }
+
+            // Clear any accumulated calls from setup or previous tests before the action
+            emitSpy.mockClear()
+
+            // Act
+            await callEvent!.func([mockCall])
+
+            // Assert
+            expect(emitSpy).not.toHaveBeenCalledWith('message', expect.anything())
         })
     })
 
