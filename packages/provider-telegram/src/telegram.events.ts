@@ -21,7 +21,11 @@ export class TelegramEvents extends EventEmitterClass<ProviderEventTypes> {
             hasFile,
             isVoice,
             mimeType,
-            message: payload.message,
+            message: {
+                voice: !!payload.message.voice,
+                media: !!payload.message.media,
+                message: payload.message.message,
+            },
         }
 
         // if (payload.chatId.toString() == "1975336063")
