@@ -51,6 +51,10 @@ class TelegramProvider extends ProviderClass<TelegramEvents> {
         const stringSession = this._getStringSession()
         this.client = new TelegramClient(stringSession, +args.apiId, args.apiHash, {
             connectionRetries: 5,
+            useWSS: true,
+            deviceModel: 'BuilderBot Server',
+            systemVersion: 'Node.js',
+            appVersion: '1.0.0',
         })
     }
 
@@ -184,9 +188,7 @@ class TelegramProvider extends ProviderClass<TelegramEvents> {
         await this.client.start({
             phoneNumber: async () => this.globalVendorArgs.apiNumber,
             phoneCode: async () => {
-                const code = await this.globalVendorArgs.getCode()
-                await utils.delay(10000)
-                return new Promise((resolve) => resolve(code))
+                return await this.globalVendorArgs.getCode()
             },
             password: async () => this.globalVendorArgs.apiPassword || '',
             onError: (err) => console.log(err),
