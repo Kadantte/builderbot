@@ -122,6 +122,28 @@ class TelegramProvider extends ProviderClass<TelegramEvents> {
         await this.client.markAsRead(from)
     }
 
+    /**
+     * Send a typing indicator to a chat
+     * @param chatId - The chat/user ID to send the typing indicator to
+     * @param action - 'typing' to show typing indicator, 'cancel' to hide it (default: 'typing')
+     * @example
+     * // Show typing indicator
+     * await provider.sendPresenceUpdate('user123')
+     *
+     * // Hide typing indicator
+     * await provider.sendPresenceUpdate('user123', 'cancel')
+     */
+    async sendPresenceUpdate(chatId: EntityLike, action: 'typing' | 'cancel' = 'typing'): Promise<void> {
+        const typingAction =
+            action === 'typing' ? new Api.SendMessageTypingAction() : new Api.SendMessageCancelAction()
+        await this.client.invoke(
+            new Api.messages.SetTyping({
+                peer: chatId,
+                action: typingAction,
+            })
+        )
+    }
+
     async sendButtons<K = any>(chatId: string, text: string, buttons: any[]): Promise<K> {
         return
     }

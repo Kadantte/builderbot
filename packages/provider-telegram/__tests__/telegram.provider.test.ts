@@ -46,10 +46,16 @@ jest.mock('telegram', () => ({
         markAsRead: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
         downloadMedia: jest.fn<() => Promise<Buffer>>().mockResolvedValue(Buffer.from('media-data')),
         addEventHandler: jest.fn(),
+        invoke: jest.fn<() => Promise<void>>().mockResolvedValue(undefined),
         session: { save: jest.fn().mockReturnValue('session-string') },
     })),
     Api: {
         User: jest.fn(),
+        SendMessageTypingAction: jest.fn().mockImplementation(() => ({ className: 'SendMessageTypingAction' })),
+        SendMessageCancelAction: jest.fn().mockImplementation(() => ({ className: 'SendMessageCancelAction' })),
+        messages: {
+            SetTyping: jest.fn().mockImplementation((args) => ({ ...args, className: 'SetTyping' })),
+        },
     },
 }))
 
@@ -376,6 +382,43 @@ describe('#TelegramProvider', () => {
         test('should delegate to client.markAsRead', async () => {
             await provider.markAsRead('user123')
             expect(provider.client.markAsRead).toHaveBeenCalledWith('user123')
+        })
+    })
+
+    // ===== sendPresenceUpdate =====
+
+    describe('#sendPresenceUpdate', () => {
+        test('should send typing action by default', async () => {
+            const { Api } = require('telegram')
+
+            await provider.sendPresenceUpdate('user123')
+
+            expect(Api.SendMessageTypingAction).toHaveBeenCalled()
+            expect(Api.messages.SetTyping).toHaveBeenCalledWith(
+                expect.objectContaining({ peer: 'user123' })
+            )
+            expect(provider.client.invoke).toHaveBeenCalled()
+        })
+
+        test('should send typing action when action is "typing"', async () => {
+            const { Api } = require('telegram')
+
+            await provider.sendPresenceUpdate('user123', 'typing')
+
+            expect(Api.SendMessageTypingAction).toHaveBeenCalled()
+            expect(provider.client.invoke).toHaveBeenCalled()
+        })
+
+        test('should send cancel action when action is "cancel"', async () => {
+            const { Api } = require('telegram')
+
+            await provider.sendPresenceUpdate('user123', 'cancel')
+
+            expect(Api.SendMessageCancelAction).toHaveBeenCalled()
+            expect(Api.messages.SetTyping).toHaveBeenCalledWith(
+                expect.objectContaining({ peer: 'user123' })
+            )
+            expect(provider.client.invoke).toHaveBeenCalled()
         })
     })
 
