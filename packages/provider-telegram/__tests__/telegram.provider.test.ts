@@ -52,10 +52,12 @@ jest.mock('telegram', () => ({
     Api: {
         User: jest.fn(),
         SendMessageTypingAction: jest.fn().mockImplementation(() => ({ className: 'SendMessageTypingAction' })),
-        SendMessageRecordAudioAction: jest.fn().mockImplementation(() => ({ className: 'SendMessageRecordAudioAction' })),
+        SendMessageRecordAudioAction: jest
+            .fn()
+            .mockImplementation(() => ({ className: 'SendMessageRecordAudioAction' })),
         SendMessageCancelAction: jest.fn().mockImplementation(() => ({ className: 'SendMessageCancelAction' })),
         messages: {
-            SetTyping: jest.fn().mockImplementation((args) => ({ ...args, className: 'SetTyping' })),
+            SetTyping: jest.fn().mockImplementation((args: object) => ({ ...args, className: 'SetTyping' })),
         },
     },
 }))
@@ -395,9 +397,7 @@ describe('#TelegramProvider', () => {
             await provider.sendPresenceUpdate('user123')
 
             expect(Api.SendMessageTypingAction).toHaveBeenCalled()
-            expect(Api.messages.SetTyping).toHaveBeenCalledWith(
-                expect.objectContaining({ peer: 'user123' })
-            )
+            expect(Api.messages.SetTyping).toHaveBeenCalledWith(expect.objectContaining({ peer: 'user123' }))
             expect(provider.client.invoke).toHaveBeenCalled()
         })
 
@@ -416,9 +416,7 @@ describe('#TelegramProvider', () => {
             await provider.sendPresenceUpdate('user123', 'cancel')
 
             expect(Api.SendMessageCancelAction).toHaveBeenCalled()
-            expect(Api.messages.SetTyping).toHaveBeenCalledWith(
-                expect.objectContaining({ peer: 'user123' })
-            )
+            expect(Api.messages.SetTyping).toHaveBeenCalledWith(expect.objectContaining({ peer: 'user123' }))
             expect(provider.client.invoke).toHaveBeenCalled()
         })
 
@@ -428,9 +426,7 @@ describe('#TelegramProvider', () => {
             await provider.sendPresenceUpdate('user123', 'recording')
 
             expect(Api.SendMessageRecordAudioAction).toHaveBeenCalled()
-            expect(Api.messages.SetTyping).toHaveBeenCalledWith(
-                expect.objectContaining({ peer: 'user123' })
-            )
+            expect(Api.messages.SetTyping).toHaveBeenCalledWith(expect.objectContaining({ peer: 'user123' }))
             expect(provider.client.invoke).toHaveBeenCalled()
         })
     })
@@ -506,7 +502,6 @@ describe('#TelegramProvider', () => {
             const handler = events[0].func
 
             let capturedPayload: any
-
             ;(provider.emit as jest.Mock).mockImplementation((_event: string, payload: any) => {
                 capturedPayload = payload
             })
@@ -526,7 +521,6 @@ describe('#TelegramProvider', () => {
             const handler = events[0].func
 
             let capturedPayload: any
-
             ;(provider.emit as jest.Mock).mockImplementation((_event: string, payload: any) => {
                 capturedPayload = payload
             })
