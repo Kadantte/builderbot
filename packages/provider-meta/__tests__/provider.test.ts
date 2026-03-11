@@ -1115,7 +1115,7 @@ describe('#MetaProvider', () => {
             jest.spyOn(metaProvider, 'sendPresenceUpdate').mockResolvedValue({ success: true })
 
             // Act
-            const typingPromise = metaProvider.typing(fakeRecipient, 1000)
+            const typingPromise = metaProvider.typing(fakeMessageId, 1000)
             await jest.runAllTimersAsync()
             await typingPromise
 
