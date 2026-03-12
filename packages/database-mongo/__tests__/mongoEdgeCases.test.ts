@@ -6,11 +6,6 @@ import { MongoAdapter } from '../src/index'
 
 const delay = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms))
 
-const hookClose = async () => {
-    await delay(1000)
-    process.exit(0)
-}
-
 let mongoServer: MongoMemoryServer
 let mongoAdapter: MongoAdapter
 
@@ -163,8 +158,8 @@ test('[MongoAdapter] - listHistory should accumulate all saved items', () => {
 })
 
 test.after(async () => {
+    await mongoAdapter.close()
     await mongoServer.stop()
-    hookClose().then()
 })
 
 test.run()

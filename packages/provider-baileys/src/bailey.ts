@@ -23,6 +23,7 @@ import {
     MessageUpsertType,
     isJidGroup,
     isJidBroadcast,
+    isLidUser,
     DisconnectReason,
     downloadMediaMessage,
     getAggregateVotesInPollMessage,
@@ -560,10 +561,9 @@ class BaileysProvider extends ProviderClass<WASocket> {
                         }
                     }
 
-                    // Buscar siempre el que tenga formato @s.whatsapp.net (puede estar en remoteJid o remoteJidAlt)
-                    const remoteJid = (messageCtx?.key as any)?.remoteJid
-                    const remoteJidAlt = (messageCtx?.key as any)?.remoteJidAlt
-                    const fromParse = remoteJid?.includes('@lid') ? remoteJidAlt : remoteJid
+                    // Preferir @s.whatsapp.net (remoteJidAlt) sobre @lid cuando esté disponible
+                    const { remoteJid, remoteJidAlt } = (messageCtx?.key ?? {}) as any
+                    const fromParse = remoteJid?.includes('@lid') ? remoteJidAlt || remoteJid : remoteJid
 
                     let payload = {
                         ...messageCtx,
@@ -760,18 +760,19 @@ class BaileysProvider extends ProviderClass<WASocket> {
     }
 
     /**
-     * Obtener LID (Local Identifier) para un número de teléfono (PN)
-     * @param {string} phoneNumber - Número de teléfono en formato JID (e.g., '1234567890@s.whatsapp.net')
-     * @returns {Promise<string|null>} - El LID correspondiente o null si no se encuentra
-     * @example await getLIDForPN('1234567890@s.whatsapp.net')
+     * Accede al lidMapping del signalRepository de Baileys.
      */
-    getLIDForPN = async (phoneNumber: string) => {
+    private get lidMapping() {
+        return (this.vendor as any)?.signalRepository?.lidMapping ?? null
+    }
+
+    /**
+     * Obtener LID (Local Identifier) para un número de teléfono (PN)
+     * @param phoneNumber - JID con formato '1234567890@s.whatsapp.net'
+     */
+    getLIDForPN = async (phoneNumber: string): Promise<string | null> => {
         try {
-            const vendor = this.vendor as any
-            if (vendor?.signalRepository?.lidMapping?.getLIDForPN) {
-                return await vendor.signalRepository.lidMapping.getLIDForPN(phoneNumber)
-            }
-            return null
+            return (await this.lidMapping?.getLIDForPN?.(phoneNumber)) ?? null
         } catch (e) {
             this.logger.log(`[${new Date().toISOString()}] Error getting LID for PN:`, e)
             return null
@@ -780,21 +781,33 @@ class BaileysProvider extends ProviderClass<WASocket> {
 
     /**
      * Obtener número de teléfono (PN) para un LID (Local Identifier)
-     * @param {string} lid - Local Identifier
-     * @returns {Promise<string|null>} - El número de teléfono correspondiente o null si no se encuentra
-     * @example await getPNForLID('lid:xxxxxx')
+     * @param lid - JID con formato '16424005304394@lid'
      */
-    getPNForLID = async (lid: string) => {
+    getPNForLID = async (lid: string): Promise<string | null> => {
         try {
-            const vendor = this.vendor as any
-            if (vendor?.signalRepository?.lidMapping?.getPNForLID) {
-                return await vendor.signalRepository.lidMapping.getPNForLID(lid)
-            }
-            return null
+            return (await this.lidMapping?.getPNForLID?.(lid)) ?? null
         } catch (e) {
             this.logger.log(`[${new Date().toISOString()}] Error getting PN for LID:`, e)
             return null
         }
+    }
+
+    /**
+     * Normaliza un número entrante a un JID válido para envío.
+     * Si es un @lid, intenta resolver a @s.whatsapp.net; si falla, envía al LID directamente.
+     */
+    private resolveNumber = async (numberIn: string): Promise<string> => {
+        const jid = baileyCleanNumber(`${numberIn}`)
+
+        if (!jid.includes('@lid')) return jid
+
+        const resolved = await this.getPNForLID(jid)
+        if (resolved) {
+            this.logger.log(`[${new Date().toISOString()}] LID resolved: ${jid} -> ${resolved}`)
+            return baileyCleanNumber(resolved)
+        }
+
+        return jid
     }
 
     /**
@@ -940,7 +953,8 @@ class BaileysProvider extends ProviderClass<WASocket> {
 
     sendMessage = async (numberIn: string, message: string, options?: SendOptions): Promise<any> => {
         options = { ...options, ...options['options'] }
-        const number = baileyCleanNumber(`${numberIn}`)
+        const number = await this.resolveNumber(numberIn)
+
         if (options.buttons?.length) return this.sendButtons(number, message, options.buttons)
         if (options.media) return this.sendMedia(number, options.media, message)
         return this.sendText(number, message)
@@ -1122,6 +1136,15 @@ class BaileysProvider extends ProviderClass<WASocket> {
 
         setTimeout(async () => {
             try {
+                // Cerrar el socket anterior para evitar conflictos de conexión (xml-not-well-formed)
+                if (this.vendor) {
+                    try {
+                        this.vendor.ws?.close()
+                        this.vendor.end(new Error('Reconnecting'))
+                    } catch (e) {
+                        this.logger.log(`[${new Date().toISOString()}] Error closing previous socket:`, e)
+                    }
+                }
                 this.initVendor().then((v) => this.listenOnEvents(v))
             } catch (error) {
                 this.logger.log(`[${new Date().toISOString()}] Reconnection failed:`, error)

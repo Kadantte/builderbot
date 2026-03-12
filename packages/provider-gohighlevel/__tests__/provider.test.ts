@@ -55,24 +55,33 @@ describe('#GoHighLevelProvider', () => {
         })
 
         test('should throw if clientId is missing', () => {
-            expect(() => new GoHighLevelProvider({
-                ...globalVendorArgs,
-                clientId: '',
-            })).toThrow('[GoHighLevel] clientId and clientSecret are required')
+            expect(
+                () =>
+                    new GoHighLevelProvider({
+                        ...globalVendorArgs,
+                        clientId: '',
+                    })
+            ).toThrow('[GoHighLevel] clientId and clientSecret are required')
         })
 
         test('should throw if clientSecret is missing', () => {
-            expect(() => new GoHighLevelProvider({
-                ...globalVendorArgs,
-                clientSecret: '',
-            })).toThrow('[GoHighLevel] clientId and clientSecret are required')
+            expect(
+                () =>
+                    new GoHighLevelProvider({
+                        ...globalVendorArgs,
+                        clientSecret: '',
+                    })
+            ).toThrow('[GoHighLevel] clientId and clientSecret are required')
         })
 
         test('should throw if locationId is missing', () => {
-            expect(() => new GoHighLevelProvider({
-                ...globalVendorArgs,
-                locationId: '',
-            })).toThrow('[GoHighLevel] locationId is required')
+            expect(
+                () =>
+                    new GoHighLevelProvider({
+                        ...globalVendorArgs,
+                        locationId: '',
+                    })
+            ).toThrow('[GoHighLevel] locationId is required')
         })
     })
 
@@ -82,6 +91,15 @@ describe('#GoHighLevelProvider', () => {
             expect(url).toContain('marketplace.gohighlevel.com/oauth/chooselocation')
             expect(url).toContain('client_id=test_client_id')
             expect(url).toContain('response_type=code')
+        })
+
+        test('should include version_id when versionId is provided', () => {
+            const providerWithVersion = new GoHighLevelProvider({
+                ...globalVendorArgs,
+                versionId: '69806f1da2860d5ef04802d2',
+            })
+            const url = providerWithVersion.getAuthorizationUrl()
+            expect(url).toContain('version_id=69806f1da2860d5ef04802d2')
         })
     })
 
@@ -144,9 +162,7 @@ describe('#GoHighLevelProvider', () => {
         test('should throw error when contact not found', async () => {
             jest.spyOn(provider, 'resolveContactId').mockResolvedValue(null)
 
-            await expect(provider.sendText('0000000000', 'Hello')).rejects.toThrow(
-                'Contact not found for phone: 0000000000'
-            )
+            await expect(provider.sendText('0000000000', 'Hello')).rejects.toThrow('Contact not found for: 0000000000')
         })
     })
 
@@ -199,11 +215,7 @@ describe('#GoHighLevelProvider', () => {
                 media: 'https://example.com/image.jpg',
             })
 
-            expect(provider.sendMedia).toHaveBeenCalledWith(
-                '1234567890',
-                'Check this',
-                'https://example.com/image.jpg'
-            )
+            expect(provider.sendMedia).toHaveBeenCalledWith('1234567890', 'Check this', 'https://example.com/image.jpg')
             expect(provider.sendText).not.toHaveBeenCalled()
             expect(provider.sendButtons).not.toHaveBeenCalled()
         })

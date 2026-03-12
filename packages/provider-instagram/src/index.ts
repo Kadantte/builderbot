@@ -1,2 +1,2 @@
 export { InstagramProvider, InstagramArgs } from './instagram.provider'
-export { InstagramEvents, InstagramMessage } from './instagram.events'
+export { InstagramEvents, InstagramMessage, InstagramListenMode, InstagramCommentValue } from './instagram.events'

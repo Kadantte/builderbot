@@ -75,7 +75,8 @@ describe('#processIncomingMessage', () => {
         expect(result).not.toBeNull()
         expect(result!.type).toBe('text')
         expect(result!.body).toBe('Hello World')
-        expect(result!.from).toBe('1234567890')
+        // contactId is prioritized over phone for 'from' field
+        expect(result!.from).toBe('contact_123')
         expect(result!.to).toBe('loc_123')
         expect(result!.contactId).toBe('contact_123')
         expect(result!.conversationId).toBe('conv_123')
