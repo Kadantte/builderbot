@@ -1116,7 +1116,7 @@ describe('#MetaProvider', () => {
 
             // Act
             const typingPromise = metaProvider.typing(fakeMessageId, 1000)
-            jest.runAllTimers()
+            await jest.runAllTimersAsync()
             await typingPromise
 
             // Assert

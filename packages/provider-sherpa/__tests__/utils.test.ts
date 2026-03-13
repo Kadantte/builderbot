@@ -38,6 +38,25 @@ describe('sherpaCleanNumber', () => {
         // Assert
         expect(cleanedNumber).toEqual('1234567890')
     })
+
+    test('should preserve @lid JIDs as-is when full is true', () => {
+        // Arrange — LID JIDs must not be stripped or converted to @s.whatsapp.net
+        // because stripping @lid and adding @s.whatsapp.net routes to the wrong number
+        const lidNumber = '16424005304394@lid'
+        // Act
+        const result = sherpaCleanNumber(lidNumber, true)
+        // Assert
+        expect(result).toEqual('16424005304394@lid')
+    })
+
+    test('should preserve @lid JIDs as-is when full is false', () => {
+        // Arrange
+        const lidNumber = '16424005304394@lid'
+        // Act
+        const result = sherpaCleanNumber(lidNumber)
+        // Assert
+        expect(result).toEqual('16424005304394@lid')
+    })
 })
 
 describe('#sherpaIsValidNumber', () => {

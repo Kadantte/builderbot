@@ -8,13 +8,9 @@ export const delay = (milliseconds: number): Promise<void> => {
     return new Promise((resolve) => setTimeout(resolve, milliseconds))
 }
 
-const hookClose = async () => {
-    await delay(1000)
-    process.exit(0)
-}
-
 let mongoServer: MongoMemoryServer
 let mongoAdapter: MongoAdapter
+let invalidAdapter: MongoAdapter | null = null
 
 test.before(async () => {
     mongoServer = await MongoMemoryServer.create()
@@ -36,7 +32,7 @@ test('[MongoAdapter] - init', async () => {
 })
 
 test('[MongoAdapter] - init with invalid URI should handle error', async () => {
-    const invalidAdapter = new MongoAdapter({
+    invalidAdapter = new MongoAdapter({
         dbUri: 'mongodb://invalid:27017',
         dbName: 'testDB',
     })
@@ -108,8 +104,11 @@ test('[MongoAdapter] - credentials should be stored', () => {
 })
 
 test.after(async () => {
+    if (invalidAdapter) {
+        await invalidAdapter.close()
+    }
+    await mongoAdapter.close()
     await mongoServer.stop()
-    hookClose().then()
 })
 
 test.run()

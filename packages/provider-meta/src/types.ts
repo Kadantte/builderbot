@@ -171,6 +171,9 @@ export interface TextMessageBody {
     template?: TemplateMessage
     status?: string
     message_id?: string
+    typing_indicator?: {
+        type: string
+    }
 }
 
 export interface Reaction {
