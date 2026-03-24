@@ -62,7 +62,7 @@ const main = async () => {
     const adapterFlow = createFlow([welcomeFlow, registerFlow, fullSamplesFlow])
     
     const adapterProvider = createProvider(Provider, 
-		{ version: [2, 3000, 1027934701] as any } 
+		{ version: [2, 3000, 1034028152] as any } 
 	)
     
     const adapterDB = new Database({ filename: 'db.json' })

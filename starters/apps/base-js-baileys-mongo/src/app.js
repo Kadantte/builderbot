@@ -62,7 +62,7 @@ const main = async () => {
     const adapterFlow = createFlow([welcomeFlow, registerFlow, fullSamplesFlow])
     
     const adapterProvider = createProvider(Provider, 
-		{ version: [2, 3000, 1027934701] } 
+		{ version: [2, 3000, 1034028152] } 
 	)
         const adapterDB = new Database({
         dbUri: process.env.MONGO_DB_URI,
