@@ -133,9 +133,12 @@ export const processIncomingMessage = async ({
             break
         }
         case 'sticker': {
+            const stickerUrl = await getMediaUrl(version, message.sticker?.id, numberId, jwtToken)
             responseObj = {
                 type: message.type,
                 from: message.from,
+                url: stickerUrl ?? fileData?.url,
+                fileData,
                 to,
                 id: message.sticker.id,
                 body: utils.generateRefProvider('_event_media_'),
