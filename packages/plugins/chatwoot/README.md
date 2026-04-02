@@ -18,11 +18,13 @@
 | **Inbox auto-creation** | Creates an API-channel inbox on first run and reuses it on subsequent starts |
 | **Contact sync** | Finds or creates the Chatwoot contact for every phone number |
 | **Conversation sync** | Finds or creates the open conversation and caches it in memory |
-| **Media attachments** | Sends images/files received from WhatsApp as attachments in Chatwoot |
+| **Media attachments** | Images, audio, video and documents are sent as attachments in both directions |
+| **Media-only messages** | WhatsApp media-only messages (no caption) are synced with a readable label (`[image]`, `[audio]`, `[file]`, …) |
+| **Multiple attachments** | When an agent sends several files from Chatwoot, each one is forwarded to WhatsApp |
 | **Bidirectional messages** | Bot outgoing messages → Chatwoot (outgoing) · User messages → Chatwoot (incoming) |
-| **Agent replies** | Chatwoot agent messages → WhatsApp via `handleWebhook` |
+| **Agent replies** | Chatwoot agent messages → WhatsApp via webhook |
 | **Blacklist integration** | When an agent takes a conversation, the user is added to the bot blacklist so the bot stops responding |
-| **Webhook auto-registration** | Optionally registers the webhook URL in Chatwoot on startup |
+| **Webhook auto-registration** | Registers the webhook URL in Chatwoot and the HTTP route on the provider server automatically |
 | **Group message filter** | `@g.us` group messages are silently ignored |
 | **Startup validation** | Credentials are verified before anything runs; the plugin self-disables on failure |
 | **Serialized API calls** | An internal queue ensures no race conditions against the Chatwoot API |
@@ -48,6 +50,8 @@ const chatwoot = createChatwootPlugin({
     token: 'YOUR_CHATWOOT_USER_TOKEN',
     url: 'https://app.chatwoot.com',
     accountId: 1,
+    // Optional but recommended: enables agent → WhatsApp replies
+    webhookUrl: 'https://your-bot.example.com/v1/chatwoot',
 })
 
 const bot = await createBot({
@@ -56,11 +60,11 @@ const bot = await createBot({
     database: new MemoryDB(),
 })
 
-// One call wires everything up
+// One call wires everything up — including the webhook HTTP route
 await chatwoot.attach(bot)
 ```
 
-That's it. Every message exchanged through your bot is now mirrored in Chatwoot.
+That's it. Every message exchanged through your bot is now mirrored in Chatwoot, and agent replies are forwarded back to WhatsApp automatically.
 
 ---
 
@@ -107,12 +111,10 @@ https://app.chatwoot.com/app/accounts/42/conversations
 
 ## Receiving agent replies (webhook)
 
-When a Chatwoot agent sends a message, Chatwoot fires a webhook. You need to expose an HTTP endpoint and call `handleWebhook` inside it.
-
-### With BuilderBot's built-in HTTP server
+When a Chatwoot agent sends a message, Chatwoot fires a webhook to your bot. As long as you set `webhookUrl` in the config, `attach()` handles everything automatically — it registers the webhook in Chatwoot **and** wires the HTTP route on the provider's server.
 
 ```ts
-import { createBot, createFlow, addKeyword, handleCtx } from '@builderbot/bot'
+import { createBot, createFlow, addKeyword } from '@builderbot/bot'
 import { BaileysProvider } from '@builderbot/provider-baileys'
 import { createChatwootPlugin } from '@builderbot/plugin-chatwoot'
 
@@ -123,28 +125,29 @@ const chatwoot = createChatwootPlugin({
     webhookUrl: 'https://your-bot.example.com/v1/chatwoot',
 })
 
-const provider = createProvider(BaileysProvider, { name: 'bot' })
-
 const bot = await createBot({
     flow: createFlow([...]),
-    provider,
+    provider: createProvider(BaileysProvider, { name: 'bot' }),
     database: new MemoryDB(),
 })
 
+// Registers the Chatwoot account webhook AND the /v1/chatwoot HTTP route automatically
 await chatwoot.attach(bot)
-
-// Expose the webhook endpoint
-provider.server.post(
-    '/v1/chatwoot',
-    handleCtx(async (bot, req, res) => {
-        await chatwoot.handleWebhook(bot, req.body)
-        res.end(JSON.stringify({ status: 'ok' }))
-    })
-)
 ```
 
 > **Note:** The URL you pass as `webhookUrl` must be reachable by your Chatwoot server.  
 > For local development use [ngrok](https://ngrok.com/) or a similar tunnel.
+
+### Advanced: manual route registration
+
+If you use a custom HTTP server outside of BuilderBot's provider, you can still call `handleWebhook` directly:
+
+```ts
+myServer.post('/v1/chatwoot', async (req, res) => {
+    await chatwoot.handleWebhook(bot, req.body)
+    res.end(JSON.stringify({ status: 'ok' }))
+})
+```
 
 ### What `handleWebhook` handles
 
@@ -242,7 +245,30 @@ const chatwoot = createChatwootPlugin({
 
 ## Supported media types
 
-The plugin automatically detects the MIME type from the file extension when uploading attachments.
+The plugin handles media in both directions.
+
+### WhatsApp → Chatwoot
+
+When an incoming WhatsApp message carries media, the file is attached to the Chatwoot message. The plugin resolves the media source through two strategies, tried in order:
+
+1. **`options.media` URL** — used when the provider already exposes a public media URL in `payload.options.media`.
+2. **`provider.saveFile` fallback** — used when the provider carries the raw message context (e.g. Baileys) but does not populate `options.media`. The plugin calls `bot.provider.saveFile(payload)` to download the file to a temporary path, uploads it to Chatwoot, then cleans up the temp file automatically. If the download fails the message is still forwarded with the readable label as caption.
+
+If the message body is a provider event string, it is also converted to a human-readable caption that appears alongside the attachment:
+
+| WhatsApp event | Label shown in Chatwoot |
+|---|---|
+| `_event_media_` | `[image]` |
+| `_event_voice_note_` | `[audio]` |
+| `_event_document_` | `[file]` |
+| `_event_video_` | `[video]` |
+| `_event_location_` | `[location]` |
+| `_event_sticker_` | `[sticker]` |
+| `_event_order_` | `[order]` |
+
+### Chatwoot → WhatsApp
+
+When an agent uploads files in Chatwoot, each attachment is forwarded as a separate WhatsApp message. The plugin detects the MIME type from the file extension when uploading local files:
 
 | Extension | MIME type |
 |---|---|
@@ -252,8 +278,13 @@ The plugin automatically detects the MIME type from the file extension when uplo
 | `.webp` | `image/webp` |
 | `.mp4` | `video/mp4` |
 | `.pdf` | `application/pdf` |
-| `.mp3` / `.ogg` | `audio/mpeg` / `audio/ogg` |
+| `.mp3` | `audio/mpeg` |
+| `.ogg` / `.opus` | `audio/ogg` |
+| `.wav` | `audio/wav` |
+| `.svg` | `image/svg+xml` |
 | other | `application/octet-stream` |
+
+For remote URLs, the MIME type is taken from the HTTP `Content-Type` response header automatically.
 
 ---
 
@@ -269,7 +300,8 @@ Wires the plugin into the bot. Must be called once after `createBot`.
 
 - Validates Chatwoot credentials (`checkAccount`)
 - Finds or creates the API-channel inbox
-- Registers the webhook in Chatwoot if `webhookUrl` is configured
+- Registers the account webhook in Chatwoot if `webhookUrl` is configured
+- Auto-registers the HTTP route on `provider.server` if `webhookUrl` is configured
 - Listens to `send_message` and `provider.message` events
 
 ### `chatwoot.handleWebhook(bot, body)`

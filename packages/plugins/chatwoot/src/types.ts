@@ -60,6 +60,20 @@ export interface BotIncomingMessagePayload {
     body: string
     name?: string
     options?: { media?: string }
+    /**
+     * Raw provider-specific message context. Baileys spreads the full WAMessage
+     * here, which is needed by `provider.saveFile` to download media when
+     * `options.media` is not populated.
+     */
+    [key: string]: unknown
+}
+
+/**
+ * Duck-typed interface for providers that can download incoming media to disk.
+ * Baileys exposes this as `provider.saveFile(ctx)` returning a local file path.
+ */
+export interface BotProviderWithSaveFile {
+    saveFile(ctx: BotIncomingMessagePayload, options?: { path?: string }): Promise<string>
 }
 
 /**

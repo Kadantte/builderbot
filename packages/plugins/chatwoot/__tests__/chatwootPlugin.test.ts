@@ -81,9 +81,11 @@ const drainQueue = () => new Promise<void>((r) => setTimeout(r, 60))
 
 // ─── mock bot ─────────────────────────────────────────────────────────────────
 
-const makeMockBot = () => {
+const makeMockBot = (saveFileImpl?: (ctx: unknown, opts?: unknown) => Promise<string>) => {
     const botHandlers: Record<string, Array<(...a: unknown[]) => unknown>> = {}
     const provHandlers: Record<string, Array<(...a: unknown[]) => unknown>> = {}
+    const serverRoutes: Record<string, (req: any, res: any) => Promise<void>> = {}
+    const serverGetRoutes: Record<string, (req: any, res: any) => void> = {}
     return {
         on(ev: string, h: (...a: unknown[]) => unknown) {
             botHandlers[ev] = [...(botHandlers[ev] ?? []), h]
@@ -94,6 +96,17 @@ const makeMockBot = () => {
                 provHandlers[ev] = [...(provHandlers[ev] ?? []), h]
             },
             emit: (ev: string, payload: unknown) => Promise.all((provHandlers[ev] ?? []).map((h) => h(payload))),
+            server: {
+                routes: serverRoutes,
+                getRoutes: serverGetRoutes,
+                post(path: string, handler: (req: any, res: any) => Promise<void>) {
+                    serverRoutes[path] = handler
+                },
+                get(path: string, handler: (req: any, res: any) => void) {
+                    serverGetRoutes[path] = handler
+                },
+            },
+            ...(saveFileImpl ? { saveFile: saveFileImpl } : {}),
         },
         blacklist: {
             items: new Set<string>(),
@@ -360,6 +373,211 @@ test('ChatwootApi.sendMessage sends FormData when mediaSource is provided', asyn
 
 // ─── SimpleQueue serialization ────────────────────────────────────────────────
 
+// ─── media / _event_* normalization ──────────────────────────────────────────
+
+/** Extracts { content, message_type } from either a JSON string body or FormData. */
+const extractMessageBody = (body: unknown): { content: string; message_type: string } | null => {
+    if (body instanceof FormData) {
+        return { content: String(body.get('content') ?? ''), message_type: String(body.get('message_type') ?? '') }
+    }
+    if (typeof body === 'string') {
+        try {
+            return JSON.parse(body)
+        } catch {
+            return null
+        }
+    }
+    return null
+}
+
+test('provider message: _event_media_ with options.media sends empty content (attachment speaks for itself)', async () => {
+    const bodies: ReturnType<typeof extractMessageBody>[] = []
+    const { mock: baseMock } = makeSmartFetch()
+    const captureFetch: MockFn = async (url, opts) => {
+        if (String(url).includes('/messages') && opts?.method === 'POST') {
+            bodies.push(extractMessageBody(opts?.body))
+        }
+        return baseMock(url, opts)
+    }
+    const plugin = createChatwootPlugin(MOCK_CONFIG)
+    const bot = makeMockBot()
+    await withFetch(baseMock, () => plugin.attach(bot as any))
+
+    await withFetch(captureFetch, async () => {
+        await bot.provider.emit('message', {
+            from: '5215511223344',
+            body: '_event_media_',
+            options: { media: 'https://example.com/photo.jpg' },
+        })
+        await drainQueue()
+    })
+
+    const msg = bodies.find((b) => b?.message_type === 'incoming')
+    assert.ok(msg, 'a message was sent to Chatwoot')
+    assert.is(msg?.content, '', 'media with no caption → empty content, no redundant [image] label')
+})
+
+test('provider message: _event_voice_note_ with options.media sends empty content', async () => {
+    const bodies: ReturnType<typeof extractMessageBody>[] = []
+    const { mock: baseMock } = makeSmartFetch()
+    const captureFetch: MockFn = async (url, opts) => {
+        if (String(url).includes('/messages') && opts?.method === 'POST') {
+            bodies.push(extractMessageBody(opts?.body))
+        }
+        return baseMock(url, opts)
+    }
+    const plugin = createChatwootPlugin(MOCK_CONFIG)
+    const bot = makeMockBot()
+    await withFetch(baseMock, () => plugin.attach(bot as any))
+
+    await withFetch(captureFetch, async () => {
+        await bot.provider.emit('message', {
+            from: '5215511223344',
+            body: '_event_voice_note_',
+            options: { media: 'https://example.com/audio.ogg' },
+        })
+        await drainQueue()
+    })
+
+    const msg = bodies.find((b) => b?.message_type === 'incoming')
+    assert.ok(msg, 'a message was sent to Chatwoot')
+    assert.is(msg?.content, '', 'audio with media URL → empty content, no redundant [audio] label')
+})
+
+test('provider message: media-only message with empty body is still synced to Chatwoot', async () => {
+    const { mock, calls } = makeSmartFetch()
+    const plugin = createChatwootPlugin(MOCK_CONFIG)
+    const bot = makeMockBot()
+    await withFetch(mock, () => plugin.attach(bot as any))
+    const countAfterAttach = calls.length
+
+    await withFetch(mock, async () => {
+        await bot.provider.emit('message', {
+            from: '5215511223344',
+            body: '',
+            options: { media: 'https://example.com/photo.jpg' },
+        })
+        await drainQueue()
+    })
+
+    assert.ok(calls.length > countAfterAttach, 'fetch calls were made for media-only incoming message')
+})
+
+test('send_message: media-only bot message (empty content) is synced to Chatwoot', async () => {
+    const { mock, calls } = makeSmartFetch()
+    const plugin = createChatwootPlugin(MOCK_CONFIG)
+    const bot = makeMockBot()
+    await withFetch(mock, () => plugin.attach(bot as any))
+    const countAfterAttach = calls.length
+
+    await withFetch(mock, async () => {
+        await bot.emit('send_message', {
+            from: '5215511223344',
+            answer: '',
+            options: { media: 'https://example.com/image.png' },
+        })
+        await drainQueue()
+    })
+
+    assert.ok(calls.length > countAfterAttach, 'fetch calls were made for media-only outgoing message')
+})
+
+test('handleWebhook forwards all attachments when agent sends multiple files', async () => {
+    const { mock } = makeSmartFetch()
+    const plugin = createChatwootPlugin(MOCK_CONFIG)
+    const bot = makeMockBot()
+    await withFetch(mock, () => plugin.attach(bot as any))
+
+    await plugin.handleWebhook(bot as any, {
+        event: 'message_created',
+        message_type: 'outgoing',
+        private: false,
+        content: 'See attached files',
+        attachments: [
+            { data_url: 'https://example.com/file1.pdf' },
+            { data_url: 'https://example.com/file2.png' },
+            { data_url: 'https://example.com/file3.mp4' },
+        ],
+        conversation: {
+            inbox_id: MOCK_INBOX.id,
+            channel: 'Channel::Api',
+            meta: { sender: { phone_number: '+5215511223344' } },
+        },
+    })
+
+    assert.is(bot.sent.length, 3, 'one sendMessage call per attachment')
+    assert.is((bot.sent[0].options as any)?.media, 'https://example.com/file1.pdf', 'first file with content')
+    assert.is(bot.sent[0].content, 'See attached files', 'text goes with first file')
+    assert.is((bot.sent[1].options as any)?.media, 'https://example.com/file2.png', 'second file separate')
+    assert.is((bot.sent[2].options as any)?.media, 'https://example.com/file3.mp4', 'third file separate')
+})
+
+// ─── auto HTTP route registration ────────────────────────────────────────────
+
+test('attach() auto-registers POST route on provider.server when webhookUrl is set', async () => {
+    const { mock } = makeSmartFetch()
+    const plugin = createChatwootPlugin({ ...MOCK_CONFIG, webhookUrl: 'https://bot.example.com/v1/chatwoot' })
+    const bot = makeMockBot()
+    await withFetch(mock, () => plugin.attach(bot as any))
+    assert.ok(
+        bot.provider.server.routes['/v1/chatwoot'] !== undefined,
+        'POST route /v1/chatwoot should be registered on provider.server'
+    )
+})
+
+test('attach() does not register any route when webhookUrl is not set', async () => {
+    const { mock } = makeSmartFetch()
+    const plugin = createChatwootPlugin(MOCK_CONFIG)
+    const bot = makeMockBot()
+    await withFetch(mock, () => plugin.attach(bot as any))
+    assert.is(Object.keys(bot.provider.server.routes).length, 0, 'no routes should be registered without webhookUrl')
+})
+
+test('auto-registered route forwards agent message to WhatsApp', async () => {
+    const { mock } = makeSmartFetch()
+    const plugin = createChatwootPlugin({ ...MOCK_CONFIG, webhookUrl: 'https://bot.example.com/v1/chatwoot' })
+    const bot = makeMockBot()
+    await withFetch(mock, () => plugin.attach(bot as any))
+
+    const handler = bot.provider.server.routes['/v1/chatwoot']
+    assert.ok(handler, 'route handler must exist')
+
+    const mockRes = {
+        headers: {} as Record<string, string>,
+        body: '',
+        writeHead(_code: number, headers: Record<string, string>) {
+            this.headers = { ...this.headers, ...headers }
+        },
+        end(data: string) {
+            this.body = data
+        },
+    }
+
+    await handler(
+        {
+            body: {
+                event: 'message_created',
+                message_type: 'outgoing',
+                private: false,
+                content: 'Hello from agent via route',
+                conversation: {
+                    inbox_id: MOCK_INBOX.id,
+                    channel: 'Channel::Api',
+                    meta: { sender: { phone_number: '+5215511223344' } },
+                },
+            },
+        },
+        mockRes
+    )
+
+    assert.is(bot.sent.length, 1, 'sendMessage should be called once')
+    assert.is(bot.sent[0].number, '5215511223344', 'message sent to correct phone')
+    assert.is(bot.sent[0].content, 'Hello from agent via route', 'message content matches')
+    assert.is(mockRes.body, JSON.stringify({ status: 'ok' }), 'response body is { status: ok }')
+})
+
+// ─── SimpleQueue serialization ────────────────────────────────────────────────
+
 test('enqueued messages are processed without dropping', async () => {
     const { mock, calls } = makeSmartFetch()
     const plugin = createChatwootPlugin(MOCK_CONFIG)
@@ -373,6 +591,211 @@ test('enqueued messages are processed without dropping', async () => {
         await drainQueue()
     })
     assert.ok(calls.length > countAfterAttach, 'fetch calls were made for enqueued messages')
+})
+
+// ─── saveFile fallback + public URL (WA → Chatwoot, no options.media) ────────
+
+test('attach() registers GET /media/:filename route when webhookUrl and server.get are present', async () => {
+    const { mock } = makeSmartFetch()
+    const plugin = createChatwootPlugin({ ...MOCK_CONFIG, webhookUrl: 'https://bot.example.com/v1/chatwoot' })
+    const bot = makeMockBot()
+    await withFetch(mock, () => plugin.attach(bot as any))
+    assert.ok(
+        bot.provider.server.getRoutes['/media/:filename'] !== undefined,
+        'GET /media/:filename route should be registered'
+    )
+})
+
+test('provider message: _event_media_ without options.media uses saveFile + public URL', async () => {
+    const SAVED_PATH = '/tmp/chatwoot-media/file-12345.jpg'
+    const bodies: ReturnType<typeof extractMessageBody>[] = []
+    const downloadedUrls: string[] = []
+
+    const saveFileMock = async (_ctx: unknown, _opts?: unknown): Promise<string> => SAVED_PATH
+
+    const { mock: baseMock } = makeSmartFetch()
+    const captureFetch: MockFn = async (url, opts) => {
+        if (String(url).includes('/messages') && opts?.method === 'POST') {
+            bodies.push(extractMessageBody(opts?.body))
+        }
+        // Capture media download attempts
+        if (String(url).includes('/media/')) {
+            downloadedUrls.push(String(url))
+        }
+        return baseMock(url, opts)
+    }
+
+    const plugin = createChatwootPlugin({ ...MOCK_CONFIG, webhookUrl: 'https://bot.example.com/v1/chatwoot' })
+    const bot = makeMockBot(saveFileMock)
+    await withFetch(baseMock, () => plugin.attach(bot as any))
+
+    await withFetch(captureFetch, async () => {
+        await bot.provider.emit('message', {
+            from: '5215511223344',
+            body: '_event_media_',
+            message: { imageMessage: { mimetype: 'image/jpeg' } },
+        })
+        await drainQueue()
+    })
+
+    const incoming = bodies.find((b) => b?.message_type === 'incoming')
+    assert.ok(incoming, 'a message was sent to Chatwoot')
+    assert.is(incoming?.content, '', 'image with no caption + media URL → empty content')
+    // The media was fetched from the public URL
+    assert.ok(
+        downloadedUrls.some((u) => u.includes('https://bot.example.com/media/file-12345.jpg')),
+        'plugin fetched media from the public /media URL'
+    )
+})
+
+test('provider message: saveFile failure falls back to label-only message', async () => {
+    const bodies: ReturnType<typeof extractMessageBody>[] = []
+
+    const failingSaveFile = async (_ctx: unknown, _opts?: unknown): Promise<string> => {
+        throw new Error('download failed')
+    }
+
+    const { mock: baseMock } = makeSmartFetch()
+    const captureFetch: MockFn = async (url, opts) => {
+        if (String(url).includes('/messages') && opts?.method === 'POST') {
+            bodies.push(extractMessageBody(opts?.body))
+        }
+        return baseMock(url, opts)
+    }
+
+    const plugin = createChatwootPlugin({ ...MOCK_CONFIG, webhookUrl: 'https://bot.example.com/v1/chatwoot' })
+    const bot = makeMockBot(failingSaveFile)
+    await withFetch(baseMock, () => plugin.attach(bot as any))
+
+    await withFetch(captureFetch, async () => {
+        await bot.provider.emit('message', {
+            from: '5215511223344',
+            body: '_event_media_',
+            message: { imageMessage: { mimetype: 'image/jpeg' } },
+        })
+        await drainQueue()
+    })
+
+    const incoming = bodies.find((b) => b?.message_type === 'incoming')
+    assert.ok(incoming, 'message still sent to Chatwoot even when saveFile throws')
+    assert.is(incoming?.content, '[image]', 'body still normalized to [image]')
+})
+
+test('provider message: image with caption sends real caption text instead of [image]', async () => {
+    const bodies: ReturnType<typeof extractMessageBody>[] = []
+
+    const { mock: baseMock } = makeSmartFetch()
+    const captureFetch: MockFn = async (url, opts) => {
+        if (String(url).includes('/messages') && opts?.method === 'POST') {
+            bodies.push(extractMessageBody(opts?.body))
+        }
+        return baseMock(url, opts)
+    }
+
+    const plugin = createChatwootPlugin(MOCK_CONFIG)
+    const bot = makeMockBot()
+    await withFetch(baseMock, () => plugin.attach(bot as any))
+
+    await withFetch(captureFetch, async () => {
+        await bot.provider.emit('message', {
+            from: '5215511223344',
+            body: '_event_media_',
+            // Baileys raw WAMessage with a caption
+            message: { imageMessage: { mimetype: 'image/jpeg', caption: 'Check this out!' } },
+        })
+        await drainQueue()
+    })
+
+    const incoming = bodies.find((b) => b?.message_type === 'incoming')
+    assert.ok(incoming, 'a message was sent to Chatwoot')
+    assert.is(incoming?.content, 'Check this out!', 'real caption replaces [image] label')
+})
+
+test('provider message: image without caption sends empty content (no redundant [image] label)', async () => {
+    const bodies: ReturnType<typeof extractMessageBody>[] = []
+
+    const SAVED_PATH = '/tmp/chatwoot-media/file-99.jpg'
+    const saveFileMock = async (_ctx: unknown, _opts?: unknown): Promise<string> => SAVED_PATH
+
+    const { mock: baseMock } = makeSmartFetch()
+    const captureFetch: MockFn = async (url, opts) => {
+        if (String(url).includes('/messages') && opts?.method === 'POST') {
+            bodies.push(extractMessageBody(opts?.body))
+        }
+        return baseMock(url, opts)
+    }
+
+    const plugin = createChatwootPlugin({ ...MOCK_CONFIG, webhookUrl: 'https://bot.example.com/v1/chatwoot' })
+    const bot = makeMockBot(saveFileMock)
+    await withFetch(baseMock, () => plugin.attach(bot as any))
+
+    await withFetch(captureFetch, async () => {
+        await bot.provider.emit('message', {
+            from: '5215511223344',
+            body: '_event_media_',
+            message: { imageMessage: { mimetype: 'image/jpeg', caption: '' } },
+        })
+        await drainQueue()
+    })
+
+    const incoming = bodies.find((b) => b?.message_type === 'incoming')
+    assert.ok(incoming, 'a message was sent to Chatwoot')
+    assert.is(incoming?.content, '', 'no caption + media URL → empty content, no redundant label')
+})
+
+test('provider message: video with caption sends real caption text', async () => {
+    const bodies: ReturnType<typeof extractMessageBody>[] = []
+
+    const { mock: baseMock } = makeSmartFetch()
+    const captureFetch: MockFn = async (url, opts) => {
+        if (String(url).includes('/messages') && opts?.method === 'POST') {
+            bodies.push(extractMessageBody(opts?.body))
+        }
+        return baseMock(url, opts)
+    }
+
+    const plugin = createChatwootPlugin(MOCK_CONFIG)
+    const bot = makeMockBot()
+    await withFetch(baseMock, () => plugin.attach(bot as any))
+
+    await withFetch(captureFetch, async () => {
+        await bot.provider.emit('message', {
+            from: '5215511223344',
+            body: '_event_media_',
+            message: { videoMessage: { mimetype: 'video/mp4', caption: 'Watch this video' } },
+        })
+        await drainQueue()
+    })
+
+    const incoming = bodies.find((b) => b?.message_type === 'incoming')
+    assert.ok(incoming, 'a message was sent to Chatwoot')
+    assert.is(incoming?.content, 'Watch this video', 'video caption is used as content')
+})
+
+test('provider message: no saveFile on provider sends [image] label as last-resort fallback', async () => {
+    const bodies: ReturnType<typeof extractMessageBody>[] = []
+
+    const { mock: baseMock } = makeSmartFetch()
+    const captureFetch: MockFn = async (url, opts) => {
+        if (String(url).includes('/messages') && opts?.method === 'POST') {
+            bodies.push(extractMessageBody(opts?.body))
+        }
+        return baseMock(url, opts)
+    }
+
+    // No saveFile, no options.media → no mediaUrl → falls back to normalizeBody label
+    const plugin = createChatwootPlugin(MOCK_CONFIG)
+    const bot = makeMockBot()
+    await withFetch(baseMock, () => plugin.attach(bot as any))
+
+    await withFetch(captureFetch, async () => {
+        await bot.provider.emit('message', { from: '5215511223344', body: '_event_media_' })
+        await drainQueue()
+    })
+
+    const incoming = bodies.find((b) => b?.message_type === 'incoming')
+    assert.ok(incoming, 'message sent to Chatwoot without saveFile')
+    assert.is(incoming?.content, '[image]', 'no media URL → [image] label used as fallback')
 })
 
 test.run()
