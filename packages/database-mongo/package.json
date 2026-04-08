@@ -30,7 +30,7 @@
     },
     "homepage": "https://github.com/codigoencasa/bot-whatsapp#readme",
     "dependencies": {
-        "@builderbot/bot": "workspace:^",
+        "@builderbot/bot": "^1.4.2-alpha.3",
         "mongodb": "^7.0.0"
     },
     "devDependencies": {
@@ -47,5 +47,5 @@
         "tslib": "^2.6.2",
         "tsm": "^2.3.0"
     },
-    "gitHead": "b36178dfb87da8ce270e28b6daaff2c50374b6eb"
+    "gitHead": "be4c4287fe2fa5847968c98c3d9d32088edeaca3"
 }
