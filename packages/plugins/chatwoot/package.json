@@ -1,6 +1,6 @@
 {
     "name": "@builderbot/plugin-chatwoot",
-    "version": "1.4.2-alpha.8",
+    "version": "1.4.2-alpha.9",
     "description": "Plugin de Chatwoot para BuilderBot - Crea inbox, guarda contactos y sincroniza conversaciones automáticamente",
     "keywords": [
         "chatwoot",
