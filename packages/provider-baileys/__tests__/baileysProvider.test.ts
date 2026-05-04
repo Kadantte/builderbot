@@ -38,6 +38,7 @@ jest.mock('baileys', () => ({
 }))
 
 jest.mock('fs/promises', () => ({
+    readFile: jest.fn().mockImplementation(() => Promise.resolve(Buffer.from('audio-buffer') as any)),
     writeFile: jest.fn(),
 }))
 
@@ -706,21 +707,40 @@ describe('#BaileysProvider', () => {
     })
 
     describe('#sendAudio ', () => {
-        test('should send audio message with correct URL', async () => {
+        test('should send audio message as buffer with ptt=true by default', async () => {
             // Arrange
             const number = phoneNumber
-            const audioUrl = 'http://example.com/audio.mp3'
+            const audioPath = '/tmp/audio.opus'
             const mockSendMessage = mockSendSuccess
             provider.vendor.sendMessage = mockSendMessage
 
             // Act
-            const result = await provider.sendAudio(number, audioUrl)
+            const result = await provider.sendAudio(number, audioPath)
 
             // Assert
             expect(result).toEqual('success')
             expect(mockSendMessage).toHaveBeenCalledWith(number, {
-                audio: { url: audioUrl },
+                audio: Buffer.from('audio-buffer'),
                 ptt: true,
+                mimetype: 'audio/ogg; codecs=opus',
+            })
+        })
+
+        test('should send audio message with isPTT=false when specified', async () => {
+            // Arrange
+            const number = phoneNumber
+            const audioPath = '/tmp/audio.opus'
+            const mockSendMessage = mockSendSuccess
+            provider.vendor.sendMessage = mockSendMessage
+
+            // Act
+            const result = await provider.sendAudio(number, audioPath, false)
+
+            // Assert
+            expect(result).toEqual('success')
+            expect(mockSendMessage).toHaveBeenCalledWith(number, {
+                audio: Buffer.from('audio-buffer'),
+                ptt: false,
                 mimetype: 'audio/ogg; codecs=opus',
             })
         })

@@ -4,7 +4,7 @@ import type { Boom } from '@hapi/boom'
 import { Console } from 'console'
 import type { PathOrFileDescriptor } from 'fs'
 import { createReadStream, createWriteStream, readFileSync } from 'fs'
-import { writeFile } from 'fs/promises'
+import { readFile, writeFile } from 'fs/promises'
 import mime from 'mime-types'
 import NodeCache from 'node-cache'
 import { tmpdir } from 'os'
@@ -933,10 +933,10 @@ class BaileysProvider extends ProviderClass<WASocket> {
      * @example await sendMessage('+XXXXXXXXXXX', 'audio.mp3')
      */
 
-    sendAudio = async (number: string, audioUrl: string) => {
+    sendAudio = async (number: string, audioPath: string, isPTT = true) => {
         const payload: AnyMediaMessageContent = {
-            audio: { url: audioUrl },
-            ptt: true,
+            audio: await readFile(audioPath),
+            ptt: isPTT,
             mimetype: 'audio/ogg; codecs=opus',
         }
         return this.vendor.sendMessage(number, payload)

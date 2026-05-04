@@ -33,14 +33,19 @@ const convertAudio = async (filePath: string, format: FormatOptions['ext'] = 'op
     )
 
     await new Promise<void>((resolve, reject) => {
-        ffmpeg(filePath)
+        const cmd = ffmpeg(filePath)
             .audioCodec(formats[format].code)
-            .audioBitrate('64k')
+            .audioBitrate(format === 'opus' ? '32k' : '64k')
             .format(formats[format].ext)
             .output(opusFilePath)
             .on('end', () => resolve())
             .on('error', (err) => reject(err))
-            .run()
+
+        if (format === 'opus') {
+            cmd.audioChannels(1).audioFrequency(48000).outputOptions(['-application voip', '-frame_duration 20'])
+        }
+
+        cmd.run()
     })
 
     return opusFilePath
