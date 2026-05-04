@@ -276,7 +276,7 @@ describe('#MetaProvider', () => {
             // Arrange
             const fakeRecipient = '1234567890'
             const fakePathVideo: any = 'path/to/audio.mp3'
-            const convertedPath: any = 'path/to/audio.opus'
+            const convertedPath: any = 'path/to/audio.ogg'
 
             metaProvider.sendMessageMeta = jest.fn() as never
             ;(utils.convertAudio as jest.MockedFunction<typeof utils.convertAudio>).mockResolvedValue(convertedPath)
@@ -286,7 +286,7 @@ describe('#MetaProvider', () => {
             await metaProvider.sendAudio(fakeRecipient, fakePathVideo)
 
             // Assert
-            expect(utils.convertAudio).toHaveBeenCalledWith(fakePathVideo, 'opus')
+            expect(utils.convertAudio).toHaveBeenCalledWith(fakePathVideo, 'ogg')
             expect(metaProvider.sendMessageMeta).toHaveBeenCalledWith({
                 messaging_product: 'whatsapp',
                 to: fakeRecipient,

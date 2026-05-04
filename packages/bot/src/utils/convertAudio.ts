@@ -5,7 +5,7 @@ ffmpeg.setFfmpegPath(ffmpegInstaller.path)
 
 export interface FormatOptions {
     code: string
-    ext: 'mp4' | 'opus' | 'mp3'
+    ext: 'mp4' | 'ogg' | 'mp3'
 }
 
 const formats: Record<string, FormatOptions> = {
@@ -13,9 +13,9 @@ const formats: Record<string, FormatOptions> = {
         code: 'libmp3lame',
         ext: 'mp3',
     },
-    opus: {
+    ogg: {
         code: 'libopus',
-        ext: 'opus',
+        ext: 'ogg',
     },
     mp4: {
         code: 'aac',
@@ -23,11 +23,11 @@ const formats: Record<string, FormatOptions> = {
     },
 }
 
-const convertAudio = async (filePath: string, format: FormatOptions['ext'] = 'opus'): Promise<string> => {
+const convertAudio = async (filePath: string, format: FormatOptions['ext'] = 'ogg'): Promise<string> => {
     if (!filePath) {
         throw new Error('filePath is required')
     }
-    const opusFilePath = path.join(
+    const outputFilePath = path.join(
         path.dirname(filePath),
         `${path.basename(filePath, path.extname(filePath))}.${formats[format].ext}`
     )
@@ -35,20 +35,20 @@ const convertAudio = async (filePath: string, format: FormatOptions['ext'] = 'op
     await new Promise<void>((resolve, reject) => {
         const cmd = ffmpeg(filePath)
             .audioCodec(formats[format].code)
-            .audioBitrate(format === 'opus' ? '32k' : '64k')
+            .audioBitrate(format === 'ogg' ? '32k' : '64k')
             .format(formats[format].ext)
-            .output(opusFilePath)
+            .output(outputFilePath)
             .on('end', () => resolve())
             .on('error', (err) => reject(err))
 
-        if (format === 'opus') {
+        if (format === 'ogg') {
             cmd.audioChannels(1).audioFrequency(48000).outputOptions(['-application voip', '-frame_duration 20'])
         }
 
         cmd.run()
     })
 
-    return opusFilePath
+    return outputFilePath
 }
 
 export { convertAudio }

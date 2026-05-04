@@ -838,7 +838,7 @@ class MetaProvider extends ProviderClass<MetaInterface> implements MetaInterface
 
         // Auto-convert to OGG/Opus if not already in that format (required for voice notes)
         if (!mimeType?.includes('ogg') && !mimeType?.includes('opus')) {
-            audioPath = await utils.convertAudio(pathVideo, 'opus')
+            audioPath = await utils.convertAudio(pathVideo, 'ogg')
         }
 
         const formData = new FormData()
