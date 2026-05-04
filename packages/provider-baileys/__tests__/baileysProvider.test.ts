@@ -721,6 +721,7 @@ describe('#BaileysProvider', () => {
             expect(mockSendMessage).toHaveBeenCalledWith(number, {
                 audio: { url: audioUrl },
                 ptt: true,
+                mimetype: 'audio/ogg; codecs=opus',
             })
         })
     })

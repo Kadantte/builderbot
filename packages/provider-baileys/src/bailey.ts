@@ -937,6 +937,7 @@ class BaileysProvider extends ProviderClass<WASocket> {
         const payload: AnyMediaMessageContent = {
             audio: { url: audioUrl },
             ptt: true,
+            mimetype: 'audio/ogg; codecs=opus',
         }
         return this.vendor.sendMessage(number, payload)
     }
