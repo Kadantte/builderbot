@@ -463,4 +463,25 @@ describe('#processIncomingMessage ', () => {
             timestamp: expect.any(Number),
         })
     })
+
+    test('should propagate the BSUID userId from contact to the resulting Message', async () => {
+        // Arrange
+        const params = {
+            messageId: '123',
+            messageTimestamp: Date.now(),
+            pushName: 'John Doe',
+            message: { type: 'text', from: 'sender', text: { body: 'Hello' } },
+            to: 'receiver',
+            jwtToken: 'fakeToken',
+            version: '1.0',
+            numberId: '987',
+            userId: 'US.13491208655302741918',
+        }
+
+        // Act
+        const result = await processIncomingMessage(params)
+
+        // Assert
+        expect(result.userId).toBe('US.13491208655302741918')
+    })
 })
