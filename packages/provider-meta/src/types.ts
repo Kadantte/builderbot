@@ -87,6 +87,7 @@ export interface Order {
 export interface Contact {
     profile: Profile
     wa_id: string
+    user_id?: string
     name: string
     phones: string[]
 }
@@ -100,6 +101,7 @@ export interface Message {
     body: string
     pushName: string
     name: string
+    userId?: string
     url?: string
     fileData?: File | null
     payload?: string
@@ -126,6 +128,7 @@ export interface ParamsIncomingMessage {
     message: any
     fileData?: File | null
     fromMe?: boolean
+    userId?: string
 }
 
 export type TextGenericParams = {
@@ -234,6 +237,7 @@ export interface Metadata {
 export interface ContactMeta {
     profile: Profile
     wa_id: string
+    user_id?: string
     name: string
     phones: string[]
 }
