@@ -12,7 +12,7 @@ import Queue from 'queue-promise'
 
 import { MetaCoreVendor } from './core'
 import { downloadFile, getProfile } from '../utils'
-import { parseMetaNumber } from '../utils/number'
+import { isBSUID, parseMetaNumber } from '../utils/number'
 
 import type { MetaInterface } from '~/interface/meta'
 import type {
@@ -134,6 +134,7 @@ class MetaProvider extends ProviderClass<MetaInterface> implements MetaInterface
      * @returns Fixed phone number with correct prefix
      */
     protected fixPrefixMetaNumber = (phoneNumber: string) => {
+        if (isBSUID(phoneNumber)) return phoneNumber
         for (const [prev, current] of Object.entries(this.prefixMap)) {
             if (phoneNumber.startsWith(prev)) {
                 return phoneNumber.replace(prev, current)
