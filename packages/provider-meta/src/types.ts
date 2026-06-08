@@ -86,7 +86,7 @@ export interface Order {
 
 export interface Contact {
     profile: Profile
-    wa_id: string
+    wa_id?: string
     user_id?: string
     name: string
     phones: string[]
@@ -236,7 +236,7 @@ export interface Metadata {
 
 export interface ContactMeta {
     profile: Profile
-    wa_id: string
+    wa_id?: string
     user_id?: string
     name: string
     phones: string[]

@@ -441,5 +441,43 @@ describe('#MetaCoreVendor ', () => {
             // Assert
             expect(processSpy).toHaveBeenCalledWith(expect.objectContaining({ userId: 'US.13491208655302741918' }))
         })
+
+        test('should handle contact without wa_id (username-only user)', async () => {
+            // Arrange — for a user with a username and no phone number, Meta may omit wa_id
+            const mockReq = {
+                body: {
+                    entry: [
+                        {
+                            changes: [
+                                {
+                                    value: {
+                                        messages: [{ type: 'text', from: 'sender', text: { body: 'Hi' } }],
+                                        contacts: [
+                                            {
+                                                profile: { name: 'Jane' },
+                                                user_id: 'US.13491208655302741918',
+                                            },
+                                        ],
+                                    },
+                                },
+                            ],
+                        },
+                    ],
+                },
+                globalVendorArgs: {},
+            }
+            const mockRes = {
+                statusCode: 0,
+                end: jest.fn(),
+            }
+            const processSpy = require('../src/utils/processIncomingMsg').processIncomingMessage as jest.Mock
+            processSpy.mockImplementation(() => true)
+
+            // Act
+            await metaCoreVendor.incomingMsg(mockReq as any, mockRes as any, mockNext)
+
+            // Assert — must still forward userId even when wa_id is absent
+            expect(processSpy).toHaveBeenCalledWith(expect.objectContaining({ userId: 'US.13491208655302741918' }))
+        })
     })
 })

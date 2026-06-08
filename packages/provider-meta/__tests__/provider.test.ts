@@ -158,6 +158,19 @@ describe('#MetaProvider', () => {
         })
     })
 
+    describe('#fixPrefixMetaNumber', () => {
+        test('should leave a BSUID untouched (no prefix swap applied)', () => {
+            const bsuid = 'US.13491208655302741918'
+            const result = metaProvider['fixPrefixMetaNumber'](bsuid)
+            expect(result).toBe(bsuid)
+        })
+
+        test('should swap AR/MX prefixes for phone numbers', () => {
+            expect(metaProvider['fixPrefixMetaNumber']('5491123456789')).toBe('541123456789')
+            expect(metaProvider['fixPrefixMetaNumber']('5211234567890')).toBe('521234567890')
+        })
+    })
+
     describe('#sendText', () => {
         test('should send text message to the provided recipient', async () => {
             // Arrange
