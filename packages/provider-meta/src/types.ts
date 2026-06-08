@@ -79,9 +79,17 @@ export interface MetaGlobalVendorArgs extends GlobalVendorArgs {
     version: string
 }
 
+export interface ProductItem {
+    product_retailer_id: string
+    quantity: number
+    item_price?: number
+    currency?: string
+}
+
 export interface Order {
     catalog_id: string
-    product_items: string[]
+    product_items: ProductItem[]
+    text?: string
 }
 
 export interface Contact {

@@ -171,8 +171,9 @@ export const processIncomingMessage = async ({
                 from: message.from,
                 to,
                 order: {
-                    catalog_id: message.order.catalog_id,
-                    product_items: message.order.product_items,
+                    catalog_id: message.order?.catalog_id,
+                    product_items: message.order?.product_items ?? [],
+                    text: message.order?.text,
                 },
                 body: utils.generateRefProvider('_event_order_'),
                 pushName,
