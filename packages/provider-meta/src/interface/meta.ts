@@ -1,6 +1,15 @@
 import type { SendOptions, BotContext, Button } from '@builderbot/bot/dist/types'
 
-import type { TextMessageBody, Reaction, Localization, Message, SaveFileOptions, MetaList } from '~/types'
+import type {
+    TextMessageBody,
+    Reaction,
+    Localization,
+    Message,
+    SaveFileOptions,
+    MetaList,
+    Order,
+    MetaOrderDetails,
+} from '~/types'
 
 export interface MetaInterface {
     sendMessageMeta: (body: TextMessageBody) => void
@@ -56,4 +65,5 @@ export interface MetaInterface {
     markAsRead: (wa_id: string) => Promise<any>
     sendPresenceUpdate: (messageId: string) => Promise<any>
     typing: (messageId: string, ms?: number) => Promise<void>
+    getOrderDetails: (order: Order) => Promise<MetaOrderDetails>
 }

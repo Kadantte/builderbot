@@ -92,6 +92,29 @@ export interface Order {
     text?: string
 }
 
+export interface MetaOrderProduct {
+    id?: string
+    retailer_id: string
+    name: string
+    imageUrl: string
+    price: number
+    currency: string
+    quantity: number
+}
+
+export interface MetaOrderPrice {
+    currency: string
+    total: number
+}
+
+export interface MetaOrderDetails {
+    catalog_id: string
+    title: string
+    text?: string
+    price: MetaOrderPrice
+    products: MetaOrderProduct[]
+}
+
 export interface Contact {
     profile: Profile
     wa_id?: string

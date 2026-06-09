@@ -11,15 +11,17 @@ import { join, basename, resolve } from 'path'
 import Queue from 'queue-promise'
 
 import { MetaCoreVendor } from './core'
-import { downloadFile, getProfile } from '../utils'
+import { downloadFile, getOrderDetails, getProfile } from '../utils'
 import { isBSUID, parseMetaNumber } from '../utils/number'
 
 import type { MetaInterface } from '~/interface/meta'
 import type {
     MetaGlobalVendorArgs,
+    MetaOrderDetails,
     Localization,
     Message,
     MetaList,
+    Order,
     ParsedContact,
     Reaction,
     SaveFileOptions,
@@ -182,6 +184,37 @@ class MetaProvider extends ProviderClass<MetaInterface> implements MetaInterface
             console.log(`[Error]:`, err.message)
             return Buffer.from('')
         }
+    }
+
+    /**
+     * Retrieve full order details by querying the Meta Graph API catalog.
+     *
+     * The WhatsApp order webhook only provides `catalog_id`, `product_retailer_id`,
+     * `quantity`, `item_price`, and `currency`. This method enriches that data by
+     * calling the catalog API to resolve product names, images, and the catalog title.
+     *
+     * Requires the access token to have read access to the catalog
+     * (`catalog_management` permission or equivalent).
+     *
+     * @param order - The `order` object from `ctx.order` in an EVENTS.ORDER handler
+     * @returns Enriched order details including title, products with name/imageUrl/price, and total
+     * @example
+     * addKeyword(EVENTS.ORDER).addAction(async (ctx, { provider }) => {
+     *     const details = await provider.getOrderDetails(ctx.order)
+     *     // details.title
+     *     // details.products[].name, .imageUrl, .price, .quantity
+     *     // details.price.total, details.price.currency
+     *     // orderDate -> new Date(ctx.timestamp * 1000)
+     * })
+     */
+    getOrderDetails = async (order: Order): Promise<MetaOrderDetails> => {
+        if (!order || typeof order !== 'object' || !('catalog_id' in order)) {
+            console.log('[MetaProvider.getOrderDetails] called without a valid Order object; returning empty result')
+            const { version, jwtToken } = this.globalVendorArgs
+            return getOrderDetails(version, jwtToken, null)
+        }
+        const { version, jwtToken } = this.globalVendorArgs
+        return getOrderDetails(version, jwtToken, order)
     }
 
     /**

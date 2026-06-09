@@ -12,6 +12,8 @@ jest.mock('axios')
 jest.mock('../src/utils', () => ({
     downloadFile: jest.fn(),
     getProfile: jest.fn(),
+     
+    getOrderDetails: jest.fn() as any,
     verifyToken: jest.fn(),
 }))
 
@@ -1151,6 +1153,50 @@ describe('#MetaProvider', () => {
             expect(metaProvider.sendPresenceUpdate).toHaveBeenCalledWith(fakeMessageId)
 
             jest.useRealTimers()
+        })
+    })
+
+    describe('#getOrderDetails', () => {
+        const emptyDetails = {
+            catalog_id: '',
+            title: '',
+            text: undefined,
+            price: { currency: '', total: 0 },
+            products: [],
+        }
+
+        test('should return safe empty result when called with a null order (fail-loud guard)', async () => {
+            // Arrange — the guard bypasses the real util; mock returns empty shell
+            const { getOrderDetails: utilMock } = require('../src/utils')
+            utilMock.mockResolvedValue(emptyDetails)
+
+            // Act
+            const result = await metaProvider.getOrderDetails(null as any)
+
+            // Assert — must not throw and must return an empty MetaOrderDetails shape
+            expect(result).toMatchObject({
+                catalog_id: '',
+                title: '',
+                products: [],
+                price: { total: 0 },
+            })
+        })
+
+        test('should return safe empty result when called with a plain string (baileys-style guard)', async () => {
+            // Arrange
+            const { getOrderDetails: utilMock } = require('../src/utils')
+            utilMock.mockResolvedValue(emptyDetails)
+
+            // Act — simulates a caller mistakenly passing orderId as a string
+            const result = await metaProvider.getOrderDetails('some-order-id' as any)
+
+            // Assert
+            expect(result).toMatchObject({
+                catalog_id: '',
+                title: '',
+                products: [],
+                price: { total: 0 },
+            })
         })
     })
 })
