@@ -25,7 +25,7 @@
         "@builderbot/bot": "workspace:*"
     },
     "devDependencies": {
-        "@builderbot/bot": "workspace:^",
+        "@builderbot/bot": "^1.4.3-alpha.0",
         "@jest/globals": "^30.0.0",
         "@rollup/plugin-commonjs": "^25.0.0",
         "@rollup/plugin-json": "^6.0.0",
@@ -40,5 +40,5 @@
         "ts-jest": "^29.0.0",
         "typescript": "^5.0.0"
     },
-    "gitHead": "be4c4287fe2fa5847968c98c3d9d32088edeaca3"
+    "gitHead": "4c667603733e1262920fbd919fa388e544f7f707"
 }
