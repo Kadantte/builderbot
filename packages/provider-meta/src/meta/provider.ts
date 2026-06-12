@@ -29,6 +29,7 @@ import type {
 } from '~/types'
 
 const URL = `https://graph.facebook.com`
+const URL_REGEX = /https?:\/\/[^\s]+/
 
 class MetaProvider extends ProviderClass<MetaInterface> implements MetaInterface {
     public vendor: Vendor<any>
@@ -799,7 +800,8 @@ class MetaProvider extends ProviderClass<MetaInterface> implements MetaInterface
         options = { ...options, ...options['options'] }
         if (options?.buttons?.length) return this.sendButtons(to, options.buttons, message)
         if (options?.media) return this.sendMedia(to, message, options.media, context)
-        return this.sendText(to, message, context)
+        const preview_url = options?.preview_url as boolean | undefined
+        return this.sendText(to, message, context, preview_url)
     }
 
     /**
@@ -1028,15 +1030,16 @@ class MetaProvider extends ProviderClass<MetaInterface> implements MetaInterface
      * // With URL preview
      * await provider.sendText('1234567890', 'Check https://example.com', null, true)
      */
-    sendText = async (to: string, message: string, context = null, preview_url: boolean = false) => {
+    sendText = async (to: string, message: string, context = null, preview_url?: boolean) => {
         to = parseMetaNumber(to)
+        const resolvedPreview = preview_url ?? URL_REGEX.test(message)
         const body: TextMessageBody = {
             messaging_product: 'whatsapp',
             recipient_type: 'individual',
             to,
             type: 'text',
             text: {
-                preview_url,
+                preview_url: resolvedPreview,
                 body: message,
             },
         }

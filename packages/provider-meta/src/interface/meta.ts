@@ -14,7 +14,7 @@ import type {
 export interface MetaInterface {
     sendMessageMeta: (body: TextMessageBody) => void
     sendMessageToApi: (body: TextMessageBody) => Promise<any>
-    sendText: (to: string, message: string, context: string | null) => Promise<any>
+    sendText: (to: string, message: string, context: string | null, preview_url?: boolean) => Promise<any>
     sendImage: (to: string, mediaInput: string | null, caption: string, context: string | null) => Promise<any>
     sendImageUrl: (to: string, url: string, caption: string, context: string | null) => Promise<void>
     sendVideo: (to: string, pathVideo: string | null, caption: string, context: string | null) => Promise<any>

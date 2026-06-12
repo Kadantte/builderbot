@@ -12,7 +12,7 @@ jest.mock('axios')
 jest.mock('../src/utils', () => ({
     downloadFile: jest.fn(),
     getProfile: jest.fn(),
-     
+
     getOrderDetails: jest.fn() as any,
     verifyToken: jest.fn(),
 }))
@@ -174,7 +174,7 @@ describe('#MetaProvider', () => {
     })
 
     describe('#sendText', () => {
-        test('should send text message to the provided recipient', async () => {
+        test('should send text message without URL — preview_url false', async () => {
             // Arrange
             const fakeRecipient = '1234567890'
             const fakeMessage = 'Hello, World!'
@@ -194,6 +194,79 @@ describe('#MetaProvider', () => {
                     body: fakeMessage,
                 },
             })
+        })
+
+        test('should auto-enable preview_url when message contains an https URL', async () => {
+            // Arrange
+            const fakeRecipient = '1234567890'
+            const fakeMessage = 'Check this out: https://example.com/page'
+            metaProvider.sendMessageMeta = jest.fn() as never
+
+            // Act
+            await metaProvider.sendText(fakeRecipient, fakeMessage)
+
+            // Assert
+            expect(metaProvider.sendMessageMeta).toHaveBeenCalledWith({
+                messaging_product: 'whatsapp',
+                recipient_type: 'individual',
+                to: fakeRecipient,
+                type: 'text',
+                text: {
+                    preview_url: true,
+                    body: fakeMessage,
+                },
+            })
+        })
+
+        test('should auto-enable preview_url when message contains an http URL', async () => {
+            // Arrange
+            const fakeRecipient = '1234567890'
+            const fakeMessage = 'Visit http://example.com for more info'
+            metaProvider.sendMessageMeta = jest.fn() as never
+
+            // Act
+            await metaProvider.sendText(fakeRecipient, fakeMessage)
+
+            // Assert
+            expect(metaProvider.sendMessageMeta).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    text: expect.objectContaining({ preview_url: true }),
+                })
+            )
+        })
+
+        test('should respect explicit preview_url=false even when message has a URL', async () => {
+            // Arrange
+            const fakeRecipient = '1234567890'
+            const fakeMessage = 'See https://example.com'
+            metaProvider.sendMessageMeta = jest.fn() as never
+
+            // Act
+            await metaProvider.sendText(fakeRecipient, fakeMessage, null, false)
+
+            // Assert
+            expect(metaProvider.sendMessageMeta).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    text: expect.objectContaining({ preview_url: false }),
+                })
+            )
+        })
+
+        test('should respect explicit preview_url=true even when message has no URL', async () => {
+            // Arrange
+            const fakeRecipient = '1234567890'
+            const fakeMessage = 'Plain text message'
+            metaProvider.sendMessageMeta = jest.fn() as never
+
+            // Act
+            await metaProvider.sendText(fakeRecipient, fakeMessage, null, true)
+
+            // Assert
+            expect(metaProvider.sendMessageMeta).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    text: expect.objectContaining({ preview_url: true }),
+                })
+            )
         })
     })
 
@@ -421,9 +494,39 @@ describe('#MetaProvider', () => {
             await metaProvider.sendMessage(fakeRecipient, fakeMessage, options, context)
 
             // Assert
-            expect(metaProvider.sendText).toHaveBeenCalledWith(fakeRecipient, fakeMessage, context)
+            expect(metaProvider.sendText).toHaveBeenCalledWith(fakeRecipient, fakeMessage, context, undefined)
             expect(metaProvider.sendButtons).not.toHaveBeenCalled()
             expect(metaProvider.sendMedia).not.toHaveBeenCalled()
+        })
+
+        test('should pass preview_url=false from options to sendText', async () => {
+            // Arrange
+            const fakeRecipient = '1234567890'
+            const fakeMessage = 'Check https://example.com'
+            const options = { preview_url: false }
+            jest.spyOn(metaProvider, 'sendText')
+            metaProvider.sendMessageMeta = jest.fn() as never
+
+            // Act
+            await metaProvider.sendMessage(fakeRecipient, fakeMessage, options)
+
+            // Assert
+            expect(metaProvider.sendText).toHaveBeenCalledWith(fakeRecipient, fakeMessage, undefined, false)
+        })
+
+        test('should pass preview_url=true from options to sendText', async () => {
+            // Arrange
+            const fakeRecipient = '1234567890'
+            const fakeMessage = 'Plain text message'
+            const options = { preview_url: true }
+            jest.spyOn(metaProvider, 'sendText')
+            metaProvider.sendMessageMeta = jest.fn() as never
+
+            // Act
+            await metaProvider.sendMessage(fakeRecipient, fakeMessage, options)
+
+            // Assert
+            expect(metaProvider.sendText).toHaveBeenCalledWith(fakeRecipient, fakeMessage, undefined, true)
         })
 
         test('should parse the recipient number and send message with buttons', async () => {
