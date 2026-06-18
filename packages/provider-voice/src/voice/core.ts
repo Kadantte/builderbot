@@ -1,4 +1,3 @@
-
 import {
     AudioFrame,
     AudioSource,
@@ -15,11 +14,11 @@ import {
 } from '@livekit/rtc-node'
 import { AccessToken } from 'livekit-server-sdk'
 import { EventEmitter } from 'node:events'
-import OpenAI from 'openai'
 
+import type { ISttAdapter, ITtsAdapter } from '../adapters/index'
+import { OpenAISTTAdapter } from '../adapters/stt/openai'
+import { OpenAITTSAdapter } from '../adapters/tts/openai'
 import { bufferToInt16, chunkPcm, SilenceSegmenter } from '../audio'
-import { transcribe } from '../stt'
-import { synthesize, TTS_SAMPLE_RATE } from '../tts'
 import type { IVoiceProviderArgs, VoicePayload } from '../types'
 
 /** 10 ms frames for publishing into LiveKit. */
@@ -27,13 +26,14 @@ const PUBLISH_FRAME_MS = 10
 
 /**
  * Manages the LiveKit room connection and the bidirectional audio pipeline:
- * incoming audio tracks -> Whisper -> `message` events, and text -> OpenAI TTS
- * -> published audio track. Emits the standard provider events the
+ * incoming audio tracks -> STT adapter -> `message` events, and text -> TTS
+ * adapter -> published audio track. Emits the standard provider events the
  * VoiceProvider re-broadcasts to the bot framework.
  */
 export class LiveKitCoreVendor extends EventEmitter {
     public room: Room
-    private readonly openai: OpenAI
+    private readonly sttAdapter: ISttAdapter
+    private readonly ttsAdapter: ITtsAdapter
     private readonly args: IVoiceProviderArgs
 
     private audioSource: AudioSource | null = null
@@ -41,15 +41,31 @@ export class LiveKitCoreVendor extends EventEmitter {
 
     /**
      * Serializes utterance handling so transcriptions are emitted in the order
-     * they were spoken, regardless of variable Whisper latency.
+     * they were spoken, regardless of variable STT latency.
      */
     private utteranceQueue: Promise<void> = Promise.resolve()
 
     constructor(args: IVoiceProviderArgs) {
         super()
         this.args = args
-        this.openai = new OpenAI({ apiKey: args.openaiApiKey })
         this.room = new Room()
+
+        // Resolve STT adapter: use provided adapter or fall back to OpenAI default.
+        this.sttAdapter =
+            args.sttAdapter ??
+            new OpenAISTTAdapter({
+                apiKey: args.openaiApiKey as string,
+                model: args.sttModel,
+            })
+
+        // Resolve TTS adapter: use provided adapter or fall back to OpenAI default.
+        this.ttsAdapter =
+            args.ttsAdapter ??
+            new OpenAITTSAdapter({
+                apiKey: args.openaiApiKey as string,
+                model: args.ttsModel,
+                voice: args.ttsVoice,
+            })
     }
 
     /**
@@ -73,6 +89,9 @@ export class LiveKitCoreVendor extends EventEmitter {
 
             await this.room.connect(this.args.wsUrl, token, { autoSubscribe: true, dynacast: true })
 
+            // Pre-publish the audio source so it is ready before the first TTS reply.
+            await this.ensureAudioSource()
+
             this.emit('host', { phone: this.args.identity ?? 'builderbot', room: this.args.roomName })
             this.emit('ready', true)
         } catch (error) {
@@ -92,23 +111,26 @@ export class LiveKitCoreVendor extends EventEmitter {
     }
 
     /**
-     * Synthesize text to speech and publish it into the room as audio.
+     * Synthesize text to speech via the configured TTS adapter and publish it
+     * into the room as audio.
      */
     public async publishAudio(text: string): Promise<void> {
-        const pcm = await synthesize(this.openai, text, {
-            model: this.args.ttsModel,
-            voice: this.args.ttsVoice,
-        })
+        const pcm = await this.ttsAdapter.synthesize(text)
+        const ttsRate = this.ttsAdapter.sampleRate
 
         const source = await this.ensureAudioSource()
-        const samplesPerFrame = Math.round((PUBLISH_FRAME_MS / 1000) * TTS_SAMPLE_RATE)
+        const samplesPerFrame = Math.round((PUBLISH_FRAME_MS / 1000) * ttsRate)
         // pad=false: keep the final frame's real length so playback doesn't end
         // on a zero tail (which is audible as a click after every reply).
         const frames = chunkPcm(bufferToInt16(pcm), samplesPerFrame, false)
 
         for (const frame of frames) {
-            const audioFrame = new AudioFrame(frame, TTS_SAMPLE_RATE, 1, frame.length)
-            await source.captureFrame(audioFrame)
+            const audioFrame = new AudioFrame(frame, ttsRate, 1, frame.length)
+            try {
+                await source.captureFrame(audioFrame)
+            } catch {
+                // Frame dropped if source is momentarily not ready — non-fatal
+            }
         }
     }
 
@@ -124,7 +146,7 @@ export class LiveKitCoreVendor extends EventEmitter {
     private async ensureAudioSource(): Promise<AudioSource> {
         if (this.audioSource) return this.audioSource
 
-        const source = new AudioSource(TTS_SAMPLE_RATE, 1)
+        const source = new AudioSource(this.ttsAdapter.sampleRate, 1)
         const track = LocalAudioTrack.createAudioTrack('voice', source)
         const options = new TrackPublishOptions()
         options.source = TrackSource.SOURCE_MICROPHONE
@@ -199,11 +221,7 @@ export class LiveKitCoreVendor extends EventEmitter {
 
     private async handleUtterance(pcm: Buffer, sampleRate: number, participant: RemoteParticipant): Promise<void> {
         try {
-            const body = await transcribe(this.openai, pcm, {
-                model: this.args.sttModel,
-                language: this.args.language,
-                sampleRate,
-            })
+            const body = await this.sttAdapter.transcribe(pcm, sampleRate, this.args.language)
             if (!body) return
 
             const payload: VoicePayload = {

@@ -1826,6 +1826,3691 @@ importers:
                 specifier: ^17.0.1
                 version: 17.0.2
 
+    starters/apps/base-js-baileys-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: latest
+                version: link:../../../packages/database-json
+            '@builderbot/provider-baileys':
+                specifier: latest
+                version: link:../../../packages/provider-baileys
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-baileys-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-baileys':
+                specifier: latest
+                version: link:../../../packages/provider-baileys
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-baileys-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-baileys':
+                specifier: latest
+                version: link:../../../packages/provider-baileys
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-baileys-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-baileys':
+                specifier: latest
+                version: link:../../../packages/provider-baileys
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-baileys-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-baileys':
+                specifier: latest
+                version: link:../../../packages/provider-baileys
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-email-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: latest
+                version: link:../../../packages/database-json
+            '@builderbot/provider-email':
+                specifier: latest
+                version: link:../../../packages/provider-email
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-email-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-email':
+                specifier: latest
+                version: link:../../../packages/provider-email
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-email-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-email':
+                specifier: latest
+                version: link:../../../packages/provider-email
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-email-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-email':
+                specifier: latest
+                version: link:../../../packages/provider-email
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-email-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-email':
+                specifier: latest
+                version: link:../../../packages/provider-email
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-evolution-api-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: latest
+                version: link:../../../packages/database-json
+            '@builderbot/provider-evolution-api':
+                specifier: latest
+                version: link:../../../packages/provider-evolution-api
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-evolution-api-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-evolution-api':
+                specifier: latest
+                version: link:../../../packages/provider-evolution-api
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-evolution-api-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-evolution-api':
+                specifier: latest
+                version: link:../../../packages/provider-evolution-api
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-evolution-api-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-evolution-api':
+                specifier: latest
+                version: link:../../../packages/provider-evolution-api
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-evolution-api-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-evolution-api':
+                specifier: latest
+                version: link:../../../packages/provider-evolution-api
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-facebook-messenger-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: latest
+                version: link:../../../packages/database-json
+            '@builderbot/provider-facebook-messenger':
+                specifier: latest
+                version: link:../../../packages/provider-facebook-messenger
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-facebook-messenger-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-facebook-messenger':
+                specifier: latest
+                version: link:../../../packages/provider-facebook-messenger
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-facebook-messenger-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-facebook-messenger':
+                specifier: latest
+                version: link:../../../packages/provider-facebook-messenger
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-facebook-messenger-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-facebook-messenger':
+                specifier: latest
+                version: link:../../../packages/provider-facebook-messenger
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-facebook-messenger-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-facebook-messenger':
+                specifier: latest
+                version: link:../../../packages/provider-facebook-messenger
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-gohighlevel-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: latest
+                version: link:../../../packages/database-json
+            '@builderbot/provider-gohighlevel':
+                specifier: latest
+                version: link:../../../packages/provider-gohighlevel
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-gohighlevel-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-gohighlevel':
+                specifier: latest
+                version: link:../../../packages/provider-gohighlevel
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-gohighlevel-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-gohighlevel':
+                specifier: latest
+                version: link:../../../packages/provider-gohighlevel
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-gohighlevel-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-gohighlevel':
+                specifier: latest
+                version: link:../../../packages/provider-gohighlevel
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-gohighlevel-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-gohighlevel':
+                specifier: latest
+                version: link:../../../packages/provider-gohighlevel
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-instagram-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: latest
+                version: link:../../../packages/database-json
+            '@builderbot/provider-instagram':
+                specifier: latest
+                version: link:../../../packages/provider-instagram
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-instagram-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-instagram':
+                specifier: latest
+                version: link:../../../packages/provider-instagram
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-instagram-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-instagram':
+                specifier: latest
+                version: link:../../../packages/provider-instagram
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-instagram-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-instagram':
+                specifier: latest
+                version: link:../../../packages/provider-instagram
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-instagram-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-instagram':
+                specifier: latest
+                version: link:../../../packages/provider-instagram
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-meta-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: latest
+                version: link:../../../packages/database-json
+            '@builderbot/provider-meta':
+                specifier: latest
+                version: link:../../../packages/provider-meta
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-meta-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-meta':
+                specifier: latest
+                version: link:../../../packages/provider-meta
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-meta-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-meta':
+                specifier: latest
+                version: link:../../../packages/provider-meta
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-meta-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-meta':
+                specifier: latest
+                version: link:../../../packages/provider-meta
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-meta-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-meta':
+                specifier: latest
+                version: link:../../../packages/provider-meta
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-sherpa-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: latest
+                version: link:../../../packages/database-json
+            '@builderbot/provider-sherpa':
+                specifier: latest
+                version: link:../../../packages/provider-sherpa
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-sherpa-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-sherpa':
+                specifier: latest
+                version: link:../../../packages/provider-sherpa
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-sherpa-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-sherpa':
+                specifier: latest
+                version: link:../../../packages/provider-sherpa
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-sherpa-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-sherpa':
+                specifier: latest
+                version: link:../../../packages/provider-sherpa
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-sherpa-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-sherpa':
+                specifier: latest
+                version: link:../../../packages/provider-sherpa
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-twilio-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: latest
+                version: link:../../../packages/database-json
+            '@builderbot/provider-twilio':
+                specifier: latest
+                version: link:../../../packages/provider-twilio
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-twilio-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-twilio':
+                specifier: latest
+                version: link:../../../packages/provider-twilio
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-twilio-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-twilio':
+                specifier: latest
+                version: link:../../../packages/provider-twilio
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-twilio-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-twilio':
+                specifier: latest
+                version: link:../../../packages/provider-twilio
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-twilio-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-twilio':
+                specifier: latest
+                version: link:../../../packages/provider-twilio
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-voice-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: latest
+                version: link:../../../packages/database-json
+            '@builderbot/provider-voice':
+                specifier: latest
+                version: link:../../../packages/provider-voice
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-voice-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-voice':
+                specifier: latest
+                version: link:../../../packages/provider-voice
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-voice-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-voice':
+                specifier: latest
+                version: link:../../../packages/provider-voice
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-voice-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-voice':
+                specifier: latest
+                version: link:../../../packages/provider-voice
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-voice-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-voice':
+                specifier: latest
+                version: link:../../../packages/provider-voice
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-voice-sip-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: latest
+                version: link:../../../packages/database-json
+            '@builderbot/provider-voice-sip':
+                specifier: latest
+                version: link:../../../packages/provider-voice-sip
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-voice-sip-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-voice-sip':
+                specifier: latest
+                version: link:../../../packages/provider-voice-sip
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-voice-sip-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-voice-sip':
+                specifier: latest
+                version: link:../../../packages/provider-voice-sip
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-voice-sip-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-voice-sip':
+                specifier: latest
+                version: link:../../../packages/provider-voice-sip
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-voice-sip-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-voice-sip':
+                specifier: latest
+                version: link:../../../packages/provider-voice-sip
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-wppconnect-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: latest
+                version: link:../../../packages/database-json
+            '@builderbot/provider-wppconnect':
+                specifier: latest
+                version: link:../../../packages/provider-wppconnect
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-wppconnect-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-wppconnect':
+                specifier: latest
+                version: link:../../../packages/provider-wppconnect
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-wppconnect-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-wppconnect':
+                specifier: latest
+                version: link:../../../packages/provider-wppconnect
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-wppconnect-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-wppconnect':
+                specifier: latest
+                version: link:../../../packages/provider-wppconnect
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-js-wppconnect-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-wppconnect':
+                specifier: latest
+                version: link:../../../packages/provider-wppconnect
+        devDependencies:
+            eslint:
+                specifier: ^9.39.1
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+
+    starters/apps/base-ts-baileys-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: latest
+                version: link:../../../packages/database-json
+            '@builderbot/provider-baileys':
+                specifier: latest
+                version: link:../../../packages/provider-baileys
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-baileys-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-baileys':
+                specifier: latest
+                version: link:../../../packages/provider-baileys
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-baileys-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-baileys':
+                specifier: latest
+                version: link:../../../packages/provider-baileys
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-baileys-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-baileys':
+                specifier: latest
+                version: link:../../../packages/provider-baileys
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-baileys-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-baileys':
+                specifier: latest
+                version: link:../../../packages/provider-baileys
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-email-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: latest
+                version: link:../../../packages/database-json
+            '@builderbot/provider-email':
+                specifier: latest
+                version: link:../../../packages/provider-email
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-email-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-email':
+                specifier: latest
+                version: link:../../../packages/provider-email
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-email-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-email':
+                specifier: latest
+                version: link:../../../packages/provider-email
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-email-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-email':
+                specifier: latest
+                version: link:../../../packages/provider-email
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-email-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-email':
+                specifier: latest
+                version: link:../../../packages/provider-email
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-evolution-api-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: latest
+                version: link:../../../packages/database-json
+            '@builderbot/provider-evolution-api':
+                specifier: latest
+                version: link:../../../packages/provider-evolution-api
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-evolution-api-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-evolution-api':
+                specifier: latest
+                version: link:../../../packages/provider-evolution-api
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-evolution-api-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-evolution-api':
+                specifier: latest
+                version: link:../../../packages/provider-evolution-api
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-evolution-api-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-evolution-api':
+                specifier: latest
+                version: link:../../../packages/provider-evolution-api
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-evolution-api-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-evolution-api':
+                specifier: latest
+                version: link:../../../packages/provider-evolution-api
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-facebook-messenger-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: latest
+                version: link:../../../packages/database-json
+            '@builderbot/provider-facebook-messenger':
+                specifier: latest
+                version: link:../../../packages/provider-facebook-messenger
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-facebook-messenger-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-facebook-messenger':
+                specifier: latest
+                version: link:../../../packages/provider-facebook-messenger
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-facebook-messenger-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-facebook-messenger':
+                specifier: latest
+                version: link:../../../packages/provider-facebook-messenger
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-facebook-messenger-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-facebook-messenger':
+                specifier: latest
+                version: link:../../../packages/provider-facebook-messenger
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-facebook-messenger-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-facebook-messenger':
+                specifier: latest
+                version: link:../../../packages/provider-facebook-messenger
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-gohighlevel-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: latest
+                version: link:../../../packages/database-json
+            '@builderbot/provider-gohighlevel':
+                specifier: latest
+                version: link:../../../packages/provider-gohighlevel
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-gohighlevel-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-gohighlevel':
+                specifier: latest
+                version: link:../../../packages/provider-gohighlevel
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-gohighlevel-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-gohighlevel':
+                specifier: latest
+                version: link:../../../packages/provider-gohighlevel
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-gohighlevel-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-gohighlevel':
+                specifier: latest
+                version: link:../../../packages/provider-gohighlevel
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-gohighlevel-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-gohighlevel':
+                specifier: latest
+                version: link:../../../packages/provider-gohighlevel
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-gupshup-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-gupshup':
+                specifier: latest
+                version: link:../../../packages/provider-gupshup
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-instagram-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: latest
+                version: link:../../../packages/database-json
+            '@builderbot/provider-instagram':
+                specifier: latest
+                version: link:../../../packages/provider-instagram
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-instagram-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-instagram':
+                specifier: latest
+                version: link:../../../packages/provider-instagram
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-instagram-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-instagram':
+                specifier: latest
+                version: link:../../../packages/provider-instagram
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-instagram-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-instagram':
+                specifier: latest
+                version: link:../../../packages/provider-instagram
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-instagram-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-instagram':
+                specifier: latest
+                version: link:../../../packages/provider-instagram
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-meta-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: latest
+                version: link:../../../packages/database-json
+            '@builderbot/provider-meta':
+                specifier: latest
+                version: link:../../../packages/provider-meta
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-meta-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-meta':
+                specifier: latest
+                version: link:../../../packages/provider-meta
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-meta-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-meta':
+                specifier: latest
+                version: link:../../../packages/provider-meta
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-meta-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-meta':
+                specifier: latest
+                version: link:../../../packages/provider-meta
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-meta-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-meta':
+                specifier: latest
+                version: link:../../../packages/provider-meta
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-sherpa-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: latest
+                version: link:../../../packages/database-json
+            '@builderbot/provider-sherpa':
+                specifier: latest
+                version: link:../../../packages/provider-sherpa
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-sherpa-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-sherpa':
+                specifier: latest
+                version: link:../../../packages/provider-sherpa
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-sherpa-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-sherpa':
+                specifier: latest
+                version: link:../../../packages/provider-sherpa
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-sherpa-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-sherpa':
+                specifier: latest
+                version: link:../../../packages/provider-sherpa
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-sherpa-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-sherpa':
+                specifier: latest
+                version: link:../../../packages/provider-sherpa
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-twilio-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: latest
+                version: link:../../../packages/database-json
+            '@builderbot/provider-twilio':
+                specifier: latest
+                version: link:../../../packages/provider-twilio
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-twilio-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-twilio':
+                specifier: latest
+                version: link:../../../packages/provider-twilio
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-twilio-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-twilio':
+                specifier: latest
+                version: link:../../../packages/provider-twilio
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-twilio-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-twilio':
+                specifier: latest
+                version: link:../../../packages/provider-twilio
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-twilio-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-twilio':
+                specifier: latest
+                version: link:../../../packages/provider-twilio
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-voice-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: workspace:*
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: workspace:*
+                version: link:../../../packages/database-json
+            '@builderbot/provider-voice':
+                specifier: workspace:*
+                version: link:../../../packages/provider-voice
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-voice-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-voice':
+                specifier: latest
+                version: link:../../../packages/provider-voice
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-voice-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-voice':
+                specifier: latest
+                version: link:../../../packages/provider-voice
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-voice-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-voice':
+                specifier: latest
+                version: link:../../../packages/provider-voice
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-voice-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-voice':
+                specifier: latest
+                version: link:../../../packages/provider-voice
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-voice-sip-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: latest
+                version: link:../../../packages/database-json
+            '@builderbot/provider-voice-sip':
+                specifier: latest
+                version: link:../../../packages/provider-voice-sip
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-voice-sip-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-voice-sip':
+                specifier: latest
+                version: link:../../../packages/provider-voice-sip
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-voice-sip-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-voice-sip':
+                specifier: latest
+                version: link:../../../packages/provider-voice-sip
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-voice-sip-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-voice-sip':
+                specifier: latest
+                version: link:../../../packages/provider-voice-sip
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-voice-sip-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-voice-sip':
+                specifier: latest
+                version: link:../../../packages/provider-voice-sip
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-wppconnect-json:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-json':
+                specifier: latest
+                version: link:../../../packages/database-json
+            '@builderbot/provider-wppconnect':
+                specifier: latest
+                version: link:../../../packages/provider-wppconnect
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-wppconnect-memory:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/provider-wppconnect':
+                specifier: latest
+                version: link:../../../packages/provider-wppconnect
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-wppconnect-mongo:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mongo':
+                specifier: latest
+                version: link:../../../packages/database-mongo
+            '@builderbot/provider-wppconnect':
+                specifier: latest
+                version: link:../../../packages/provider-wppconnect
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-wppconnect-mysql:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-mysql':
+                specifier: latest
+                version: link:../../../packages/database-mysql
+            '@builderbot/provider-wppconnect':
+                specifier: latest
+                version: link:../../../packages/provider-wppconnect
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
+    starters/apps/base-ts-wppconnect-postgres:
+        dependencies:
+            '@builderbot/bot':
+                specifier: latest
+                version: link:../../../packages/bot
+            '@builderbot/database-postgres':
+                specifier: latest
+                version: link:../../../packages/database-postgres
+            '@builderbot/provider-wppconnect':
+                specifier: latest
+                version: link:../../../packages/provider-wppconnect
+        devDependencies:
+            '@types/node':
+                specifier: ^25.0.0
+                version: 25.9.3
+            eslint:
+                specifier: ^9.0.0
+                version: 9.39.1(jiti@2.6.1)
+            eslint-plugin-builderbot:
+                specifier: latest
+                version: link:../../../packages/eslint-plugin-builderbot
+            nodemon:
+                specifier: ^3.1.11
+                version: 3.1.14
+            rollup:
+                specifier: ^4.10.0
+                version: 4.53.3
+            rollup-plugin-typescript2:
+                specifier: ^0.36.0
+                version: 0.36.0(rollup@4.53.3)(typescript@5.9.3)
+            tsx:
+                specifier: ^4.7.1
+                version: 4.22.4
+            typescript:
+                specifier: ^5.4.3
+                version: 5.9.3
+            typescript-eslint:
+                specifier: ^8.0.0
+                version: 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
+
 packages:
     '@adiwajshing/keyed-db@0.2.4':
         resolution:
@@ -2567,6 +6252,24 @@ packages:
                 integrity: sha512-WI0DdZ8xFSbgMjR1sFsKABJ/C5OnRrjT06JXbZKexJGrDuPTzZdDYfFlsgcCXCyf+suG5QU2e/y1Wo2V/OapLQ==,
             }
 
+    '@esbuild/aix-ppc64@0.28.1':
+        resolution:
+            {
+                integrity: sha512-Svl7tq8k/08+p6CXPpRjQ1fKX+1odH/BQbb48fV6fj3CWHhsoIOoY87w1oHXm0qEpkIK3ZfVgp0hed3XBXzXMQ==,
+            }
+        engines: { node: '>=18' }
+        cpu: [ppc64]
+        os: [aix]
+
+    '@esbuild/android-arm64@0.28.1':
+        resolution:
+            {
+                integrity: sha512-34EGEbCIAgosYz6goLcopX6Mo7NyGv9tfwEM2/7Ce2VcVRk568iSvniGWcUXIy7wEDR1wzolcxcriFVrWYcwBg==,
+            }
+        engines: { node: '>=18' }
+        cpu: [arm64]
+        os: [android]
+
     '@esbuild/android-arm@0.15.18':
         resolution:
             {
@@ -2576,6 +6279,87 @@ packages:
         cpu: [arm]
         os: [android]
 
+    '@esbuild/android-arm@0.28.1':
+        resolution:
+            {
+                integrity: sha512-0k2F129Xdio1TdJfzJ8sy1Q47vUD2NnwdhiAf7drUN1EBTfPf4hsFCtmMgu/6m8JSzsBrlmVjudMBQqOfG8usQ==,
+            }
+        engines: { node: '>=18' }
+        cpu: [arm]
+        os: [android]
+
+    '@esbuild/android-x64@0.28.1':
+        resolution:
+            {
+                integrity: sha512-dbwY7ltSMDWsRatcRpCnES4F+im88OCUgGZjy52shC7GqHRE/cYlxNbB4Z4UpJswpcc4Qxd2oE/ufM0p61IKng==,
+            }
+        engines: { node: '>=18' }
+        cpu: [x64]
+        os: [android]
+
+    '@esbuild/darwin-arm64@0.28.1':
+        resolution:
+            {
+                integrity: sha512-TZbWkQY7kvTAXbXUT7uVACR5cMHsDiSz9z7ZKAX/RTq/WJEk3QyRr0wZpNhBDX+/0CtdqUIJlOiodQcta6tY3Q==,
+            }
+        engines: { node: '>=18' }
+        cpu: [arm64]
+        os: [darwin]
+
+    '@esbuild/darwin-x64@0.28.1':
+        resolution:
+            {
+                integrity: sha512-zfdzgK9ACBNZLI/CyHTOx81SyNbM6YXn7rxSgX97VjyiPl9W1i4Ka4fgKECEoFCKGpvBj5qArWIGgQjOwkgskQ==,
+            }
+        engines: { node: '>=18' }
+        cpu: [x64]
+        os: [darwin]
+
+    '@esbuild/freebsd-arm64@0.28.1':
+        resolution:
+            {
+                integrity: sha512-wG2EA8ENdEI0qhkSZMjfqrdY+ziCYCPMmtZjjIwOmXFjmyzEHn+UUxk5of+SYsjtfs3VpnlC7QLzSI5hY/rOAw==,
+            }
+        engines: { node: '>=18' }
+        cpu: [arm64]
+        os: [freebsd]
+
+    '@esbuild/freebsd-x64@0.28.1':
+        resolution:
+            {
+                integrity: sha512-i7dZ9vQgnvSCzi/rYCXNgtF/U+eKZNJBzu3eTQbRgHnM7tNSizLOkRFAl3qzVc/Op/u5YkHHa4pf/3DOYHthLQ==,
+            }
+        engines: { node: '>=18' }
+        cpu: [x64]
+        os: [freebsd]
+
+    '@esbuild/linux-arm64@0.28.1':
+        resolution:
+            {
+                integrity: sha512-yHs+0uc8+nvEAfAfxrWQKK5peSNzBc4PegcMO0EJ2hT71uA7vB8Ihg2e77R2P7SG5uYjPbHlLLmve4LLLRCf0g==,
+            }
+        engines: { node: '>=18' }
+        cpu: [arm64]
+        os: [linux]
+
+    '@esbuild/linux-arm@0.28.1':
+        resolution:
+            {
+                integrity: sha512-qVXBOHQS+d5Y722GwJzJUtOLlX7km3CraOaGormF1pDtPd2C/l1SHRPgjLunLGe51Sh5YYWKMFDyV4SxgMQYTQ==,
+            }
+        engines: { node: '>=18' }
+        cpu: [arm]
+        os: [linux]
+
+    '@esbuild/linux-ia32@0.28.1':
+        resolution:
+            {
+                integrity: sha512-d1z4ZuP0ajrfz/FhGT4vv278rX8KnPPJx8i5+AtK7TYbx9Le9F1hyzurZpkEyjkGa9dUGhQow4C1NmeGvqxN2w==,
+            }
+        engines: { node: '>=18' }
+        cpu: [ia32]
+        os: [linux]
+
     '@esbuild/linux-loong64@0.15.18':
         resolution:
             {
@@ -2584,6 +6368,141 @@ packages:
         engines: { node: '>=12' }
         cpu: [loong64]
         os: [linux]
+
+    '@esbuild/linux-loong64@0.28.1':
+        resolution:
+            {
+                integrity: sha512-M5sRjUVZrkm1OAPR3dlOYzNmN+loZKGVi1VUQGrwuqLcbR6qeAz+famMhjASeH3YVKvZz+zT1jlh/keC3Rj/lg==,
+            }
+        engines: { node: '>=18' }
+        cpu: [loong64]
+        os: [linux]
+
+    '@esbuild/linux-mips64el@0.28.1':
+        resolution:
+            {
+                integrity: sha512-mRObBZeHh2OxcBFPWE/FjylkRgZdYuiTR3vaTozquCGOH14iP9oN4x4Ge81CoIDYQrXmIxpFumJBu5MtZpnQJQ==,
+            }
+        engines: { node: '>=18' }
+        cpu: [mips64el]
+        os: [linux]
+
+    '@esbuild/linux-ppc64@0.28.1':
+        resolution:
+            {
+                integrity: sha512-slScBsMAb3GFDcdrCgLwZtPYRoH2H/youv10QiZyRjmsP48fznoveWytSgCI/R0ZcUgpc0ZhIUEx6LHts8yrfQ==,
+            }
+        engines: { node: '>=18' }
+        cpu: [ppc64]
+        os: [linux]
+
+    '@esbuild/linux-riscv64@0.28.1':
+        resolution:
+            {
+                integrity: sha512-kw0owk1o0GFETUJyW0jc0G4Yzs0BHZn0JDZ8JRT088vjJYX777BAs1fDGxAC+q831qOs2DTC96mNsG2opdfyyQ==,
+            }
+        engines: { node: '>=18' }
+        cpu: [riscv64]
+        os: [linux]
+
+    '@esbuild/linux-s390x@0.28.1':
+        resolution:
+            {
+                integrity: sha512-/lAIjX8aYFRByhh6L5rYtPEDRqa9de/4V/juOXcta5frjvzXO4/sqEtyytse0g3zZFuWu5cDN0MkLz2qRDD2Ag==,
+            }
+        engines: { node: '>=18' }
+        cpu: [s390x]
+        os: [linux]
+
+    '@esbuild/linux-x64@0.28.1':
+        resolution:
+            {
+                integrity: sha512-u/anNYF2mmVOEDwLtnQ1wOr3EZ9sTNGLWrsYGYwHWzGA3Si84IOkHXlbWTD1NB+9/1lcnweYKO54uhxZydNzfA==,
+            }
+        engines: { node: '>=18' }
+        cpu: [x64]
+        os: [linux]
+
+    '@esbuild/netbsd-arm64@0.28.1':
+        resolution:
+            {
+                integrity: sha512-oks0DYbLwWMmaakTsCb+zL4E+aHRVLom9IJZOAthMQEPiQmydXHkziYEsGYRx0uNV/IjEKGAV941JzH02pflqw==,
+            }
+        engines: { node: '>=18' }
+        cpu: [arm64]
+        os: [netbsd]
+
+    '@esbuild/netbsd-x64@0.28.1':
+        resolution:
+            {
+                integrity: sha512-aeL6lAnN89Hz43Mlh1G8ARasbuoYvSITDEx0tHh5b7jJnHcssqgjy9Yx430GDpmCa6OyrKoS0aNRjKundRizGg==,
+            }
+        engines: { node: '>=18' }
+        cpu: [x64]
+        os: [netbsd]
+
+    '@esbuild/openbsd-arm64@0.28.1':
+        resolution:
+            {
+                integrity: sha512-MEFJe5C3R8pwXdZ5Y21oo6m7ePiS0d9pWucn99O/wvyJZChoIQKrQDxKrGeW8F5+T0okTHesAmDeiHDTIq0V/Q==,
+            }
+        engines: { node: '>=18' }
+        cpu: [arm64]
+        os: [openbsd]
+
+    '@esbuild/openbsd-x64@0.28.1':
+        resolution:
+            {
+                integrity: sha512-i/ZLIOafE0Z8cI/XANJAixoJL/uRAoS2xOA3rb0xN+KK0K177cMAsQYkzHtBrtMXAKuAc7HGgcWiZ/sRC1Nxgw==,
+            }
+        engines: { node: '>=18' }
+        cpu: [x64]
+        os: [openbsd]
+
+    '@esbuild/openharmony-arm64@0.28.1':
+        resolution:
+            {
+                integrity: sha512-ge+Z7EXFNt2BO1oAMsVpiQ8EwndV9i1xXerAeTIK7AtPs3bKFXQM7nlRxDSIUIMeueR1CNXxqztLzdNeReKBJg==,
+            }
+        engines: { node: '>=18' }
+        cpu: [arm64]
+        os: [openharmony]
+
+    '@esbuild/sunos-x64@0.28.1':
+        resolution:
+            {
+                integrity: sha512-BEjgtECkL3vY+SaSQ6nzVfiALUeFxpawyp8Jmf5PtYhf1Ug40N1h/hxlhts+f1FvSvarEigdxS3BlSMI2PJLcQ==,
+            }
+        engines: { node: '>=18' }
+        cpu: [x64]
+        os: [sunos]
+
+    '@esbuild/win32-arm64@0.28.1':
+        resolution:
+            {
+                integrity: sha512-lCv9eK/H6ZJWbE7bh2nw54CZ9M2nupBxJcTsdk/QQnWkdSjKGuxmmH8/GWrlT1eMmZfn4dGcCjRte397WqfQXA==,
+            }
+        engines: { node: '>=18' }
+        cpu: [arm64]
+        os: [win32]
+
+    '@esbuild/win32-ia32@0.28.1':
+        resolution:
+            {
+                integrity: sha512-zvb/mB2bSCoJOpoCBgYKKpX6YM6mJBlBUVUtVj41DlZJVEB6/0CKlRYxP5wWl1C1ILiCoAU5wZZ4q1P3qeS6Eg==,
+            }
+        engines: { node: '>=18' }
+        cpu: [ia32]
+        os: [win32]
+
+    '@esbuild/win32-x64@0.28.1':
+        resolution:
+            {
+                integrity: sha512-bm4Mowrv+GXMlpWX++EcXw/iLyd1o3+bJkC2DkWXYVvgZCqD/bSj9ctZeAMC3cIxgjRVR2Dufaiu4YPxr5gW1A==,
+            }
+        engines: { node: '>=18' }
+        cpu: [x64]
+        os: [win32]
 
     '@eslint-community/eslint-utils@4.9.0':
         resolution:
@@ -6112,6 +10031,12 @@ packages:
                 integrity: sha512-WOhQTZ4G8xZ1tjJTvKOpyEVSGgOTvJAfDK3FNFgELyaTpzhdgHVHeqW8V+UJvzF5BT+/B54T/1S2K6gd9c7bbA==,
             }
 
+    '@types/node@25.9.3':
+        resolution:
+            {
+                integrity: sha512-603BddQMv3pUcr4U2dhujk83N2tTDVr/34wII2B6bJy6g+8WD6yUb11jszNs0gdi4PesVWl7ABt8nYMVpnLUcg==,
+            }
+
     '@types/nodemailer@6.4.22':
         resolution:
             {
@@ -7100,6 +11025,13 @@ packages:
                 integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==,
             }
 
+    balanced-match@4.0.4:
+        resolution:
+            {
+                integrity: sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==,
+            }
+        engines: { node: 18 || 20 || >=22 }
+
     bare-events@2.8.2:
         resolution:
             {
@@ -7208,6 +11140,13 @@ packages:
             }
         engines: { node: ^18.17.0 || >=20.5.0 }
 
+    binary-extensions@2.3.0:
+        resolution:
+            {
+                integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==,
+            }
+        engines: { node: '>=8' }
+
     binary@0.3.0:
         resolution:
             {
@@ -7295,6 +11234,13 @@ packages:
             {
                 integrity: sha512-Jt0vHyM+jmUBqojB7E1NIYadt0vI0Qxjxd2TErW94wDz+E2LAm5vKMXXwg6ZZBTHPuUlDgQHKXvjGBdfcF1ZDQ==,
             }
+
+    brace-expansion@5.0.6:
+        resolution:
+            {
+                integrity: sha512-kLpxurY4Z4r9sgMsyG0Z9uzsBlgiU/EFKhj/h91/8yHu0edo7XuixOIH3VcJ8kkxs6/jPzoI6U9Vj3WqbMQ94g==,
+            }
+        engines: { node: 18 || 20 || >=22 }
 
     braces@3.0.3:
         resolution:
@@ -7634,6 +11580,13 @@ packages:
                 integrity: sha512-IkxPpb5rS/d1IiLbHMgfPuS0FgiWTtFIm/Nj+2woXDLTZ7fOT2eqzgYbdMlLweqlHbsZjxEChoVK+7iph7jyQg==,
             }
         engines: { node: '>=20.18.1' }
+
+    chokidar@3.6.0:
+        resolution:
+            {
+                integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==,
+            }
+        engines: { node: '>= 8.10.0' }
 
     chownr@1.1.4:
         resolution:
@@ -9263,6 +13216,14 @@ packages:
         engines: { node: '>=12' }
         hasBin: true
 
+    esbuild@0.28.1:
+        resolution:
+            {
+                integrity: sha512-HrJrvZv5ayxBzPfwphOoNzkzOIIlifzk0KJrGK2c8R4+LKpMtpYLQeUdjnwjWv/LZlkH2laZk+4w78pi99D4Vw==,
+            }
+        engines: { node: '>=18' }
+        hasBin: true
+
     escalade@3.2.0:
         resolution:
             {
@@ -10685,6 +14646,12 @@ packages:
                 integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==,
             }
 
+    ignore-by-default@1.0.1:
+        resolution:
+            {
+                integrity: sha512-Ius2VYcGNk7T90CppJqcIkS5ooHUZyIQK+ClZfMfMNFEF9VSE73Fq+906u/CWu92x4gzZMWOwfFYckPObzdEbA==,
+            }
+
     ignore-walk@6.0.5:
         resolution:
             {
@@ -10908,6 +14875,13 @@ packages:
                 integrity: sha512-n4ZT37wG78iz03xPRKJrHTdZbe3IicyucEtdRsV5yglwc3GyUfbAfpSeD0FJ41NbUNSt5wbhqfp1fS+BgnvDFQ==,
             }
         engines: { node: '>= 0.4' }
+
+    is-binary-path@2.1.0:
+        resolution:
+            {
+                integrity: sha512-ZMERYes6pDydyuGidse7OsHxtbI7WVeUEozgR/g7rd0xUimYNlvZRE/K2MgZTjWy725IfelLeVcEM97mmtRGXw==,
+            }
+        engines: { node: '>=8' }
 
     is-boolean-object@1.2.2:
         resolution:
@@ -12686,6 +16660,13 @@ packages:
             }
         engines: { node: 20 || >=22 }
 
+    minimatch@10.2.5:
+        resolution:
+            {
+                integrity: sha512-MULkVLfKGYDFYejP07QOurDLLQpcjk7Fw+7jXS2R2czRQzR56yHRveU5NDJEOviH+hETZKSkIk5c+T23GjFUMg==,
+            }
+        engines: { node: 18 || 20 || >=22 }
+
     minimatch@3.0.5:
         resolution:
             {
@@ -13249,6 +17230,14 @@ packages:
                 integrity: sha512-PNDFSJdP+KFgdsG3ZzMXCgquO7I6McjY2vlqILjtJd0hy8wEvtugS9xKRF2NWlPNGxvLCXlTNIae4serI7dinw==,
             }
         engines: { node: '>=6.0.0' }
+
+    nodemon@3.1.14:
+        resolution:
+            {
+                integrity: sha512-jakjZi93UtB3jHMWsXL68FXSAosbLfY0In5gtKq3niLSkrWznrVBzXFNOEMJUfc9+Ke7SHWoAZsiMkNP3vq6Jw==,
+            }
+        engines: { node: '>=10' }
+        hasBin: true
 
     nopt@6.0.0:
         resolution:
@@ -14599,6 +18588,12 @@ packages:
                 integrity: sha512-BQWfCqYM+QINd+yawJz23tbBM40VIGXOdDw3X344KcclI/gtBbdWF6SlQ4nK/bYhF9d27KYug9WzljHC6B9Ysg==,
             }
 
+    pstree.remy@1.1.8:
+        resolution:
+            {
+                integrity: sha512-77DZwxQmxKnu3aR542U+X8FypNzbfJ+C5XQDk3uWjWxn6151aIMGthWYRXTqT1E5oJvg+ljaa2OJi+VfvCOQ8w==,
+            }
+
     pump@3.0.3:
         resolution:
             {
@@ -14997,6 +18992,13 @@ packages:
             {
                 integrity: sha512-v05I2k7xN8zXvPD9N+z/uhXPaj0sUFCe2rcWZIpBsqxfP7xXFQ0tipAd/wjj1YxWyWtUS5IDJpOG82JKt2EAVA==,
             }
+
+    readdirp@3.6.0:
+        resolution:
+            {
+                integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==,
+            }
+        engines: { node: '>=8.10.0' }
 
     real-cancellable-promise@1.2.3:
         resolution:
@@ -15578,6 +19580,13 @@ packages:
             {
                 integrity: sha512-nAu1WFPQSMNr2Zn9PGSZK9AGn4t/y97lEm+MXTtUDwfP0ksAIX4nO+6ruD9Jwut4C49SB1Ws+fbXsm/yScWOHw==,
             }
+
+    simple-update-notifier@2.0.0:
+        resolution:
+            {
+                integrity: sha512-a2B9Y0KlNXl9u/vsW6sTIu9vGEpfKu2wRV6l1H3XEas/0gUIzGzBoP/IouTcUQbm9JWZLH3COxyn03TYlFax6w==,
+            }
+        engines: { node: '>=10' }
 
     simple-xml-to-json@1.2.3:
         resolution:
@@ -16353,6 +20362,13 @@ packages:
             }
         engines: { node: '>=14.16' }
 
+    touch@3.1.1:
+        resolution:
+            {
+                integrity: sha512-r0eojU4bI8MnHr8c5bNo7lJDdI2qXlWWJk6a9EAFG7vbhTjElYhBVS3/miuE0uOuoLdb8Mc/rVfsmm6eo5o9GA==,
+            }
+        hasBin: true
+
     tr46@0.0.3:
         resolution:
             {
@@ -16508,6 +20524,14 @@ packages:
                 integrity: sha512-++0HFnmmR+gMpDtKTnW3XJ4yv9kVGi20n+NfyQWB9qwJvTaIWY9kBmzek2YUQK5APTQ/1DTrXmm4QtFPmW9Rzw==,
             }
         engines: { node: '>=12' }
+        hasBin: true
+
+    tsx@4.22.4:
+        resolution:
+            {
+                integrity: sha512-X8EX+XV4QR5xCsrgxaED954zTDfY8KqlDtskKEL0cHhyS/P8b4IFOvGDQpsC9Q1XnLq915wEfwwY/zzskCtmhg==,
+            }
+        engines: { node: '>=18.0.0' }
         hasBin: true
 
     tuf-js@1.1.7:
@@ -16754,6 +20778,12 @@ packages:
                 integrity: sha512-mlExGW4w71ebDJviH16lQLtZS32VKqsSfk80GCfUlwT/4/hNRFsoscrF/c++9xinkMzECL1uL9DDwXqFWkruPg==,
             }
 
+    undefsafe@2.0.5:
+        resolution:
+            {
+                integrity: sha512-WxONCrssBM8TSPRqN5EmsjVrsv4A8X12J4ArBiiayv3DyyG3ZlIg6yysuuSYdZsVz3TKcTg2fd//Ujd4CHV1iA==,
+            }
+
     underscore@1.13.7:
         resolution:
             {
@@ -16770,6 +20800,12 @@ packages:
         resolution:
             {
                 integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==,
+            }
+
+    undici-types@7.24.6:
+        resolution:
+            {
+                integrity: sha512-WRNW+sJgj5OBN4/0JpHFqtqzhpbnV0GuB+OozA9gCL7a993SmU+1JBZCzLNxYsbMfIeDL+lTsphD5jN5N+n0zg==,
             }
 
     undici@7.16.0:
@@ -18098,7 +22134,7 @@ snapshots:
             '@babel/types': 7.28.5
             '@jridgewell/remapping': 2.3.5
             convert-source-map: 2.0.0
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             gensync: 1.0.0-beta.2
             json5: 2.2.3
             semver: 6.3.1
@@ -18255,7 +22291,7 @@ snapshots:
             '@babel/parser': 7.28.5
             '@babel/template': 7.27.2
             '@babel/types': 7.28.5
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
         transitivePeerDependencies:
             - supports-color
 
@@ -18461,10 +22497,88 @@ snapshots:
         dependencies:
             tslib: 2.8.1
 
+    '@esbuild/aix-ppc64@0.28.1':
+        optional: true
+
+    '@esbuild/android-arm64@0.28.1':
+        optional: true
+
     '@esbuild/android-arm@0.15.18':
         optional: true
 
+    '@esbuild/android-arm@0.28.1':
+        optional: true
+
+    '@esbuild/android-x64@0.28.1':
+        optional: true
+
+    '@esbuild/darwin-arm64@0.28.1':
+        optional: true
+
+    '@esbuild/darwin-x64@0.28.1':
+        optional: true
+
+    '@esbuild/freebsd-arm64@0.28.1':
+        optional: true
+
+    '@esbuild/freebsd-x64@0.28.1':
+        optional: true
+
+    '@esbuild/linux-arm64@0.28.1':
+        optional: true
+
+    '@esbuild/linux-arm@0.28.1':
+        optional: true
+
+    '@esbuild/linux-ia32@0.28.1':
+        optional: true
+
     '@esbuild/linux-loong64@0.15.18':
+        optional: true
+
+    '@esbuild/linux-loong64@0.28.1':
+        optional: true
+
+    '@esbuild/linux-mips64el@0.28.1':
+        optional: true
+
+    '@esbuild/linux-ppc64@0.28.1':
+        optional: true
+
+    '@esbuild/linux-riscv64@0.28.1':
+        optional: true
+
+    '@esbuild/linux-s390x@0.28.1':
+        optional: true
+
+    '@esbuild/linux-x64@0.28.1':
+        optional: true
+
+    '@esbuild/netbsd-arm64@0.28.1':
+        optional: true
+
+    '@esbuild/netbsd-x64@0.28.1':
+        optional: true
+
+    '@esbuild/openbsd-arm64@0.28.1':
+        optional: true
+
+    '@esbuild/openbsd-x64@0.28.1':
+        optional: true
+
+    '@esbuild/openharmony-arm64@0.28.1':
+        optional: true
+
+    '@esbuild/sunos-x64@0.28.1':
+        optional: true
+
+    '@esbuild/win32-arm64@0.28.1':
+        optional: true
+
+    '@esbuild/win32-ia32@0.28.1':
+        optional: true
+
+    '@esbuild/win32-x64@0.28.1':
         optional: true
 
     '@eslint-community/eslint-utils@4.9.0(eslint@9.39.1(jiti@2.6.1))':
@@ -18477,7 +22591,7 @@ snapshots:
     '@eslint/config-array@0.21.1':
         dependencies:
             '@eslint/object-schema': 2.1.7
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             minimatch: 3.1.2
         transitivePeerDependencies:
             - supports-color
@@ -18493,7 +22607,7 @@ snapshots:
     '@eslint/eslintrc@3.3.3':
         dependencies:
             ajv: 6.12.6
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             espree: 10.4.0
             globals: 14.0.0
             ignore: 5.3.2
@@ -20296,7 +24410,7 @@ snapshots:
 
     '@puppeteer/browsers@2.10.13':
         dependencies:
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             extract-zip: 2.0.1
             progress: 2.0.3
             proxy-agent: 6.5.0
@@ -20311,7 +24425,7 @@ snapshots:
 
     '@puppeteer/browsers@2.11.0':
         dependencies:
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             extract-zip: 2.0.1
             progress: 2.0.3
             proxy-agent: 6.5.0
@@ -20326,7 +24440,7 @@ snapshots:
 
     '@puppeteer/browsers@2.3.0':
         dependencies:
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             extract-zip: 2.0.1
             progress: 2.0.3
             proxy-agent: 6.5.0
@@ -20943,7 +25057,7 @@ snapshots:
 
     '@tokenizer/inflate@0.4.1':
         dependencies:
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             token-types: 6.1.2
         transitivePeerDependencies:
             - supports-color
@@ -21132,6 +25246,10 @@ snapshots:
         dependencies:
             undici-types: 7.16.0
 
+    '@types/node@25.9.3':
+        dependencies:
+            undici-types: 7.24.6
+
     '@types/nodemailer@6.4.22':
         dependencies:
             '@types/node': 24.10.2
@@ -21239,7 +25357,7 @@ snapshots:
             '@typescript-eslint/types': 8.49.0
             '@typescript-eslint/typescript-estree': 8.49.0(typescript@5.9.3)
             '@typescript-eslint/visitor-keys': 8.49.0
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             eslint: 9.39.1(jiti@2.6.1)
             typescript: 5.9.3
         transitivePeerDependencies:
@@ -21249,7 +25367,7 @@ snapshots:
         dependencies:
             '@typescript-eslint/tsconfig-utils': 8.49.0(typescript@5.9.3)
             '@typescript-eslint/types': 8.49.0
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             typescript: 5.9.3
         transitivePeerDependencies:
             - supports-color
@@ -21268,7 +25386,7 @@ snapshots:
             '@typescript-eslint/types': 8.49.0
             '@typescript-eslint/typescript-estree': 8.49.0(typescript@5.9.3)
             '@typescript-eslint/utils': 8.49.0(eslint@9.39.1(jiti@2.6.1))(typescript@5.9.3)
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             eslint: 9.39.1(jiti@2.6.1)
             ts-api-utils: 2.1.0(typescript@5.9.3)
             typescript: 5.9.3
@@ -21283,7 +25401,7 @@ snapshots:
             '@typescript-eslint/tsconfig-utils': 8.49.0(typescript@5.9.3)
             '@typescript-eslint/types': 8.49.0
             '@typescript-eslint/visitor-keys': 8.49.0
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             minimatch: 9.0.5
             semver: 7.7.3
             tinyglobby: 0.2.15
@@ -21470,7 +25588,7 @@ snapshots:
 
     agent-base@6.0.2:
         dependencies:
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
         transitivePeerDependencies:
             - supports-color
 
@@ -21811,6 +25929,8 @@ snapshots:
 
     balanced-match@1.0.2: {}
 
+    balanced-match@4.0.4: {}
+
     bare-events@2.8.2: {}
 
     bare-fs@4.5.1:
@@ -21870,6 +25990,8 @@ snapshots:
             read-cmd-shim: 5.0.0
             write-file-atomic: 6.0.0
 
+    binary-extensions@2.3.0: {}
+
     binary@0.3.0:
         dependencies:
             buffers: 0.1.1
@@ -21915,7 +26037,7 @@ snapshots:
         dependencies:
             bytes: 3.1.2
             content-type: 1.0.5
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             http-errors: 2.0.1
             iconv-lite: 0.7.2
             on-finished: 2.4.1
@@ -21960,6 +26082,10 @@ snapshots:
     brace-expansion@2.0.2:
         dependencies:
             balanced-match: 1.0.2
+
+    brace-expansion@5.0.6:
+        dependencies:
+            balanced-match: 4.0.4
 
     braces@3.0.3:
         dependencies:
@@ -22232,6 +26358,18 @@ snapshots:
             parse5-parser-stream: 7.1.2
             undici: 7.16.0
             whatwg-mimetype: 4.0.0
+
+    chokidar@3.6.0:
+        dependencies:
+            anymatch: 3.1.3
+            braces: 3.0.3
+            glob-parent: 5.1.2
+            is-binary-path: 2.1.0
+            is-glob: 4.0.3
+            normalize-path: 3.0.0
+            readdirp: 3.6.0
+        optionalDependencies:
+            fsevents: 2.3.3
 
     chownr@1.1.4: {}
 
@@ -22762,9 +26900,11 @@ snapshots:
         dependencies:
             ms: 2.1.2
 
-    debug@4.4.3:
+    debug@4.4.3(supports-color@5.5.0):
         dependencies:
             ms: 2.1.3
+        optionalDependencies:
+            supports-color: 5.5.0
 
     decamelize-keys@1.1.1:
         dependencies:
@@ -23191,6 +27331,35 @@ snapshots:
             esbuild-windows-64: 0.15.18
             esbuild-windows-arm64: 0.15.18
 
+    esbuild@0.28.1:
+        optionalDependencies:
+            '@esbuild/aix-ppc64': 0.28.1
+            '@esbuild/android-arm': 0.28.1
+            '@esbuild/android-arm64': 0.28.1
+            '@esbuild/android-x64': 0.28.1
+            '@esbuild/darwin-arm64': 0.28.1
+            '@esbuild/darwin-x64': 0.28.1
+            '@esbuild/freebsd-arm64': 0.28.1
+            '@esbuild/freebsd-x64': 0.28.1
+            '@esbuild/linux-arm': 0.28.1
+            '@esbuild/linux-arm64': 0.28.1
+            '@esbuild/linux-ia32': 0.28.1
+            '@esbuild/linux-loong64': 0.28.1
+            '@esbuild/linux-mips64el': 0.28.1
+            '@esbuild/linux-ppc64': 0.28.1
+            '@esbuild/linux-riscv64': 0.28.1
+            '@esbuild/linux-s390x': 0.28.1
+            '@esbuild/linux-x64': 0.28.1
+            '@esbuild/netbsd-arm64': 0.28.1
+            '@esbuild/netbsd-x64': 0.28.1
+            '@esbuild/openbsd-arm64': 0.28.1
+            '@esbuild/openbsd-x64': 0.28.1
+            '@esbuild/openharmony-arm64': 0.28.1
+            '@esbuild/sunos-x64': 0.28.1
+            '@esbuild/win32-arm64': 0.28.1
+            '@esbuild/win32-ia32': 0.28.1
+            '@esbuild/win32-x64': 0.28.1
+
     escalade@3.2.0: {}
 
     escape-goat@4.0.0: {}
@@ -23291,7 +27460,7 @@ snapshots:
             ajv: 6.12.6
             chalk: 4.1.2
             cross-spawn: 7.0.6
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             escape-string-regexp: 4.0.0
             eslint-scope: 8.4.0
             eslint-visitor-keys: 4.2.1
@@ -23422,7 +27591,7 @@ snapshots:
 
     extract-zip@2.0.1:
         dependencies:
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             get-stream: 5.2.0
             yauzl: 2.10.0
         optionalDependencies:
@@ -23577,7 +27746,7 @@ snapshots:
 
     follow-redirects@1.15.11(debug@4.4.3):
         optionalDependencies:
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
 
     for-each@0.3.5:
         dependencies:
@@ -23770,7 +27939,7 @@ snapshots:
         dependencies:
             basic-ftp: 5.0.5
             data-uri-to-buffer: 6.0.2
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
         transitivePeerDependencies:
             - supports-color
 
@@ -24116,14 +28285,14 @@ snapshots:
         dependencies:
             '@tootallnate/once': 2.0.0
             agent-base: 6.0.2
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
         transitivePeerDependencies:
             - supports-color
 
     http-proxy-agent@7.0.2:
         dependencies:
             agent-base: 7.1.4
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
         transitivePeerDependencies:
             - supports-color
 
@@ -24135,14 +28304,14 @@ snapshots:
     https-proxy-agent@5.0.1:
         dependencies:
             agent-base: 6.0.2
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
         transitivePeerDependencies:
             - supports-color
 
     https-proxy-agent@7.0.6:
         dependencies:
             agent-base: 7.1.4
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
         transitivePeerDependencies:
             - supports-color
 
@@ -24175,6 +28344,8 @@ snapshots:
             safer-buffer: 2.1.2
 
     ieee754@1.2.1: {}
+
+    ignore-by-default@1.0.1: {}
 
     ignore-walk@6.0.5:
         dependencies:
@@ -24303,6 +28474,10 @@ snapshots:
     is-bigint@1.1.0:
         dependencies:
             has-bigints: 1.1.0
+
+    is-binary-path@2.1.0:
+        dependencies:
+            binary-extensions: 2.3.0
 
     is-boolean-object@1.2.2:
         dependencies:
@@ -24510,7 +28685,7 @@ snapshots:
     istanbul-lib-source-maps@5.0.6:
         dependencies:
             '@jridgewell/trace-mapping': 0.3.31
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             istanbul-lib-coverage: 3.2.2
         transitivePeerDependencies:
             - supports-color
@@ -25721,6 +29896,10 @@ snapshots:
         dependencies:
             '@isaacs/brace-expansion': 5.0.0
 
+    minimatch@10.2.5:
+        dependencies:
+            brace-expansion: 5.0.6
+
     minimatch@3.0.5:
         dependencies:
             brace-expansion: 1.1.12
@@ -25854,7 +30033,7 @@ snapshots:
         dependencies:
             async-mutex: 0.4.1
             camelcase: 6.3.0
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             find-cache-dir: 3.3.2
             follow-redirects: 1.15.11(debug@4.4.3)
             https-proxy-agent: 7.0.6
@@ -25921,14 +30100,14 @@ snapshots:
             array-differ: 3.0.0
             array-union: 2.1.0
             arrify: 2.0.1
-            minimatch: 3.0.5
+            minimatch: 3.1.2
 
     music-metadata@11.13.0:
         dependencies:
             '@borewit/text-codec': 0.2.2
             '@tokenizer/token': 0.3.0
             content-type: 2.0.0
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             file-type: 21.3.4
             media-typer: 2.0.0
             strtok3: 10.3.5
@@ -25942,7 +30121,7 @@ snapshots:
         dependencies:
             '@tokenizer/token': 0.3.0
             content-type: 1.0.5
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             file-type: 16.5.4
             media-typer: 1.1.0
             strtok3: 6.3.0
@@ -25989,7 +30168,7 @@ snapshots:
 
     new-find-package-json@2.0.0:
         dependencies:
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
         transitivePeerDependencies:
             - supports-color
 
@@ -26084,6 +30263,19 @@ snapshots:
     nodemailer@6.10.1: {}
 
     nodemailer@7.0.13: {}
+
+    nodemon@3.1.14:
+        dependencies:
+            chokidar: 3.6.0
+            debug: 4.4.3(supports-color@5.5.0)
+            ignore-by-default: 1.0.1
+            minimatch: 10.2.5
+            pstree.remy: 1.1.8
+            semver: 7.7.3
+            simple-update-notifier: 2.0.0
+            supports-color: 5.5.0
+            touch: 3.1.1
+            undefsafe: 2.0.5
 
     nopt@6.0.0:
         dependencies:
@@ -26536,7 +30728,7 @@ snapshots:
         dependencies:
             '@tootallnate/quickjs-emscripten': 0.23.0
             agent-base: 7.1.4
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             get-uri: 6.0.5
             http-proxy-agent: 7.0.2
             https-proxy-agent: 7.0.6
@@ -27069,7 +31261,7 @@ snapshots:
     proxy-agent@6.3.1:
         dependencies:
             agent-base: 7.1.4
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             http-proxy-agent: 7.0.2
             https-proxy-agent: 7.0.6
             lru-cache: 7.18.3
@@ -27082,7 +31274,7 @@ snapshots:
     proxy-agent@6.5.0:
         dependencies:
             agent-base: 7.1.4
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             http-proxy-agent: 7.0.2
             https-proxy-agent: 7.0.6
             lru-cache: 7.18.3
@@ -27099,6 +31291,8 @@ snapshots:
             fill-keys: 1.0.2
             module-not-found-error: 1.0.1
             resolve: 1.22.11
+
+    pstree.remy@1.1.8: {}
 
     pump@3.0.3:
         dependencies:
@@ -27151,7 +31345,7 @@ snapshots:
         dependencies:
             '@puppeteer/browsers': 2.3.0
             chromium-bidi: 0.6.3(devtools-protocol@0.0.1312386)
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             devtools-protocol: 0.0.1312386
             ws: 8.18.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)
         transitivePeerDependencies:
@@ -27166,7 +31360,7 @@ snapshots:
         dependencies:
             '@puppeteer/browsers': 2.10.13
             chromium-bidi: 11.0.0(devtools-protocol@0.0.1521046)
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             devtools-protocol: 0.0.1521046
             typed-query-selector: 2.12.0
             webdriver-bidi-protocol: 0.3.9
@@ -27183,7 +31377,7 @@ snapshots:
         dependencies:
             '@puppeteer/browsers': 2.11.0
             chromium-bidi: 11.0.0(devtools-protocol@0.0.1534754)
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             devtools-protocol: 0.0.1534754
             typed-query-selector: 2.12.0
             webdriver-bidi-protocol: 0.3.9
@@ -27198,7 +31392,7 @@ snapshots:
 
     puppeteer-extra-plugin-stealth@2.11.2(puppeteer-extra@3.3.6(puppeteer-core@22.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(puppeteer@21.11.0(bufferutil@4.0.9)(encoding@0.1.13)(typescript@5.9.3)(utf-8-validate@5.0.10))):
         dependencies:
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             puppeteer-extra-plugin: 3.2.3(puppeteer-extra@3.3.6(puppeteer-core@22.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(puppeteer@21.11.0(bufferutil@4.0.9)(encoding@0.1.13)(typescript@5.9.3)(utf-8-validate@5.0.10)))
             puppeteer-extra-plugin-user-preferences: 2.4.1(puppeteer-extra@3.3.6(puppeteer-core@22.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(puppeteer@21.11.0(bufferutil@4.0.9)(encoding@0.1.13)(typescript@5.9.3)(utf-8-validate@5.0.10)))
         optionalDependencies:
@@ -27208,7 +31402,7 @@ snapshots:
 
     puppeteer-extra-plugin-stealth@2.11.2(puppeteer-extra@3.3.6(puppeteer-core@24.32.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(puppeteer@24.31.0(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10))):
         dependencies:
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             puppeteer-extra-plugin: 3.2.3(puppeteer-extra@3.3.6(puppeteer-core@24.32.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(puppeteer@24.31.0(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)))
             puppeteer-extra-plugin-user-preferences: 2.4.1(puppeteer-extra@3.3.6(puppeteer-core@24.32.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(puppeteer@24.31.0(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)))
         optionalDependencies:
@@ -27218,7 +31412,7 @@ snapshots:
 
     puppeteer-extra-plugin-user-data-dir@2.4.1(puppeteer-extra@3.3.6(puppeteer-core@22.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(puppeteer@21.11.0(bufferutil@4.0.9)(encoding@0.1.13)(typescript@5.9.3)(utf-8-validate@5.0.10))):
         dependencies:
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             fs-extra: 10.1.0
             puppeteer-extra-plugin: 3.2.3(puppeteer-extra@3.3.6(puppeteer-core@22.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(puppeteer@21.11.0(bufferutil@4.0.9)(encoding@0.1.13)(typescript@5.9.3)(utf-8-validate@5.0.10)))
             rimraf: 3.0.2
@@ -27229,7 +31423,7 @@ snapshots:
 
     puppeteer-extra-plugin-user-data-dir@2.4.1(puppeteer-extra@3.3.6(puppeteer-core@24.32.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(puppeteer@24.31.0(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10))):
         dependencies:
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             fs-extra: 10.1.0
             puppeteer-extra-plugin: 3.2.3(puppeteer-extra@3.3.6(puppeteer-core@24.32.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(puppeteer@24.31.0(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)))
             rimraf: 3.0.2
@@ -27240,7 +31434,7 @@ snapshots:
 
     puppeteer-extra-plugin-user-preferences@2.4.1(puppeteer-extra@3.3.6(puppeteer-core@22.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(puppeteer@21.11.0(bufferutil@4.0.9)(encoding@0.1.13)(typescript@5.9.3)(utf-8-validate@5.0.10))):
         dependencies:
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             deepmerge: 4.3.1
             puppeteer-extra-plugin: 3.2.3(puppeteer-extra@3.3.6(puppeteer-core@22.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(puppeteer@21.11.0(bufferutil@4.0.9)(encoding@0.1.13)(typescript@5.9.3)(utf-8-validate@5.0.10)))
             puppeteer-extra-plugin-user-data-dir: 2.4.1(puppeteer-extra@3.3.6(puppeteer-core@22.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(puppeteer@21.11.0(bufferutil@4.0.9)(encoding@0.1.13)(typescript@5.9.3)(utf-8-validate@5.0.10)))
@@ -27251,7 +31445,7 @@ snapshots:
 
     puppeteer-extra-plugin-user-preferences@2.4.1(puppeteer-extra@3.3.6(puppeteer-core@24.32.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(puppeteer@24.31.0(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10))):
         dependencies:
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             deepmerge: 4.3.1
             puppeteer-extra-plugin: 3.2.3(puppeteer-extra@3.3.6(puppeteer-core@24.32.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(puppeteer@24.31.0(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)))
             puppeteer-extra-plugin-user-data-dir: 2.4.1(puppeteer-extra@3.3.6(puppeteer-core@24.32.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(puppeteer@24.31.0(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)))
@@ -27263,7 +31457,7 @@ snapshots:
     puppeteer-extra-plugin@3.2.3(puppeteer-extra@3.3.6(puppeteer-core@22.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(puppeteer@21.11.0(bufferutil@4.0.9)(encoding@0.1.13)(typescript@5.9.3)(utf-8-validate@5.0.10))):
         dependencies:
             '@types/debug': 4.1.12
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             merge-deep: 3.0.3
         optionalDependencies:
             puppeteer-extra: 3.3.6(puppeteer-core@22.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(puppeteer@21.11.0(bufferutil@4.0.9)(encoding@0.1.13)(typescript@5.9.3)(utf-8-validate@5.0.10))
@@ -27273,7 +31467,7 @@ snapshots:
     puppeteer-extra-plugin@3.2.3(puppeteer-extra@3.3.6(puppeteer-core@24.32.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(puppeteer@24.31.0(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10))):
         dependencies:
             '@types/debug': 4.1.12
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             merge-deep: 3.0.3
         optionalDependencies:
             puppeteer-extra: 3.3.6(puppeteer-core@24.32.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(puppeteer@24.31.0(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10))
@@ -27283,7 +31477,7 @@ snapshots:
     puppeteer-extra@3.3.6(puppeteer-core@22.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10))(puppeteer@21.11.0(bufferutil@4.0.9)(encoding@0.1.13)(typescript@5.9.3)(utf-8-validate@5.0.10)):
         dependencies:
             '@types/debug': 4.1.12
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             deepmerge: 4.3.1
         optionalDependencies:
             puppeteer: 21.11.0(bufferutil@4.0.9)(encoding@0.1.13)(typescript@5.9.3)(utf-8-validate@5.0.10)
@@ -27294,7 +31488,7 @@ snapshots:
     puppeteer-extra@3.3.6(puppeteer-core@24.32.1(bufferutil@4.0.9)(utf-8-validate@5.0.10))(puppeteer@24.31.0(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)):
         dependencies:
             '@types/debug': 4.1.12
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             deepmerge: 4.3.1
         optionalDependencies:
             puppeteer: 24.31.0(bufferutil@4.0.9)(typescript@5.9.3)(utf-8-validate@5.0.10)
@@ -27403,7 +31597,7 @@ snapshots:
 
     rc-config-loader@4.1.3:
         dependencies:
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             js-yaml: 4.1.1
             json5: 2.2.3
             require-from-string: 2.0.2
@@ -27495,6 +31689,10 @@ snapshots:
         dependencies:
             minimatch: 5.1.6
         optional: true
+
+    readdirp@3.6.0:
+        dependencies:
+            picomatch: 2.3.1
 
     real-cancellable-promise@1.2.3: {}
 
@@ -27943,6 +32141,10 @@ snapshots:
         dependencies:
             is-arrayish: 0.3.4
 
+    simple-update-notifier@2.0.0:
+        dependencies:
+            semver: 7.7.3
+
     simple-xml-to-json@1.2.3: {}
 
     sinon@17.0.1:
@@ -27981,7 +32183,7 @@ snapshots:
     socks-proxy-agent@7.0.0:
         dependencies:
             agent-base: 6.0.2
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             socks: 2.8.7
         transitivePeerDependencies:
             - supports-color
@@ -27989,7 +32191,7 @@ snapshots:
     socks-proxy-agent@8.0.5:
         dependencies:
             agent-base: 7.1.4
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             socks: 2.8.7
         transitivePeerDependencies:
             - supports-color
@@ -28241,7 +32443,7 @@ snapshots:
         dependencies:
             component-emitter: 1.3.1
             cookiejar: 2.1.4
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             fast-safe-stringify: 2.1.1
             form-data: 4.0.5
             formidable: 2.1.5
@@ -28482,6 +32684,8 @@ snapshots:
             '@tokenizer/token': 0.3.0
             ieee754: 1.2.1
 
+    touch@3.1.1: {}
+
     tr46@0.0.3: {}
 
     tr46@3.0.0:
@@ -28613,10 +32817,16 @@ snapshots:
         dependencies:
             esbuild: 0.15.18
 
+    tsx@4.22.4:
+        dependencies:
+            esbuild: 0.28.1
+        optionalDependencies:
+            fsevents: 2.3.3
+
     tuf-js@1.1.7:
         dependencies:
             '@tufjs/models': 1.0.4
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             make-fetch-happen: 11.1.1
         transitivePeerDependencies:
             - supports-color
@@ -28624,7 +32834,7 @@ snapshots:
     tuf-js@4.0.0:
         dependencies:
             '@tufjs/models': 4.0.0
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             make-fetch-happen: 15.0.2
         transitivePeerDependencies:
             - supports-color
@@ -28763,11 +32973,15 @@ snapshots:
             buffer: 5.7.1
             through: 2.3.8
 
+    undefsafe@2.0.5: {}
+
     underscore@1.13.7: {}
 
     undici-types@6.21.0: {}
 
     undici-types@7.16.0: {}
+
+    undici-types@7.24.6: {}
 
     undici@7.16.0: {}
 
@@ -29375,7 +33589,7 @@ snapshots:
     yoo-hoo@1.3.1:
         dependencies:
             chalk: 4.1.2
-            debug: 4.4.3
+            debug: 4.4.3(supports-color@5.5.0)
             is-in-browser: 2.0.0
             lolcatjs: 2.4.3
         transitivePeerDependencies:

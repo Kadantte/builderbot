@@ -7,6 +7,7 @@ import type polka from 'polka'
 
 import { pcmToWav } from '../audio'
 import type { VoiceInterface } from '../interface/voice'
+import { SttModel, TtsModel, TtsVoice } from '../types'
 import type { IVoiceProviderArgs, VoicePayload } from '../types'
 import { generateAudioFileName } from '../utils'
 import { LiveKitCoreVendor } from './core'
@@ -28,9 +29,9 @@ class VoiceProvider extends ProviderClass<LiveKitCoreVendor> implements VoiceInt
             port: 3000,
             writeMyself: 'none',
             identity: 'builderbot',
-            sttModel: 'whisper-1',
-            ttsModel: 'gpt-4o-mini-tts',
-            ttsVoice: 'alloy',
+            sttModel: SttModel.Gpt4oMiniTranscribe,
+            ttsModel: TtsModel.Gpt4oMiniTts,
+            ttsVoice: TtsVoice.Alloy,
             silenceMs: 800,
             silenceThreshold: 0.015,
             apiKey: undefined,
@@ -87,6 +88,7 @@ class VoiceProvider extends ProviderClass<LiveKitCoreVendor> implements VoiceInt
                 title: '🟠 Unsupported send options',
                 instructions: ['provider-voice ignores media/buttons; only text-to-speech is sent.'],
             })
+            return undefined as K
         }
         await this.vendor.publishAudio(message)
         return undefined as K

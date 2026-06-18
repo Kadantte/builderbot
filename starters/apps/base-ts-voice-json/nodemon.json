@@ -7,6 +7,6 @@
   ],
     "delay": "3",
     "execMap": {
-      "ts": "tsx"
+      "ts": "node --env-file=.env --import=tsx/esm"
     }
   }

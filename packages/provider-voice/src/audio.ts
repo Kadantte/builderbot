@@ -101,12 +101,14 @@ export const chunkPcm = (samples: Int16Array, samplesPerFrame: number, pad = tru
     if (samplesPerFrame <= 0) throw new Error('samplesPerFrame must be > 0')
     const frames: Int16Array[] = []
     for (let offset = 0; offset < samples.length; offset += samplesPerFrame) {
-        const slice = samples.subarray(offset, offset + samplesPerFrame)
-        if (slice.length === samplesPerFrame || !pad) {
-            frames.push(slice)
+        const end = Math.min(offset + samplesPerFrame, samples.length)
+        if (end - offset === samplesPerFrame || !pad) {
+            // slice() creates an owned copy — AudioFrame.protoInfo uses .buffer
+            // which must point to a buffer containing only this chunk's data.
+            frames.push(samples.slice(offset, end))
         } else {
             const padded = new Int16Array(samplesPerFrame)
-            padded.set(slice)
+            padded.set(samples.subarray(offset, end))
             frames.push(padded)
         }
     }

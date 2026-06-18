@@ -23,7 +23,7 @@ export const transcribe = async (client: OpenAI, pcm: Buffer, options: Transcrib
 
     const result = await client.audio.transcriptions.create({
         file,
-        model: options.model ?? 'whisper-1',
+        model: options.model ?? 'gpt-4o-mini-transcribe',
         language: options.language,
     })
 
