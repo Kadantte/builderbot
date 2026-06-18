@@ -42,6 +42,7 @@ export const PROVIDER_LIST: Provider[] = [
     { value: 'gohighlevel', label: 'GoHighLevel' },
     { value: 'email', label: 'Email', hint: 'IMAP/SMTP' },
     { value: 'voice', label: 'Voice', hint: 'LiveKit + OpenAI' },
+    { value: 'voice-sip', label: 'Voice SIP (PSTN)', hint: 'LiveKit SIP + OpenAI' },
 ]
 
 export const PROVIDER_DATA: ValueLabel[] = [

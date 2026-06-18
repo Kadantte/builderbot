@@ -25,6 +25,7 @@
     "packages/provider-gohighlevel",
     "packages/provider-email",
     "packages/provider-voice",
+    "packages/provider-voice-sip",
     "packages/contexts-dialogflow",
     "packages/contexts-dialogflow-cx",
     "packages/plugins/chatwoot"
