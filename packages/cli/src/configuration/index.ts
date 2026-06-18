@@ -41,6 +41,7 @@ export const PROVIDER_LIST: Provider[] = [
     { value: 'gupshup', label: 'Gupshup' },
     { value: 'gohighlevel', label: 'GoHighLevel' },
     { value: 'email', label: 'Email', hint: 'IMAP/SMTP' },
+    { value: 'voice', label: 'Voice', hint: 'LiveKit + OpenAI' },
 ]
 
 export const PROVIDER_DATA: ValueLabel[] = [

@@ -70,6 +70,7 @@
     "packages/provider-venom",
     "packages/provider-gohighlevel",
     "packages/provider-email",
+    "packages/provider-voice",
     "packages/contexts-dialogflow",
     "packages/contexts-dialogflow-cx"
   ],
