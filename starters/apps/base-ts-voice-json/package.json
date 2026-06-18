@@ -12,9 +12,9 @@
   },
   "keywords": [],
   "dependencies": {
-    "@builderbot/bot": "workspace:*",
-    "@builderbot/provider-voice": "workspace:*",
-    "@builderbot/database-json": "workspace:*"
+    "@builderbot/bot": "latest",
+    "@builderbot/provider-voice": "latest",
+    "@builderbot/database-json": "latest"
   },
   "devDependencies": {
     "@types/node": "^25.0.0",
