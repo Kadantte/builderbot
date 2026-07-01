@@ -46,7 +46,9 @@
     },
     "dependencies": {
         "@builderbot/provider-voice": "workspace:*",
-        "@roamhq/wrtc": "^0.8.0",
+        "@livekit/rtc-node": "^0.13.29",
+        "@roamhq/wrtc": "^0.10.0",
+        "livekit-server-sdk": "^2.15.5",
         "axios": "^1.7.9",
         "openai": "^6.10.0",
         "polka": "^0.5.2"

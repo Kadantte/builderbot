@@ -42,8 +42,9 @@
         "rollup-plugin-typescript2": "^0.36.0"
     },
     "dependencies": {
-        "@livekit/rtc-node": "^0.13.16",
-        "livekit-server-sdk": "^2.13.1",
+        "@livekit/rtc-node": "^0.13.29",
+        "@roamhq/wrtc": "^0.10.0",
+        "livekit-server-sdk": "^2.15.5",
         "openai": "^6.10.0",
         "polka": "^0.5.2"
     }
