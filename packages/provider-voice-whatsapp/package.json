@@ -1,6 +1,6 @@
 {
     "name": "@builderbot/provider-voice-whatsapp",
-    "version": "1.4.3-y.3",
+    "version": "1.4.3-y.4",
     "description": "WhatsApp Business voice call provider for BuilderBot via Meta Graph API WebRTC + OpenAI (Whisper STT / TTS)",
     "author": "Leifer Mendez <leifer33@gmail.com>",
     "homepage": "https://github.com/codigoencasa/bot-whatsapp#readme",
@@ -48,8 +48,8 @@
         "@builderbot/provider-voice": "workspace:*",
         "@livekit/rtc-node": "^0.13.29",
         "@roamhq/wrtc": "^0.10.0",
-        "livekit-server-sdk": "^2.15.5",
         "axios": "^1.7.9",
+        "livekit-server-sdk": "^2.15.5",
         "openai": "^6.10.0",
         "polka": "^0.5.2"
     }
