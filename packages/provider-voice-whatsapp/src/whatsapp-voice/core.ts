@@ -47,6 +47,10 @@ interface CallSession {
     utteranceQueue: Promise<void>
     /** E.164 phone number of the caller (e.g. "15551234567"). Used as ctx.from. */
     callerPhone: string
+    /** Timer for the paced TTS frame emitter. Null when no playback is active. */
+    playbackTimer: ReturnType<typeof setTimeout> | null
+    /** Cancels the in-progress playback and resolves its promise (called on hang-up). */
+    playbackCancel: (() => void) | null
 }
 
 /**
@@ -161,6 +165,8 @@ export class WhatsAppCallCoreVendor extends EventEmitter {
             inboundSampleRate: 48000,
             utteranceQueue: Promise.resolve(),
             callerPhone: event.from,
+            playbackTimer: null,
+            playbackCancel: null,
         }
         this.sessions.set(callId, session)
         this.phoneToCallId.set(event.from, callId)
@@ -431,15 +437,7 @@ export class WhatsAppCallCoreVendor extends EventEmitter {
         const samplesPerFrame = Math.round((PUBLISH_FRAME_MS / 1000) * sampleRate)
         const frames = chunkPcm(bufferToInt16(pcm), samplesPerFrame, true)
 
-        for (const frame of frames) {
-            session.source.onData({
-                samples: frame,
-                sampleRate,
-                bitsPerSample: 16,
-                channelCount: 1,
-                numberOfFrames: frame.length,
-            })
-        }
+        await this.pushFramesPaced(session, frames, sampleRate)
     }
 
     // ── Private helpers ───────────────────────────────────────────────────────
@@ -586,6 +584,56 @@ export class WhatsAppCallCoreVendor extends EventEmitter {
     }
 
     /**
+     * Emit PCM frames to the RTCAudioSource at wall-clock cadence (one frame per
+     * PUBLISH_FRAME_MS), scheduling each tick against an absolute deadline to
+     * prevent accumulated drift. Resolves when all frames have been sent or the
+     * session is cancelled / terminated.
+     */
+    private pushFramesPaced(session: CallSession, frames: Int16Array[], sampleRate: number): Promise<void> {
+        return new Promise<void>((resolve) => {
+            let i = 0
+            const startTime = Date.now()
+
+            const finish = () => {
+                if (session.playbackTimer) {
+                    clearTimeout(session.playbackTimer)
+                    session.playbackTimer = null
+                }
+                session.playbackCancel = null
+                resolve()
+            }
+
+            session.playbackCancel = finish
+
+            const tick = () => {
+                if (!session.source || session.state === CallState.Terminated) {
+                    finish()
+                    return
+                }
+                const frame = frames[i]
+                session.source.onData({
+                    samples: frame,
+                    sampleRate,
+                    bitsPerSample: 16,
+                    channelCount: 1,
+                    numberOfFrames: frame.length,
+                })
+                i++
+                if (i >= frames.length) {
+                    finish()
+                    return
+                }
+                // Absolute deadline for the next frame — self-corrects for drift.
+                const nextDeadline = startTime + i * PUBLISH_FRAME_MS
+                const delay = Math.max(0, nextDeadline - Date.now())
+                session.playbackTimer = setTimeout(tick, delay)
+            }
+
+            tick()
+        })
+    }
+
+    /**
      * Release all resources for a call session and remove it from the map.
      *
      * Safe to call in any state — closes the peer connection, stops sink,
@@ -596,6 +644,10 @@ export class WhatsAppCallCoreVendor extends EventEmitter {
     private releaseSession(callId: string): void {
         const session = this.sessions.get(callId)
         if (!session) return
+
+        if (session.playbackCancel) {
+            session.playbackCancel()
+        }
 
         try {
             if (session.sink) {
