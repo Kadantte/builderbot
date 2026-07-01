@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, jest, test } from '@jest/globals'
 import Queue from 'queue-promise'
+
 import { MetaCoreVendor } from '../src/meta/core'
 import { Message } from '../src/types'
 
@@ -235,6 +236,40 @@ describe('#MetaCoreVendor ', () => {
             // Assert
             expect(statusArray).toEqual([])
         })
+
+        test('should fall back to recipient_user_id when recipient_id is absent', () => {
+            // Arrange — for users with a hidden phone (username adopted), Meta sends recipient_user_id only
+            const mockObj = {
+                entry: [
+                    {
+                        changes: [
+                            {
+                                value: {
+                                    statuses: [
+                                        {
+                                            recipient_user_id: 'US.13491208655302741918',
+                                            errors: [{ error_data: { details: 'reach_failed' } }],
+                                            status: 'failed',
+                                        },
+                                    ],
+                                },
+                            },
+                        ],
+                    },
+                ],
+            }
+
+            // Act
+            const statusArray = metaCoreVendor['extractStatus'](mockObj)
+
+            // Assert
+            expect(statusArray).toEqual([
+                {
+                    status: 'failed',
+                    reason: 'Number(US.13491208655302741918): reach_failed',
+                },
+            ])
+        })
     })
 
     describe('#processMessage', () => {
@@ -286,7 +321,7 @@ describe('#MetaCoreVendor ', () => {
             const promise = metaCoreVendor.processMessage(mockMessage)
 
             // Assert
-            await expect(promise).rejects.toThrowError('Test error')
+            await expect(promise).rejects.toThrow('Test error')
         })
     })
 
@@ -366,6 +401,83 @@ describe('#MetaCoreVendor ', () => {
             // Assert
             expect(mockRes.statusCode).toBe(200)
             expect(mockRes.end).toHaveBeenCalledWith('Messages enqueued')
+        })
+
+        test('should forward contact.user_id (BSUID) to processIncomingMessage', async () => {
+            // Arrange
+            const mockReq = {
+                body: {
+                    entry: [
+                        {
+                            changes: [
+                                {
+                                    value: {
+                                        messages: [{ type: 'text', from: 'sender', text: { body: 'Hi' } }],
+                                        contacts: [
+                                            {
+                                                profile: { name: 'Jane' },
+                                                wa_id: '5491123456789',
+                                                user_id: 'US.13491208655302741918',
+                                            },
+                                        ],
+                                    },
+                                },
+                            ],
+                        },
+                    ],
+                },
+                globalVendorArgs: {},
+            }
+            const mockRes = {
+                statusCode: 0,
+                end: jest.fn(),
+            }
+            const processSpy = require('../src/utils/processIncomingMsg').processIncomingMessage as jest.Mock
+            processSpy.mockImplementation(() => true)
+
+            // Act
+            await metaCoreVendor.incomingMsg(mockReq as any, mockRes as any, mockNext)
+
+            // Assert
+            expect(processSpy).toHaveBeenCalledWith(expect.objectContaining({ userId: 'US.13491208655302741918' }))
+        })
+
+        test('should handle contact without wa_id (username-only user)', async () => {
+            // Arrange — for a user with a username and no phone number, Meta may omit wa_id
+            const mockReq = {
+                body: {
+                    entry: [
+                        {
+                            changes: [
+                                {
+                                    value: {
+                                        messages: [{ type: 'text', from: 'sender', text: { body: 'Hi' } }],
+                                        contacts: [
+                                            {
+                                                profile: { name: 'Jane' },
+                                                user_id: 'US.13491208655302741918',
+                                            },
+                                        ],
+                                    },
+                                },
+                            ],
+                        },
+                    ],
+                },
+                globalVendorArgs: {},
+            }
+            const mockRes = {
+                statusCode: 0,
+                end: jest.fn(),
+            }
+            const processSpy = require('../src/utils/processIncomingMsg').processIncomingMessage as jest.Mock
+            processSpy.mockImplementation(() => true)
+
+            // Act
+            await metaCoreVendor.incomingMsg(mockReq as any, mockRes as any, mockNext)
+
+            // Assert — must still forward userId even when wa_id is absent
+            expect(processSpy).toHaveBeenCalledWith(expect.objectContaining({ userId: 'US.13491208655302741918' }))
         })
     })
 })

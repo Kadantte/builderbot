@@ -16,6 +16,7 @@ export class File {
     mime_type?: string
     sha256?: string
     id?: string
+    url?: string
     voice?: boolean
     animated?: boolean
     filename?: string
@@ -78,14 +79,46 @@ export interface MetaGlobalVendorArgs extends GlobalVendorArgs {
     version: string
 }
 
+export interface ProductItem {
+    product_retailer_id: string
+    quantity: number
+    item_price?: number
+    currency?: string
+}
+
 export interface Order {
     catalog_id: string
-    product_items: string[]
+    product_items: ProductItem[]
+    text?: string
+}
+
+export interface MetaOrderProduct {
+    id?: string
+    retailer_id: string
+    name: string
+    imageUrl: string
+    price: number
+    currency: string
+    quantity: number
+}
+
+export interface MetaOrderPrice {
+    currency: string
+    total: number
+}
+
+export interface MetaOrderDetails {
+    catalog_id: string
+    title: string
+    text?: string
+    price: MetaOrderPrice
+    products: MetaOrderProduct[]
 }
 
 export interface Contact {
     profile: Profile
-    wa_id: string
+    wa_id?: string
+    user_id?: string
     name: string
     phones: string[]
 }
@@ -99,6 +132,7 @@ export interface Message {
     body: string
     pushName: string
     name: string
+    userId?: string
     url?: string
     fileData?: File | null
     payload?: string
@@ -111,6 +145,7 @@ export interface Message {
     order?: Order
     id?: string
     caption?: string
+    fromMe?: boolean
 }
 
 export interface ParamsIncomingMessage {
@@ -123,6 +158,8 @@ export interface ParamsIncomingMessage {
     version: string
     message: any
     fileData?: File | null
+    fromMe?: boolean
+    userId?: string
 }
 
 export type TextGenericParams = {
@@ -168,6 +205,9 @@ export interface TextMessageBody {
     template?: TemplateMessage
     status?: string
     message_id?: string
+    typing_indicator?: {
+        type: string
+    }
 }
 
 export interface Reaction {
@@ -227,7 +267,8 @@ export interface Metadata {
 
 export interface ContactMeta {
     profile: Profile
-    wa_id: string
+    wa_id?: string
+    user_id?: string
     name: string
     phones: string[]
 }

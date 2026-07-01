@@ -51,8 +51,13 @@ export class MetaCoreVendor extends EventEmitter {
                 const values = change.value || {}
                 const statuses = values.statuses || []
                 statuses.forEach(
-                    (status: { recipient_id: string; errors: { error_data: { details: string } }[]; status: any }) => {
-                        const recipient_id = status.recipient_id || 'N/A'
+                    (status: {
+                        recipient_id?: string
+                        recipient_user_id?: string
+                        errors: { error_data: { details: string } }[]
+                        status: any
+                    }) => {
+                        const recipient_id = status.recipient_id || status.recipient_user_id || 'N/A'
                         const errorDetails = status.errors?.[0]?.error_data?.details || 'Unknown'
                         statusArray.push({
                             status: status.status || 'Unknown',
@@ -125,11 +130,12 @@ export class MetaCoreVendor extends EventEmitter {
 
         try {
             await Promise.all(
-                messages.map( async (message: any) => {
+                messages.map(async (message: any) => {
                     let contact: ContactMeta
                     if (Array.isArray(contacts)) [contact] = contacts
                     const to = body.entry[0].changes[0].value?.metadata?.display_phone_number
                     const pushName: string | undefined = contact?.profile?.name ?? 'Unknown'
+                    const userId: string | undefined = contact?.user_id
                     const fileData =
                         message?.audio ??
                         message?.image ??
@@ -144,10 +150,12 @@ export class MetaCoreVendor extends EventEmitter {
                         to,
                         pushName,
                         message,
+                        fromMe: message?.fromMe ?? false,
                         jwtToken,
                         numberId,
                         version,
                         fileData,
+                        userId,
                     })
                     if (response) {
                         await this.queue.enqueue(() => this.processMessage(response))

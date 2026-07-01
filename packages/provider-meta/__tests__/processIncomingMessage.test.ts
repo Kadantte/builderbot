@@ -1,4 +1,5 @@
 import { describe, expect, jest, test } from '@jest/globals'
+
 import { processIncomingMessage } from '../src/utils'
 
 jest.mock('../src/utils/mediaUrl', () => ({
@@ -325,6 +326,7 @@ describe('#processIncomingMessage ', () => {
 
     test('should process sticker message correctly', async () => {
         // Arrange
+        const stickerUrl = 'https://example.com/sticker.webp'
         const params = {
             messageId: '123',
             messageTimestamp: Date.now(),
@@ -340,6 +342,8 @@ describe('#processIncomingMessage ', () => {
             numberId: '987',
         }
 
+        ;(require('../src/utils/mediaUrl').getMediaUrl as jest.Mock).mockImplementation(() => stickerUrl)
+
         // Act
         const result = await processIncomingMessage(params)
 
@@ -349,6 +353,9 @@ describe('#processIncomingMessage ', () => {
             from: 'sender',
             to: 'receiver',
             id: 'stickerId',
+            url: stickerUrl,
+            fileData: undefined,
+            fromMe: undefined,
             body: expect.any(String),
             pushName: 'John Doe',
             name: 'John Doe',
@@ -397,7 +404,7 @@ describe('#processIncomingMessage ', () => {
     })
 
     test('should process order message correctly', async () => {
-        // Arrange
+        // Arrange — real Meta Cloud API order payload structure
         const params = {
             messageId: '123',
             messageTimestamp: Date.now(),
@@ -406,8 +413,20 @@ describe('#processIncomingMessage ', () => {
                 type: 'order',
                 from: 'sender',
                 order: {
-                    catalog_id: 'catalogId',
-                    product_items: [{ id: 'productId', quantity: 2 }],
+                    catalog_id: 'catalog_12345',
+                    text: 'Please deliver fast',
+                    product_items: [
+                        {
+                            product_retailer_id: 'sku-abc123',
+                            quantity: 2,
+                            item_price: 19.99,
+                            currency: 'USD',
+                        },
+                        {
+                            product_retailer_id: 'sku-def456',
+                            quantity: 1,
+                        },
+                    ],
                 },
             },
             to: 'receiver',
@@ -425,14 +444,84 @@ describe('#processIncomingMessage ', () => {
             from: 'sender',
             to: 'receiver',
             order: {
-                catalog_id: 'catalogId',
-                product_items: [{ id: 'productId', quantity: 2 }],
+                catalog_id: 'catalog_12345',
+                text: 'Please deliver fast',
+                product_items: [
+                    {
+                        product_retailer_id: 'sku-abc123',
+                        quantity: 2,
+                        item_price: 19.99,
+                        currency: 'USD',
+                    },
+                    {
+                        product_retailer_id: 'sku-def456',
+                        quantity: 1,
+                    },
+                ],
             },
             body: expect.any(String),
             pushName: 'John Doe',
             name: 'John Doe',
             message_id: '123',
             timestamp: expect.any(Number),
+        })
+    })
+
+    test('should handle order message with minimal fields', async () => {
+        // Arrange — Meta may send order without optional fields
+        const params = {
+            messageId: '456',
+            messageTimestamp: Date.now(),
+            pushName: 'Jane Doe',
+            message: {
+                type: 'order',
+                from: 'sender',
+                order: {
+                    catalog_id: 'catalog_minimal',
+                    product_items: [{ product_retailer_id: 'sku-1', quantity: 1 }],
+                },
+            },
+            to: 'receiver',
+            jwtToken: 'fakeToken',
+            version: '1.0',
+            numberId: '987',
+        }
+
+        // Act
+        const result = await processIncomingMessage(params)
+
+        // Assert
+        expect(result.order).toEqual({
+            catalog_id: 'catalog_minimal',
+            product_items: [{ product_retailer_id: 'sku-1', quantity: 1 }],
+            text: undefined,
+        })
+    })
+
+    test('should handle order message with missing order object gracefully', async () => {
+        // Arrange — defensive: malformed webhook without order object
+        const params = {
+            messageId: '789',
+            messageTimestamp: Date.now(),
+            pushName: 'Ghost User',
+            message: {
+                type: 'order',
+                from: 'sender',
+            },
+            to: 'receiver',
+            jwtToken: 'fakeToken',
+            version: '1.0',
+            numberId: '987',
+        }
+
+        // Act
+        const result = await processIncomingMessage(params)
+
+        // Assert
+        expect(result.order).toEqual({
+            catalog_id: undefined,
+            product_items: [],
+            text: undefined,
         })
     })
 
@@ -461,5 +550,26 @@ describe('#processIncomingMessage ', () => {
             message_id: '123',
             timestamp: expect.any(Number),
         })
+    })
+
+    test('should propagate the BSUID userId from contact to the resulting Message', async () => {
+        // Arrange
+        const params = {
+            messageId: '123',
+            messageTimestamp: Date.now(),
+            pushName: 'John Doe',
+            message: { type: 'text', from: 'sender', text: { body: 'Hello' } },
+            to: 'receiver',
+            jwtToken: 'fakeToken',
+            version: '1.0',
+            numberId: '987',
+            userId: 'US.13491208655302741918',
+        }
+
+        // Act
+        const result = await processIncomingMessage(params)
+
+        // Assert
+        expect(result.userId).toBe('US.13491208655302741918')
     })
 })

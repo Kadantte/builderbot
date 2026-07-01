@@ -45,7 +45,7 @@ test('convertAudio - throws error if filePath is empty', async () => {
     }
 })
 
-test('convertAudio - converts to opus by default', async () => {
+test('convertAudio - converts to ogg by default', async () => {
     const fakePath = join(process.cwd(), '__mock__', 'test.mp3')
     // Simular el evento 'end' de ffmpeg
     onStub.callsFake((event, callback) => {
@@ -56,7 +56,7 @@ test('convertAudio - converts to opus by default', async () => {
     })
 
     const result = await convertAudio(fakePath)
-    assert.ok(result.includes('test.opus'))
+    assert.ok(result.includes('test.ogg'))
 })
 
 test.run()

@@ -12,7 +12,9 @@ export const processIncomingMessage = async ({
     jwtToken,
     version,
     numberId,
-    fileData
+    fileData,
+    fromMe,
+    userId,
 }: ParamsIncomingMessage): Promise<Message> => {
     let responseObj: Message
 
@@ -65,7 +67,7 @@ export const processIncomingMessage = async ({
             responseObj = {
                 type: message.type,
                 from: message.from,
-                url: imageUrl,
+                url: imageUrl ?? fileData?.url,
                 fileData,
                 caption: message?.image?.caption,
                 to,
@@ -80,7 +82,7 @@ export const processIncomingMessage = async ({
             responseObj = {
                 type: message.type,
                 from: message.from,
-                url: documentUrl,
+                url: documentUrl ?? fileData?.url,
                 fileData,
                 to,
                 body: utils.generateRefProvider('_event_document_'),
@@ -94,7 +96,7 @@ export const processIncomingMessage = async ({
             responseObj = {
                 type: message.type,
                 from: message.from,
-                url: videoUrl,
+                url: videoUrl ?? fileData?.url,
                 fileData,
                 caption: message?.video?.caption,
                 to,
@@ -122,7 +124,7 @@ export const processIncomingMessage = async ({
             responseObj = {
                 type: message.type,
                 from: message.from,
-                url: audioUrl,
+                url: audioUrl ?? fileData?.url,
                 fileData,
                 to,
                 body: utils.generateRefProvider('_event_voice_note_'),
@@ -132,9 +134,12 @@ export const processIncomingMessage = async ({
             break
         }
         case 'sticker': {
+            const stickerUrl = await getMediaUrl(version, message.sticker?.id, numberId, jwtToken)
             responseObj = {
                 type: message.type,
                 from: message.from,
+                url: stickerUrl ?? fileData?.url,
+                fileData,
                 to,
                 id: message.sticker.id,
                 body: utils.generateRefProvider('_event_media_'),
@@ -166,8 +171,9 @@ export const processIncomingMessage = async ({
                 from: message.from,
                 to,
                 order: {
-                    catalog_id: message.order.catalog_id,
-                    product_items: message.order.product_items,
+                    catalog_id: message.order?.catalog_id,
+                    product_items: message.order?.product_items ?? [],
+                    text: message.order?.text,
                 },
                 body: utils.generateRefProvider('_event_order_'),
                 pushName,
@@ -183,5 +189,7 @@ export const processIncomingMessage = async ({
         ...responseObj,
         message_id: messageId,
         timestamp: messageTimestamp,
+        fromMe,
+        userId,
     }
 }
