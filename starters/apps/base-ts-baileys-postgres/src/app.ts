@@ -61,7 +61,12 @@ const fullSamplesFlow = addKeyword<Provider, Database>(['samples', utils.setEven
 const main = async () => {
     const adapterFlow = createFlow([welcomeFlow, registerFlow, fullSamplesFlow])
     
-    const adapterProvider = createProvider(Provider)
+    // If you experience ERRO AUTH issues, check the latest WhatsApp version at:
+    // https://wppconnect.io/whatsapp-versions/
+    // Example: version "2.3000.1035824857-alpha" -> [2, 3000, 1035824857]
+    const adapterProvider = createProvider(Provider, 
+		{ version: [2, 3000, 1035824857] } 
+	)
     const adapterDB = new Database({
        host: process.env.POSTGRES_DB_HOST,
        user: process.env.POSTGRES_DB_USER,
@@ -112,6 +117,15 @@ const main = async () => {
 
             res.writeHead(200, { 'Content-Type': 'application/json' })
             return res.end(JSON.stringify({ status: 'ok', number, intent }))
+        })
+    )
+
+    adapterProvider.server.get(
+        '/v1/blacklist/list',
+        handleCtx(async (bot, req, res) => {
+            const blacklist = bot.blacklist.getList()
+            res.writeHead(200, { 'Content-Type': 'application/json' })
+            return res.end(JSON.stringify({ status: 'ok', blacklist }))
         })
     )
 

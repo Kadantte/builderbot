@@ -17,7 +17,7 @@ export type GlobalVendorArgs<V = { [key: string]: any }> = {
 export type ProviderEventTypes = {
     message: [arg1: BotContext]
     require_action: [
-        arg1: { title: string; instructions: string[]; payload?: { qr?: string; code?: string; [key: string]: any } }
+        arg1: { title: string; instructions: string[]; payload?: { qr?: string; code?: string; [key: string]: any } },
     ]
     notice: [arg1: { title: string; instructions: string[] }]
     ready: any
@@ -30,6 +30,9 @@ export type GeneralArgs = {
     blackList?: string[]
     listEvents?: Record<string, any>
     delay?: number
+    logs?: {
+        notices?: boolean
+    }
     globalState?: Record<string, any>
     extensions?: Record<string, any>
     queue?: {
@@ -257,6 +260,8 @@ export interface TFlow<P = any, B = any> {
 export interface SendOptions {
     buttons?: Button[]
     media?: string
+    /** Whether to show a link preview when the message contains a URL. Auto-detected if omitted. */
+    preview_url?: boolean
     [key: string]: any
 }
 
@@ -269,6 +274,10 @@ export type DispatchFn = (
     }
 ) => any
 
+export type BotCtxMethods = {
+    endFlow: (from: string, message?: string) => Promise<void>
+}
+
 export type BotCtxMiddlewareOptions = {
     provider: any
     blacklist: DynamicBlacklist
@@ -276,6 +285,7 @@ export type BotCtxMiddlewareOptions = {
     state: (number: string) => BotStateStandAlone
     globalState: () => BotStateGlobal
     emit: (eventName: string, args: Record<string, any> & { from: string }) => void
+    ctxMethods: BotCtxMethods
 }
 
 export type BotCtxMiddleware<P = ProviderClass> = Partial<P & BotCtxMiddlewareOptions>

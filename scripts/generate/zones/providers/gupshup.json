@@ -1,0 +1,9 @@
+{
+    "IMPORT": "import { GupshupProvider as Provider } from '@builderbot/provider-gupshup'\n",
+    "IMPLEMENTATION": "const adapterProvider = createProvider(Provider, {\n    apiKey: 'YOUR_API_KEY',\n    srcName: 'YOUR_APP_NAME',\n    phoneNumber: 'YOUR_SOURCE_NUMBER',\n})",
+    "DEPENDENCIES": {
+        "@builderbot/bot": "latest",
+        "@builderbot/provider-gupshup": "latest"
+    },
+    "DEV_DEPENDENCIES": {}
+}

@@ -1,4 +1,5 @@
 import type { GlobalVendorArgs } from '@builderbot/bot/dist/types'
+import type { ISttAdapter, ITtsAdapter, WhatsAppCallEntryEvent } from '@builderbot/provider-voice'
 
 interface Image {
     id?: string
@@ -16,6 +17,7 @@ export class File {
     mime_type?: string
     sha256?: string
     id?: string
+    url?: string
     voice?: boolean
     animated?: boolean
     filename?: string
@@ -76,16 +78,80 @@ export interface MetaGlobalVendorArgs extends GlobalVendorArgs {
     numberId: string
     verifyToken: string
     version: string
+    // ── WhatsApp Business voice calls (opt-in) ──────────────────────────────
+    /** Enable inbound WhatsApp Business voice call handling (WebRTC/SDP + STT/TTS). Default: false. */
+    enableVoiceCalls?: boolean
+    /** OpenAI API key used for the default STT (Whisper) and TTS adapters when voice calls are enabled. */
+    openaiApiKey?: string
+    /** Custom STT adapter. When provided, overrides the built-in OpenAI Whisper transcription. */
+    sttAdapter?: ISttAdapter
+    /** Custom TTS adapter. When provided, overrides the built-in OpenAI TTS synthesis. */
+    ttsAdapter?: ITtsAdapter
+    /** Language hint (ISO-639-1) for STT transcription, e.g. 'es'. */
+    language?: string
+    /** Milliseconds of trailing silence that close an utterance. Default 800. */
+    silenceMs?: number
+    /** RMS amplitude (0..1) below which a frame is considered silence. Default 0.015. */
+    silenceThreshold?: number
+    /** ICE server configuration for the WebRTC peer connection used in voice calls. */
+    iceServers?: RTCIceServer[]
+    /**
+     * Maximum time in milliseconds to wait for ICE gathering to complete before
+     * sending the SDP to Meta via `pre_accept`. WhatsApp Calling uses non-trickle
+     * ICE, so all candidates must be embedded in the SDP. Default: 2000.
+     */
+    iceGatheringTimeoutMs?: number
+    // ── Webhook security (optional) ─────────────────────────────────────────
+    /**
+     * Meta App Secret used to validate the `X-Hub-Signature-256` header on
+     * incoming webhook `POST` requests (HMAC-SHA256 over the raw body).
+     * When set, requests with a missing or invalid signature are rejected
+     * with `401`. Applies to both `messages` and `calls` webhook events.
+     */
+    appSecret?: string
+}
+
+export interface ProductItem {
+    product_retailer_id: string
+    quantity: number
+    item_price?: number
+    currency?: string
 }
 
 export interface Order {
     catalog_id: string
-    product_items: string[]
+    product_items: ProductItem[]
+    text?: string
+}
+
+export interface MetaOrderProduct {
+    id?: string
+    retailer_id: string
+    name: string
+    imageUrl: string
+    price: number
+    currency: string
+    quantity: number
+}
+
+export interface MetaOrderPrice {
+    currency: string
+    total: number
+}
+
+export interface MetaOrderDetails {
+    catalog_id: string
+    title: string
+    text?: string
+    price: MetaOrderPrice
+    products: MetaOrderProduct[]
 }
 
 export interface Contact {
     profile: Profile
-    wa_id: string
+    wa_id?: string
+    user_id?: string
+    parent_user_id?: string
     name: string
     phones: string[]
 }
@@ -99,11 +165,15 @@ export interface Message {
     body: string
     pushName: string
     name: string
+    userId?: string
+    /** WhatsApp username from contact.profile.username when present. */
+    username?: string
     url?: string
     fileData?: File | null
     payload?: string
     title_button_reply?: string
     title_list_reply?: string
+    id_list_reply?: string
     latitude?: number
     longitude?: number
     contacts?: Contact[]
@@ -111,6 +181,11 @@ export interface Message {
     order?: Order
     id?: string
     caption?: string
+    fromMe?: boolean
+    /** Raw PCM (16-bit LE mono) of a transcribed voice call utterance. Present only for voice call messages. */
+    audio?: Buffer
+    /** Sample rate (Hz) of `audio`, when present. */
+    sampleRate?: number
 }
 
 export interface ParamsIncomingMessage {
@@ -123,12 +198,16 @@ export interface ParamsIncomingMessage {
     version: string
     message: any
     fileData?: File | null
+    fromMe?: boolean
+    userId?: string
+    username?: string
 }
 
 export type TextGenericParams = {
     messaging_product: 'whatsapp'
     recipient_type: string
-    to: string
+    to?: string
+    recipient?: string
     type: string
     [key: string]: any
 }
@@ -150,6 +229,8 @@ export interface ParsedContact {
 export interface TextMessageBody {
     messaging_product: string
     to?: string
+    /** BSUID destination — Meta requires `recipient` instead of `to` for Business-Scoped User IDs. */
+    recipient?: string
     type?: string
     recipient_type?: string
     text?: {
@@ -168,6 +249,9 @@ export interface TextMessageBody {
     template?: TemplateMessage
     status?: string
     message_id?: string
+    typing_indicator?: {
+        type: string
+    }
 }
 
 export interface Reaction {
@@ -216,8 +300,24 @@ export interface Change {
 export interface Value {
     messaging_product: string
     metadata: Metadata
-    contacts: ContactMeta[]
-    messages: MessageFromMeta[]
+    // Meta sends one of these per change: messages (+contacts), statuses, or calls — never mixed.
+    contacts?: ContactMeta[]
+    messages?: MessageFromMeta[]
+    statuses?: MessageStatus[]
+    calls?: WhatsAppCallEntryEvent[]
+}
+
+/** A single `errors[]` entry on a Meta message status update. */
+export interface MessageStatusError {
+    error_data?: { details?: string }
+}
+
+/** A single entry in `value.statuses[]` on a message-status webhook change. */
+export interface MessageStatus {
+    recipient_id?: string
+    recipient_user_id?: string
+    errors?: MessageStatusError[]
+    status?: string
 }
 
 export interface Metadata {
@@ -227,21 +327,32 @@ export interface Metadata {
 
 export interface ContactMeta {
     profile: Profile
-    wa_id: string
+    wa_id?: string
+    user_id?: string
+    parent_user_id?: string
     name: string
     phones: string[]
 }
 
 export interface Profile {
     name: string
+    username?: string
 }
 
 export interface MessageFromMeta {
-    from: string
+    from?: string
+    /** BSUID when Meta omits the phone (`from`) for username-adopted users. */
+    from_user_id?: string
     id: string
     timestamp: string
-    text: Text
+    text?: Text
     type: string
+    fromMe?: boolean
+    audio?: File | null
+    image?: File | null
+    video?: File | null
+    document?: File | null
+    sticker?: File | null
 }
 
 export interface Text {

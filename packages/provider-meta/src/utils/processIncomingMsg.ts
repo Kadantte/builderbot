@@ -12,15 +12,21 @@ export const processIncomingMessage = async ({
     jwtToken,
     version,
     numberId,
-    fileData
+    fileData,
+    fromMe,
+    userId,
+    username,
 }: ParamsIncomingMessage): Promise<Message> => {
     let responseObj: Message
+
+    // Prefer phone when Meta sends it; fall back to BSUID so ctx.from stays the reply id.
+    const from = message.from ?? message.from_user_id ?? userId
 
     switch (message.type) {
         case 'text': {
             responseObj = {
                 type: message.type,
-                from: message.from,
+                from,
                 to,
                 body: message.text?.body,
                 name: pushName,
@@ -31,14 +37,15 @@ export const processIncomingMessage = async ({
         case 'interactive': {
             responseObj = {
                 type: 'interactive',
-                from: message.from,
+                from,
                 to,
                 body:
                     message.interactive?.button_reply?.title ??
-                    message.interactive?.list_reply?.id ??
-                    message.interactive?.nfm_reply.response_json,
+                    message.interactive?.list_reply?.title ??
+                    message.interactive?.nfm_reply?.response_json,
                 title_button_reply: message.interactive?.button_reply?.title,
                 title_list_reply: message.interactive?.list_reply?.title,
+                id_list_reply: message.interactive?.list_reply?.id,
                 nfm_reply: message.interactive?.nfm_reply?.response_json
                     ? JSON.parse(message.interactive?.nfm_reply?.response_json)
                     : undefined,
@@ -50,7 +57,7 @@ export const processIncomingMessage = async ({
         case 'button': {
             responseObj = {
                 type: 'button',
-                from: message.from,
+                from,
                 to,
                 body: message.button?.text,
                 payload: message.button?.payload,
@@ -64,8 +71,8 @@ export const processIncomingMessage = async ({
             const imageUrl = await getMediaUrl(version, message.image?.id, numberId, jwtToken)
             responseObj = {
                 type: message.type,
-                from: message.from,
-                url: imageUrl,
+                from,
+                url: imageUrl ?? fileData?.url,
                 fileData,
                 caption: message?.image?.caption,
                 to,
@@ -79,8 +86,8 @@ export const processIncomingMessage = async ({
             const documentUrl = await getMediaUrl(version, message.document?.id, numberId, jwtToken)
             responseObj = {
                 type: message.type,
-                from: message.from,
-                url: documentUrl,
+                from,
+                url: documentUrl ?? fileData?.url,
                 fileData,
                 to,
                 body: utils.generateRefProvider('_event_document_'),
@@ -93,8 +100,8 @@ export const processIncomingMessage = async ({
             const videoUrl = await getMediaUrl(version, message.video?.id, numberId, jwtToken)
             responseObj = {
                 type: message.type,
-                from: message.from,
-                url: videoUrl,
+                from,
+                url: videoUrl ?? fileData?.url,
                 fileData,
                 caption: message?.video?.caption,
                 to,
@@ -107,7 +114,7 @@ export const processIncomingMessage = async ({
         case 'location': {
             responseObj = {
                 type: message.type,
-                from: message.from,
+                from,
                 to,
                 latitude: message.location.latitude,
                 longitude: message.location.longitude,
@@ -121,8 +128,8 @@ export const processIncomingMessage = async ({
             const audioUrl = await getMediaUrl(version, message.audio?.id, numberId, jwtToken)
             responseObj = {
                 type: message.type,
-                from: message.from,
-                url: audioUrl,
+                from,
+                url: audioUrl ?? fileData?.url,
                 fileData,
                 to,
                 body: utils.generateRefProvider('_event_voice_note_'),
@@ -132,9 +139,12 @@ export const processIncomingMessage = async ({
             break
         }
         case 'sticker': {
+            const stickerUrl = await getMediaUrl(version, message.sticker?.id, numberId, jwtToken)
             responseObj = {
                 type: message.type,
-                from: message.from,
+                from,
+                url: stickerUrl ?? fileData?.url,
+                fileData,
                 to,
                 id: message.sticker.id,
                 body: utils.generateRefProvider('_event_media_'),
@@ -146,7 +156,7 @@ export const processIncomingMessage = async ({
         case 'contacts': {
             responseObj = {
                 type: message.type,
-                from: message.from,
+                from,
                 contacts: [
                     {
                         name: message.contacts[0].name,
@@ -163,11 +173,12 @@ export const processIncomingMessage = async ({
         case 'order': {
             responseObj = {
                 type: message.type,
-                from: message.from,
+                from,
                 to,
                 order: {
-                    catalog_id: message.order.catalog_id,
-                    product_items: message.order.product_items,
+                    catalog_id: message.order?.catalog_id,
+                    product_items: message.order?.product_items ?? [],
+                    text: message.order?.text,
                 },
                 body: utils.generateRefProvider('_event_order_'),
                 pushName,
@@ -183,5 +194,8 @@ export const processIncomingMessage = async ({
         ...responseObj,
         message_id: messageId,
         timestamp: messageTimestamp,
+        fromMe,
+        userId,
+        username,
     }
 }

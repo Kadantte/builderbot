@@ -1,11 +1,20 @@
 import type { SendOptions, BotContext, Button } from '@builderbot/bot/dist/types'
 
-import type { TextMessageBody, Reaction, Localization, Message, SaveFileOptions, MetaList } from '~/types'
+import type {
+    TextMessageBody,
+    Reaction,
+    Localization,
+    Message,
+    SaveFileOptions,
+    MetaList,
+    Order,
+    MetaOrderDetails,
+} from '~/types'
 
 export interface MetaInterface {
     sendMessageMeta: (body: TextMessageBody) => void
     sendMessageToApi: (body: TextMessageBody) => Promise<any>
-    sendText: (to: string, message: string, context: string | null) => Promise<any>
+    sendText: (to: string, message: string, context: string | null, preview_url?: boolean) => Promise<any>
     sendImage: (to: string, mediaInput: string | null, caption: string, context: string | null) => Promise<any>
     sendImageUrl: (to: string, url: string, caption: string, context: string | null) => Promise<void>
     sendVideo: (to: string, pathVideo: string | null, caption: string, context: string | null) => Promise<any>
@@ -54,4 +63,7 @@ export interface MetaInterface {
     sendFile: (to: string, mediaInput: string | null, caption: string, context: string | null) => Promise<any>
     sendAudio: (to: string, fileOpus: string, context: string | null) => void
     markAsRead: (wa_id: string) => Promise<any>
+    sendPresenceUpdate: (messageId: string) => Promise<any>
+    typing: (messageId: string, ms?: number) => Promise<void>
+    getOrderDetails: (order: Order) => Promise<MetaOrderDetails>
 }

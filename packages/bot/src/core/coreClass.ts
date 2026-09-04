@@ -2,6 +2,7 @@ import { Console } from 'console'
 import { createWriteStream } from 'fs'
 
 import type {
+    BotCtxMethods,
     BotStateGlobal,
     BotStateStandAlone,
     DispatchFn,
@@ -44,6 +45,9 @@ class CoreClass<P extends ProviderClass = any, D extends MemoryDB = any> extends
         blackList: [],
         listEvents: {},
         delay: 0,
+        logs: {
+            notices: true,
+        },
         globalState: {},
         extensions: undefined,
         queue: {
@@ -60,12 +64,20 @@ class CoreClass<P extends ProviderClass = any, D extends MemoryDB = any> extends
      * - Setup provider
      * - Setup generalArgs
      */
-    constructor(_flow: any, _database: D, _provider: P, _args: GeneralArgs) {
+    constructor(_flow: any, _database: D, _provider: P, _args: GeneralArgs | null | undefined) {
         super()
         this.flowClass = _flow
         this.database = _database
         this.provider = _provider
-        this.generalArgs = { ...this.generalArgs, ..._args }
+        const args = _args ?? {}
+        this.generalArgs = {
+            ...this.generalArgs,
+            ...args,
+            logs: {
+                ...this.generalArgs.logs,
+                ...(args.logs ?? {}),
+            },
+        }
 
         this.dynamicBlacklist.add(this.generalArgs.blackList)
 
@@ -97,7 +109,10 @@ class CoreClass<P extends ProviderClass = any, D extends MemoryDB = any> extends
         },
         {
             event: 'notice',
-            func: ({ instructions, title = '' }) => printer(instructions, title, 'bgMagenta'),
+            func: ({ instructions, title = '' }) => {
+                if (this.generalArgs.logs?.notices === false) return
+                printer(instructions, title, 'bgMagenta')
+            },
         },
         {
             event: 'ready',
@@ -129,7 +144,7 @@ class CoreClass<P extends ProviderClass = any, D extends MemoryDB = any> extends
         idleForCallback.stop(messageCtxInComing)
         const { body, from } = messageCtxInComing
         let msgToSend = []
-        let endFlowFlag = false
+        let endFlowFlag = this.stateHandler.get(from)('__end_flow__') || false
         const fallBackFlag = false
 
         if (this.dynamicBlacklist.checkIf(from)) return
@@ -179,7 +194,7 @@ class CoreClass<P extends ProviderClass = any, D extends MemoryDB = any> extends
             },
             index = 0
         ) => {
-            const body = typeof payload === 'string' ? payload : payload?.body ?? payload?.answer
+            const body = typeof payload === 'string' ? payload : (payload?.body ?? payload?.answer)
             const media = payload?.media ?? null
             const buttons = payload?.buttons ?? []
             const capture = payload?.capture ?? false
@@ -375,7 +390,7 @@ class CoreClass<P extends ProviderClass = any, D extends MemoryDB = any> extends
                 flag.fallBack = true
                 await this.sendProviderAndSave(from, {
                     ...prevMsg,
-                    answer: typeof message === 'string' ? message : message?.body ?? prevMsg.answer,
+                    answer: typeof message === 'string' ? message : (message?.body ?? prevMsg.answer),
                     options: {
                         ...prevMsg.options,
                         buttons: prevMsg.options?.buttons,
@@ -676,6 +691,7 @@ class CoreClass<P extends ProviderClass = any, D extends MemoryDB = any> extends
             }
         }
 
+        await this.stateHandler.updateState({ from })({ __end_flow__: false })
         return exportFunctionsSend(() => sendFlow(msgToSend, from, { forceQueue: true }))
     }
 
@@ -768,8 +784,20 @@ class CoreClass<P extends ProviderClass = any, D extends MemoryDB = any> extends
                 update: this.globalStateHandler.updateState(),
                 clear: this.globalStateHandler.clear(),
             }),
+            ctxMethods: this.buildCtxMethods(),
         })
     }
+
+    /**
+     * Build context methods for HTTP handlers
+     * @returns {BotCtxMethods}
+     */
+    private buildCtxMethods = (): BotCtxMethods => ({
+        endFlow: async (from: string) => {
+            this.queuePrincipal.clearQueue(from)
+            this.stateHandler.updateState({ from })({ __end_flow__: true })
+        },
+    })
 
     /**
      *
@@ -785,6 +813,7 @@ class CoreClass<P extends ProviderClass = any, D extends MemoryDB = any> extends
                       dispatch: DispatchFn
                       state: (number: string) => BotStateStandAlone
                       globalState: () => BotStateGlobal
+                      ctxMethods: BotCtxMethods
                       emit: (eventName: string, args: Record<string, any> & { from: string }) => void
                   })
                 | undefined,

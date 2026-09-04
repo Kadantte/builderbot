@@ -89,9 +89,9 @@ class Queue<T> {
             }
 
             // Modo seguro por defecto: no limpia la cola al crear el timeout y gestiona timers por item
-            const timer = ({ resolve }: ITimerPromise) =>
+            const timer = ({ reject }: ITimerPromise) =>
                 setTimeout(() => {
-                    resolve('timeout' as unknown as T)
+                    reject(new Error(`Queue item timeout after ${this.timeout}ms`) as unknown as T)
                 }, this.timeout)
 
             const timerPromise = new Promise<T>((resolve, reject) => {

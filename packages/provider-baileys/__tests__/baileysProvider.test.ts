@@ -1,11 +1,12 @@
+import { utils } from '@builderbot/bot'
 import { beforeEach, describe, expect, jest, test } from '@jest/globals'
-import { BaileysProvider } from '../src'
-import path from 'path'
-import { IStickerOptions } from 'wa-sticker-formatter'
+import { useMultiFileAuthState } from 'baileys'
 import fs from 'fs'
 import mime from 'mime-types'
-import { utils } from '@builderbot/bot'
-import { useMultiFileAuthState } from 'baileys'
+import path from 'path'
+import { IStickerOptions } from 'wa-sticker-formatter'
+
+import { BaileysProvider } from '../src'
 
 const phoneNumber = '+123456789'
 
@@ -14,6 +15,7 @@ jest.mock('baileys', () => ({
     proto: {
         Message: {
             fromObject: jest.fn().mockReturnValue({}),
+            create: jest.fn().mockReturnValue({}),
         },
     },
     useMultiFileAuthState: jest.fn().mockImplementation(() => ({
@@ -32,9 +34,11 @@ jest.mock('baileys', () => ({
         waitForConnectionUpdate: jest.fn(),
         requestPairingCode: jest.fn(),
     })),
+    getAggregateVotesInPollMessage: jest.fn().mockReturnValue([{ name: 'Option 1', voters: ['voter1'] }]),
 }))
 
 jest.mock('fs/promises', () => ({
+    readFile: jest.fn().mockImplementation(() => Promise.resolve(Buffer.from('audio-buffer') as any)),
     writeFile: jest.fn(),
 }))
 
@@ -48,7 +52,10 @@ jest.mock('wa-sticker-formatter', () => {
 
 jest.mock('../src/utils', () => ({
     baileyCleanNumber: jest.fn().mockImplementation(() => phoneNumber),
-    baileyIsValidNumber: jest.fn((number: string) => number === '1234567890'),
+    baileyIsValidNumber: jest.fn((number: string) => {
+        if (!number || number.trim() === '') return false
+        return !number.includes('@g.us')
+    }),
     baileyCleanNumberWithLid: jest
         .fn()
         .mockImplementation((key: any) => key?.remoteJid || key?.senderPn || 'mocked-number'),
@@ -530,7 +537,7 @@ describe('#BaileysProvider', () => {
     })
 
     describe('#sendPoll', () => {
-        test('should send poll message with correct options', async () => {
+        test('should send poll message with multiselect false (selectableCount 0)', async () => {
             // Arrange
             const numberIn = phoneNumber
             const text = 'Please vote'
@@ -547,10 +554,12 @@ describe('#BaileysProvider', () => {
 
             // Assert
             expect(result).toEqual('success')
-            expect(mockSendMessage).toHaveBeenCalled()
+            expect(mockSendMessage).toHaveBeenCalledWith(phoneNumber, {
+                poll: { name: text, values: poll.options, selectableCount: 0 },
+            })
         })
 
-        test('should send poll message with correct options multiselect undefined', async () => {
+        test('should send poll message with multiselect undefined (selectableCount 1)', async () => {
             // Arrange
             const numberIn = phoneNumber
             const text = 'Please vote'
@@ -567,10 +576,12 @@ describe('#BaileysProvider', () => {
 
             // Assert
             expect(result).toEqual('success')
-            expect(mockSendMessage).toHaveBeenCalled()
+            expect(mockSendMessage).toHaveBeenCalledWith(phoneNumber, {
+                poll: { name: text, values: poll.options, selectableCount: 1 },
+            })
         })
 
-        test('should send poll message with correct options multiselect true', async () => {
+        test('should send poll message with multiselect true (selectableCount 1)', async () => {
             // Arrange
             const numberIn = phoneNumber
             const text = 'Please vote'
@@ -580,14 +591,16 @@ describe('#BaileysProvider', () => {
             }
 
             const mockSendMessage = mockSendSuccess
-            provider.vendor.sendMessage = mockSendSuccess
+            provider.vendor.sendMessage = mockSendMessage
 
             // Act
             const result = await provider.sendPoll(numberIn, text, poll)
 
             // Assert
             expect(result).toEqual('success')
-            expect(mockSendMessage).toHaveBeenCalled()
+            expect(mockSendMessage).toHaveBeenCalledWith(phoneNumber, {
+                poll: { name: text, values: poll.options, selectableCount: 1 },
+            })
         })
 
         test('should return false if options length is less than 2', async () => {
@@ -700,21 +713,41 @@ describe('#BaileysProvider', () => {
     })
 
     describe('#sendAudio ', () => {
-        test('should send audio message with correct URL', async () => {
+        test('should send audio message as buffer with ptt=true by default', async () => {
             // Arrange
             const number = phoneNumber
-            const audioUrl = 'http://example.com/audio.mp3'
+            const audioPath = '/tmp/audio.opus'
             const mockSendMessage = mockSendSuccess
             provider.vendor.sendMessage = mockSendMessage
 
             // Act
-            const result = await provider.sendAudio(number, audioUrl)
+            const result = await provider.sendAudio(number, audioPath)
 
             // Assert
             expect(result).toEqual('success')
             expect(mockSendMessage).toHaveBeenCalledWith(number, {
-                audio: { url: audioUrl },
+                audio: Buffer.from('audio-buffer'),
                 ptt: true,
+                mimetype: 'audio/ogg; codecs=opus',
+            })
+        })
+
+        test('should send audio message with isPTT=false when specified', async () => {
+            // Arrange
+            const number = phoneNumber
+            const audioPath = '/tmp/audio.opus'
+            const mockSendMessage = mockSendSuccess
+            provider.vendor.sendMessage = mockSendMessage
+
+            // Act
+            const result = await provider.sendAudio(number, audioPath, false)
+
+            // Assert
+            expect(result).toEqual('success')
+            expect(mockSendMessage).toHaveBeenCalledWith(number, {
+                audio: Buffer.from('audio-buffer'),
+                ptt: false,
+                mimetype: 'audio/ogg; codecs=opus',
             })
         })
     })
@@ -996,6 +1029,57 @@ describe('#BaileysProvider', () => {
             expect(provider.emit).toHaveBeenCalled()
         })
 
+        test('Detect orderMessage with standard JID', async () => {
+            // Arrange
+            jest.mocked(utils.generateRefProvider).mockReturnValue('_event_order___mock-uuid')
+
+            const mockMessage = {
+                message: {
+                    orderMessage: { orderId: 'order-123', token: 'token-abc' },
+                },
+                pushName: 'Buyer Name',
+                key: {
+                    remoteJid: '5491112223344@s.whatsapp.net',
+                    id: 'msg-order-001',
+                },
+            }
+
+            // Act
+            await provider['busEvents']()[0].func({ messages: [mockMessage], type: 'notify' })
+
+            // Assert
+            expect(provider.emit).toHaveBeenCalledWith(
+                'message',
+                expect.objectContaining({ body: '_event_order___mock-uuid' })
+            )
+        })
+
+        test('Detect orderMessage with @lid JID and no remoteJidAlt', async () => {
+            // Arrange — escenario del bug: @lid sin remoteJidAlt crasheaba baileyCleanNumber(undefined)
+            jest.mocked(utils.generateRefProvider).mockReturnValue('_event_order___mock-uuid')
+
+            const mockMessage = {
+                message: {
+                    orderMessage: { orderId: 'order-456', token: 'token-xyz' },
+                },
+                pushName: 'Buyer Name',
+                key: {
+                    remoteJid: '5491112223344@lid',
+                    remoteJidAlt: undefined,
+                    id: 'msg-order-002',
+                },
+            }
+
+            // Act
+            await provider['busEvents']()[0].func({ messages: [mockMessage], type: 'notify' })
+
+            // Assert
+            expect(provider.emit).toHaveBeenCalledWith(
+                'message',
+                expect.objectContaining({ body: '_event_order___mock-uuid' })
+            )
+        })
+
         test('Detect broadcast in a message', async () => {
             // Arrange
             const mockMessage = {
@@ -1139,28 +1223,17 @@ describe('#BaileysProvider', () => {
             }
 
             const mockSendMessage = jest.fn()
-            const mockReadMessages = jest.fn()
             provider.vendor = {
                 sendMessage: mockSendMessage,
-                readMessages: mockReadMessages,
             } as any
 
-            // Mock baileyIsValidNumber to return true for our test number
-            const originalBaileyIsValidNumber = require('../src/utils').baileyIsValidNumber
-            require('../src/utils').baileyIsValidNumber = jest.fn().mockReturnValue(true)
+            // Act
+            const result = await provider['busEvents']()[0].func({ messages: [mockMessage], type: 'notify' })
 
-            try {
-                // Act
-                const result = await provider['busEvents']()[0].func({ messages: [mockMessage], type: 'notify' })
-
-                // Assert
-                expect(mockReadMessages).toHaveBeenCalledWith([mockMessage.key])
-                expect(mockSendMessage).toHaveBeenCalledWith(remoteJid, { text: 'Sync message test' })
-                expect(result).toBeUndefined()
-            } finally {
-                // Restore original function
-                require('../src/utils').baileyIsValidNumber = originalBaileyIsValidNumber
-            }
+            // Assert
+            // Note: readMessages was removed in Baileys v7 to prevent bans
+            expect(mockSendMessage).toHaveBeenCalledWith(remoteJid, { text: 'Sync message test' })
+            expect(result).toBeUndefined()
         })
 
         test('should not process Invalid messages when fallBackAction is defined but message is from group', async () => {

@@ -65,6 +65,9 @@ const main = async () => {
         numberId: 'numberId',
         verifyToken: 'verifyToken',
         version: 'v18.0'
+        // Optional: enable inbound WhatsApp Business voice calls (WebRTC/SDP + STT/TTS)
+        // enableVoiceCalls: true,
+        // openaiApiKey: process.env.OPENAI_API_KEY ?? 'YOUR_OPENAI_API_KEY',
     })
     const adapterDB = new Database()
 
@@ -110,6 +113,15 @@ const main = async () => {
 
             res.writeHead(200, { 'Content-Type': 'application/json' })
             return res.end(JSON.stringify({ status: 'ok', number, intent }))
+        })
+    )
+
+    adapterProvider.server.get(
+        '/v1/blacklist/list',
+        handleCtx(async (bot, req, res) => {
+            const blacklist = bot.blacklist.getList()
+            res.writeHead(200, { 'Content-Type': 'application/json' })
+            return res.end(JSON.stringify({ status: 'ok', blacklist }))
         })
     )
 
